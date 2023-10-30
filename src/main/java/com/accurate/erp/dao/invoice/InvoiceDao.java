@@ -443,7 +443,7 @@ public class InvoiceDao {
 
 	@SuppressWarnings("deprecation")
 	@Transactional
-	public InvoiceDO getInvoiceDetails(String invNo) {
+	public InvoiceDO getInvoiceDetails(String invId) {
 		LOGGER.info("InvoiceDao :: getInvoiceDetails :: Start ");
 		InvoiceDO invDO = null;
 		try {
@@ -458,7 +458,7 @@ public class InvoiceDao {
 
 			query.select(root);
 
-			Predicate predicate = builder.equal(root.get("invoiceNo"), invNo);
+			Predicate predicate = builder.equal(root.get("invoiceId"), invId);
 
 			query.where(predicate);
 

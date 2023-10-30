@@ -135,6 +135,8 @@ public class InvoiceService {
 		
 		Object shippingState=inputJson.get("shippingState");
 		
+		Object termsAndCondition=inputJson.get("termsAndCondition");
+		
 		List<Map<String,Object>> invoiceProd=(List<Map<String,Object>>)inputJson.get("invoiceProducts");
 		
 		List<InvoiceProductDO> invoiceProducts=new ArrayList<>();
@@ -291,14 +293,18 @@ public class InvoiceService {
 			invoiceDO.setShippingState(shippingState.toString());
 		}
 		
+		if(termsAndCondition!=null) {
+			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
+		}
+		
 		return invoiceDao.saveInvoice(invoiceDO);
 		
 	}
 	
 	
-	public InvoiceDO getInvoiceDetails(String invNo){
+	public InvoiceDO getInvoiceDetails(String invId){
 		LOGGER.info("InvoiceService::getInvoiceDetails()::start");
-		return invoiceDao.getInvoiceDetails(invNo);
+		return invoiceDao.getInvoiceDetails(invId);
 	}
 	
 	public boolean DeleteInvoice(String invNo){

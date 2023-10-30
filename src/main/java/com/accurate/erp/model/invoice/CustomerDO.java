@@ -72,8 +72,22 @@ public class CustomerDO {
 	String shippingAddress1;
 	
 	
+	@Column(name="payment_terms")
+	String termsAndCondition;
 	
 	
+	
+	
+	
+
+	public String getTermsAndCondition() {
+		return termsAndCondition;
+	}
+
+	public void setTermsAndCondition(String termsAndCondition) {
+		this.termsAndCondition = termsAndCondition;
+	}
+
 	public String getShippingState() {
 		return shippingState;
 	}

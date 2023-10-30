@@ -226,8 +226,8 @@ public class InvoiceController {
 	
 	@GetMapping(value="/viewInvoice")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getInvoiceDetails(@QueryParam("invNo") String invNo){
-		InvoiceDO invoicedo=invoiceService.getInvoiceDetails(invNo);
+	public ResponseEntity<?> getInvoiceDetails(@QueryParam("invId") String invId){
+		InvoiceDO invoicedo=invoiceService.getInvoiceDetails(invId);
 		if(invoicedo!=null) {
 		return new ResponseEntity<InvoiceDO>(invoicedo,HttpStatus.OK);
 		}
