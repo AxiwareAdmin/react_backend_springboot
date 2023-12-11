@@ -13,7 +13,7 @@ import javax.persistence.Table;
 public class DocumentSeqMasterDO {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "document_seq_Id")
 	Integer documentSeqId;
 	

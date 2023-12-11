@@ -1,40 +1,12 @@
-package com.accurate.erp.model.invoice;
+package com.accurate.erp.model.quotation;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-
-/*import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;*/
-
-import org.hibernate.annotations.Cascade;
-//import javax.persistence.CascadeType;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.CascadeType;
-
-/*import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;*/
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,21 +17,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "invoice")
-public class InvoiceDO {
+@Table(name = "QUOTATION")
+public class QuotationDO {
 	
-
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Invoice_id")
-	Integer invoiceId;
+	@Column(name = "Quotation_id")
+	Integer quotationId;
 
-	@Column(name = "Invoice_No")
-	String invoiceNo;
+	@Column(name = "Quotation_No")
+	String quotationNo;
 
-	@Column(name = "Invoice_Date")
-	Date invoiceDate;
+	@Column(name = "Quotation_Date")
+	Date quotationDate;
 
 	@Column(name = "Customer_Name")
 	String customerName;
@@ -127,11 +98,11 @@ public class InvoiceDO {
 	@Column(name = "Additional_Charges")
 	String additionalCharges;
 
-	@Column(name = "Invoice_Status")
-	String invoiceStatus;
+	@Column(name = "Quotation_Status")
+	String quotationStatus;
 
-	@Column(name = "Invoice_Value")
-	BigDecimal invoiceValue;
+	@Column(name = "Quotation_Value")
+	BigDecimal quotationValue;
 	
 	@Column(name = "Taxable_Value")
 	BigDecimal taxableValue;
@@ -152,8 +123,8 @@ public class InvoiceDO {
 	@Column(name="Other_Discount")
 	BigDecimal otherDiscount;
 	
-	@Column(name="Invoice_Product_ID")
-	Integer invoiceProductId;
+	@Column(name="Quotation_Product_ID")
+	Integer quotationProductId;
 
 	@Column(name="Month")
 	String month;
@@ -164,72 +135,31 @@ public class InvoiceDO {
 	@Column(name="Created_Date")
 	Date createdDate;
 	
-	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.EAGER,cascade= CascadeType.ALL)
-	List<InvoiceProductDO> invoiceProductDO=new ArrayList<>();
-	
+	@OneToMany(mappedBy="quotation",fetch=FetchType.EAGER,cascade= CascadeType.ALL)
+	List<QuotationProductDO> quotationProductDO=new ArrayList<>();
 
-	public String getServiceCheck() {
-		return serviceCheck;
+	public Integer getQuotationId() {
+		return quotationId;
 	}
 
-	public void setServiceCheck(String serviceCheck) {
-		this.serviceCheck = serviceCheck;
+	public void setQuotationId(Integer quotationId) {
+		this.quotationId = quotationId;
 	}
 
-	public List<InvoiceProductDO> getInvoiceProductDO() {
-		return invoiceProductDO;
+	public String getQuotationNo() {
+		return quotationNo;
 	}
 
-	public void setInvoiceProductDO(List<InvoiceProductDO> invoiceProductDO) {
-		this.invoiceProductDO = invoiceProductDO;
+	public void setQuotationNo(String quotationNo) {
+		this.quotationNo = quotationNo;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
+	public Date getQuotationDate() {
+		return quotationDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getMonth() {
-		return month;
-	}
-
-	public void setMonth(String month) {
-		this.month = month;
-	}
-
-	public Integer getInvoiceProductId() {
-		return invoiceProductId;
-	}
-
-	public void setInvoiceProductId(Integer invoiceProductId) {
-		this.invoiceProductId = invoiceProductId;
-	}
-
-	public Integer getInvoiceId() {
-		return invoiceId;
-	}
-
-	public void setInvoiceId(Integer invoiceId) {
-		this.invoiceId = invoiceId;
-	}
-
-	public String getInvoiceNo() {
-		return invoiceNo;
-	}
-
-	public void setInvoiceNo(String invoiceNo) {
-		this.invoiceNo = invoiceNo;
-	}
-
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
-
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
+	public void setQuotationDate(Date quotationDate) {
+		this.quotationDate = quotationDate;
 	}
 
 	public String getCustomerName() {
@@ -392,7 +322,6 @@ public class InvoiceDO {
 		this.additionalTerms = additionalTerms;
 	}
 
-
 	public String getTransportCharges() {
 		return transportCharges;
 	}
@@ -409,20 +338,20 @@ public class InvoiceDO {
 		this.additionalCharges = additionalCharges;
 	}
 
-	public String getInvoiceStatus() {
-		return invoiceStatus;
+	public String getQuotationStatus() {
+		return quotationStatus;
 	}
 
-	public void setInvoiceStatus(String invoiceStatus) {
-		this.invoiceStatus = invoiceStatus;
+	public void setQuotationStatus(String quotationStatus) {
+		this.quotationStatus = quotationStatus;
 	}
 
-	public BigDecimal getInvoiceValue() {
-		return invoiceValue;
+	public BigDecimal getQuotationValue() {
+		return quotationValue;
 	}
 
-	public void setInvoiceValue(BigDecimal invoiceValue) {
-		this.invoiceValue = invoiceValue;
+	public void setQuotationValue(BigDecimal quotationValue) {
+		this.quotationValue = quotationValue;
 	}
 
 	public BigDecimal getTaxableValue() {
@@ -472,7 +401,46 @@ public class InvoiceDO {
 	public void setOtherDiscount(BigDecimal otherDiscount) {
 		this.otherDiscount = otherDiscount;
 	}
+
+	public Integer getQuotationProductId() {
+		return quotationProductId;
+	}
+
+	public void setQuotationProductId(Integer quotationProductId) {
+		this.quotationProductId = quotationProductId;
+	}
+
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	public String getServiceCheck() {
+		return serviceCheck;
+	}
+
+	public void setServiceCheck(String serviceCheck) {
+		this.serviceCheck = serviceCheck;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public List<QuotationProductDO> getQuotationProductDO() {
+		return quotationProductDO;
+	}
+
+	public void setQuotationProductDO(List<QuotationProductDO> quotationProductDO) {
+		this.quotationProductDO = quotationProductDO;
+	}
 	
-	
-	
+
 }
