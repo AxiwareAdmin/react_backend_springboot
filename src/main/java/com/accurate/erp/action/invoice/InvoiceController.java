@@ -36,9 +36,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.accurate.erp.dto.security.AuthenticationRequest;
 import com.accurate.erp.helper.JwtUtil;
 import com.accurate.erp.model.invoice.CustomerDO;
+import com.accurate.erp.model.invoice.EmployeeDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.ProductDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
+import com.accurate.erp.model.purchase.PurchaseDO;
+import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.security.service.CustomUserDetailsService;
 import com.accurate.erp.service.excel.ExcelService;
 import com.accurate.erp.service.invoice.InvoiceService;
@@ -92,6 +95,34 @@ public class InvoiceController {
 		}
 	}
 	
+	@GetMapping(value="/supplier/{supplierId}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getSuplierById(@PathVariable String supplierId){
+		SupplierDO supplierDO=invoiceService.getSupplierById(supplierId);
+		if(supplierDO!=null) {
+		return new ResponseEntity<SupplierDO>(supplierDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Suppliers are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping(value="/suppliers")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getAllSuppliers(){
+		List<SupplierDO> supplierDOs=invoiceService.getAllSuppliers();
+		if(supplierDOs!=null && supplierDOs.size()>0) {
+		return new ResponseEntity<List<SupplierDO>>(supplierDOs,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Suppliers are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
 	@GetMapping(value="/allInvoices")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getAllInvoiceList(){
@@ -105,6 +136,64 @@ public class InvoiceController {
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
+	
+	@GetMapping("/purchases")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> getAllPurchase(){
+		List<PurchaseDO> list=invoiceService.getPurchaseList();
+		
+		if(list!=null && list.size()>0) {
+			return new ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK);
+		}else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "purchases not found");
+			return ResponseEntity.ok(jsonObj.toString());
+		}
+	}
+	
+	@GetMapping("/purchase/{id}")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> getPurchaseById(@PathVariable String id){
+		PurchaseDO purchaseDO=invoiceService.getPurchaseById(id);
+		
+		if(purchaseDO!=null) {
+			return new ResponseEntity<PurchaseDO>(purchaseDO,HttpStatus.OK);
+		}
+		
+		JSONObject jsonObj=new JSONObject();
+		jsonObj.put("res", "purchases not found");
+		return ResponseEntity.ok(jsonObj.toString());
+		
+	}
+	/*
+	 * @GetMapping("/purchases")
+	 * 
+	 * @CrossOrigin(origins = {"*"}) public ResponseEntity<?> getPurchase(){
+	 * List<PurchaseDO> list=invoiceService.getPurchaseList();
+	 * 
+	 * if(list!=null && list.size()>0) { return new
+	 * ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK); }else { JSONObject
+	 * jsonObj=new JSONObject(); jsonObj.put("res", "purchases not found"); return
+	 * ResponseEntity.ok(jsonObj.toString()); } }
+	 */
+	
+	@GetMapping("/purchases/{month}")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> getPurchasesByMonth(@PathVariable String month){
+		
+		List<PurchaseDO> list=invoiceService.getPurchaseList(month);
+		
+		if(list!=null && list.size()>0) {
+			return new ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK);
+		}else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "purchases not found");
+			return ResponseEntity.ok(jsonObj.toString());
+		}
+		
+		
+	}
+	
 	@GetMapping(value="/getInvNo")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getInvNo(){
@@ -224,6 +313,48 @@ public class InvoiceController {
 		}
 	}
 	
+	@GetMapping(value = "/getPurchases")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getPurchaseList(){
+		List<PurchaseDO> purchaseList=invoiceService.getPurchaseList();
+		if(purchaseList!=null && purchaseList.size()>0) {
+			
+			/*invoiceList.forEach((ele) ->{
+				
+			});*/
+			List<String> salesobj = new ArrayList<>();
+			for(String str  : month) {
+				JSONObject jsonObj=new JSONObject();
+				Integer totalInv = 0;
+				BigDecimal closingBal = new BigDecimal(0);
+				BigDecimal amount = new BigDecimal(0);
+				for(PurchaseDO purchaseDO : purchaseList) {
+					if(str.equalsIgnoreCase(purchaseDO.getMonth())) {
+						totalInv = totalInv + 1;
+						amount = amount.add(new BigDecimal(purchaseDO.getInvoiceValue()));
+						closingBal = closingBal.add(new BigDecimal(1));
+					}
+				}
+				jsonObj.put("month", str);
+				jsonObj.put("totalInv", totalInv);
+				jsonObj.put("amount", amount);
+				jsonObj.put("closingBal", closingBal);
+				if(totalInv>0)
+				jsonObj.put("progress", amount.divide(new BigDecimal(totalInv)).multiply(new BigDecimal(100)));
+				else
+					jsonObj.put("progress","0");
+				salesobj.add(jsonObj.toString());
+			}
+			
+		return new ResponseEntity<List<String>>(salesobj,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Purchase are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
 	@GetMapping(value="/viewInvoice")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getInvoiceDetails(@QueryParam("invId") String invId){
@@ -237,6 +368,25 @@ public class InvoiceController {
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
+	
+	@GetMapping(value="/deletePurchase/{id}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> deletePurchase(@PathVariable String purchaseId){
+		boolean flag=invoiceService.deletePurchase(purchaseId);
+		
+		JSONObject jsonObj=new JSONObject();
+		
+		if(flag) {
+			jsonObj.put("res", "sucess");
+		}else {
+			jsonObj.put("res", "failure");
+		}
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+	}
+	
+	
+
+	
 	
 	@GetMapping(value="/deleteInv")
 	@CrossOrigin(origins={"*"})
@@ -282,7 +432,21 @@ public class InvoiceController {
 	            .body(file);
 	}
 	
-		@GetMapping(value="/sendmail")
+	
+	@PostMapping("/excel/purchases")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> downloadInvoicesInExcelForPurchase(@RequestBody Map<String,String> data){
+		String filename = "invoices.xlsx";
+		System.out.println(data);
+	    InputStreamResource file = new InputStreamResource(excelService.loadPurchase(data));
+	    
+	    return ResponseEntity.ok()
+	            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+	            .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+	            .body(file);
+	}
+	
+	@GetMapping(value="/sendmail")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> sendMail(@QueryParam("invNo") String invNo , @QueryParam("custName") String custName ){
 		boolean flag=false;
@@ -421,6 +585,12 @@ public class InvoiceController {
 		jsonObject.put("res", "standard type not found");
 		return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
 		
+	}
+	
+	@GetMapping("/employee")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> test(@RequestBody EmployeeDO employee){
+		return new ResponseEntity<EmployeeDO>(employee,HttpStatus.OK);
 	}
 	
 }

@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +25,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableJpaRepositories("com.accureate.erp.dao.invoice")
 public class ErpApplication {
 	
+	private final static Logger LOGGER=LogManager.getLogger(ErpApplication.class);
+	
 	@Value("${DB_DRIVER}")
 	   String DB_DRIVER;
 	
@@ -39,6 +43,8 @@ public class ErpApplication {
 	String hibernateDialect;
 
 	public static void main(String[] args) {
+		
+		LOGGER.info("start of application--->");
 		
 		ConfigurableApplicationContext ctx=SpringApplication.run(ErpApplication.class, args);
 		

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.accurate.erp.helper.ExcelHelper;
 import com.accurate.erp.model.invoice.InvoiceDO;
+import com.accurate.erp.model.purchase.PurchaseDO;
 import com.accurate.erp.service.invoice.InvoiceService;
 
 @Service
@@ -25,4 +26,10 @@ public class ExcelService {
 	  }
 	
 	
+	public ByteArrayInputStream loadPurchase(Map<String,String> data) {
+	    List<PurchaseDO> invoices = invoiceService.getPurchaseList(data);
+
+	    ByteArrayInputStream in = ExcelHelper.purchasesToExcel(invoices);
+	    return in;
+	  }
 }

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,11 +21,13 @@ import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.InvoiceProductDO;
 import com.accurate.erp.model.invoice.ProductDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
+import com.accurate.erp.model.purchase.PurchaseDO;
+import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.utility.mail.SendMail;
 
 @Service
 public class InvoiceService {
-	private static final Logger LOGGER=Logger.getLogger(InvoiceService.class);
+	private static final Logger LOGGER=LogManager.getLogger(InvoiceService.class);
 
 	@Autowired
 	InvoiceDao invoiceDao;
@@ -44,6 +48,11 @@ public class InvoiceService {
 	public List<InvoiceDO> getInvoiceList(Map<String, String> data){
 		LOGGER.info("InvoiceService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(data);
+	}
+	
+	public List<PurchaseDO> getPurchaseList(Map<String, String> data){
+		LOGGER.info("InvoiceService::getPurchaseList()::start");
+		return invoiceDao.getPurchaseList(data);
 	}
 	
 		public String getInvNo(){
@@ -312,6 +321,11 @@ public class InvoiceService {
 		return invoiceDao.DeleteInvoice(invNo);
 	}
 	
+	public boolean deletePurchase(String purchaseId){
+		LOGGER.info("InvoiceService::deletePurchase()::start");
+		return invoiceDao.DeleteInvoice(purchaseId);
+	}
+	
 	public boolean cloneInvoice(String invNo){
 		LOGGER.info("InvoiceService::cloneInvoice()::start");
 		return invoiceDao.cloneInvoice(invNo);
@@ -389,4 +403,23 @@ public class InvoiceService {
 		return invoiceDao.getStandardType(module, subModule);
 	}
 	
+	public List<PurchaseDO> getPurchaseList(){
+		return invoiceDao.getPurchaseList();
+	}
+	
+	public List<PurchaseDO> getPurchaseList(String month){
+		return invoiceDao.getPurchaseList(month);
+	}
+	
+	public PurchaseDO getPurchaseById(String purchaseId) {
+		return invoiceDao.getPurchaseById(purchaseId);
+	}
+	
+	public SupplierDO getSupplierById(String supplierId) {
+		return invoiceDao.getSuppliersById(supplierId);
+	}
+	
+	public List<SupplierDO> getAllSuppliers(){
+		return invoiceDao.getAllSuppliers();
+	}
 }

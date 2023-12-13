@@ -15,7 +15,9 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.hibernate.Query;
 /*import org.hibernate.Criteria;
 import org.hibernate.Query;*/
@@ -36,6 +38,8 @@ import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.ProductDO;
 import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
+import com.accurate.erp.model.purchase.PurchaseDO;
+import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.model.util.StandardTypeDO;
 
 /*import jakarta.persistence.Query;
@@ -51,7 +55,7 @@ import com.accurate.erp.model.invoice.InvoiceProductDO;
 @Repository
 public class InvoiceDao {
 
-	private final static Logger LOGGER = Logger.getLogger(InvoiceController.class);
+	private final static Logger LOGGER = LogManager.getLogger(InvoiceController.class);
 
 	@Autowired
 	SessionFactory sessionFactory;
@@ -175,6 +179,81 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao :: getInvoiceList method end");
 		return invoiceList;
 	}
+	
+	
+	public List<PurchaseDO> getPurchaseList(Map<String, String> data) {
+		LOGGER.info("InvoiceDao :: getPurchaseList :: Start ");
+		List<PurchaseDO> purchaseList = new ArrayList<PurchaseDO>();
+		try {
+
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy/MM/dd");
+			String customerName = data.get("customerName");
+
+			Date toDate = sdf.parse(data.get("toDate"));
+			
+			toDate=sdf2.parse(sdf2.format(toDate));
+
+			Date fromDate = sdf.parse(data.get("fromDate"));
+			
+			fromDate=sdf2.parse(sdf2.format(fromDate));
+
+			String status = data.get("status");
+
+			String category = data.get("category");
+
+			Session session = getSession();
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+
+			CriteriaQuery<PurchaseDO> query = builder.createQuery(PurchaseDO.class);
+
+			Root<PurchaseDO> root = query.from(PurchaseDO.class);
+
+			query.select(root);
+
+			Predicate customerPredicate = builder.equal(root.get("supplierName"), customerName);
+
+			Predicate datePredicate = builder.between(root.get("purchaseDate"), fromDate, toDate);
+
+//			Predicate statusPredicate = builder.equal(root.get("invoiceStatus"), status);
+
+			Predicate[] predicate = new Predicate[3];
+			List<Predicate> predList = new ArrayList<>();
+			
+			 int predCount=0;
+			  
+			  if(customerName!=null && customerName.length()>0) {
+				  predList.add(customerPredicate);
+			  }
+			  
+			  if(fromDate!=null && toDate!=null) { 
+				  predList.add(datePredicate);
+			  }
+			 
+			 
+
+			Predicate finalPred = builder.and(predList.toArray(new Predicate[0]));
+
+			query.where(finalPred);
+
+//			Predicate categoryPredicate=builder.equal(root.get(null), statusPredicate)
+
+			purchaseList = session.createQuery(query).getResultList();
+
+			/*
+			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
+			 * invoiceList=criteria.list();
+			 */
+
+		} catch (Exception e) {
+			LOGGER.error("Exception occured in InvoiceDao :: getPurchaseList ");
+		}
+		LOGGER.info("InvoiceDao :: getPurchaseList method end");
+		return purchaseList;
+	}
+	
 
 	public List<InvoiceDO> getInvoiceList(Map<String, String> data) {
 		LOGGER.info("InvoiceDao :: getInvoiceList :: Start ");
@@ -182,11 +261,17 @@ public class InvoiceDao {
 		try {
 
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy/MM/dd");
 			String customerName = data.get("customerName");
 
 			Date toDate = sdf.parse(data.get("toDate"));
+			
+			toDate=sdf2.parse(sdf2.format(toDate));
 
 			Date fromDate = sdf.parse(data.get("fromDate"));
+			
+			fromDate=sdf2.parse(sdf2.format(fromDate));
 
 			String status = data.get("status");
 
@@ -500,6 +585,32 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao :: DeleteInvoice method end");
 		return flag;
 	}
+	
+	public boolean deletePurchase(String purchaseId) {
+		LOGGER.info("InvoiceDao :: DeleteInvoice :: Start ");
+		boolean flag = false;
+		InvoiceDO invDo = null;
+		try {
+
+			Session session = getSession();
+			Query query = session.createNativeQuery("delete from purchase where purchase_id ='" + purchaseId + "'");
+			/*
+			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
+			 * criteria.add(Restrictions.eq("invoiceNo",invNo)); invDo =
+			 * (InvoiceDO)criteria.uniqueResult(); session.delete(invDo);
+			 */
+			query.executeUpdate();
+			flag = true;
+
+		} catch (Exception e) {
+			LOGGER.error("Exception occured in InvoiceDao :: DeleteInvoice ");
+			flag = false;
+		}
+		LOGGER.info("InvoiceDao :: DeleteInvoice method end");
+		return flag;
+	}
+	
+	
 
 //	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public boolean cloneInvoice(String invNo) {
@@ -779,7 +890,146 @@ public class InvoiceDao {
 		return gstRates;
 	}
 	
-
+	
+	public List<PurchaseDO> getPurchaseList(){
+		LOGGER.info("InvoiceDao::getPurchaseList()::start");
+		 
+		List<PurchaseDO> purchaseList=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<PurchaseDO> query=builder.createQuery(PurchaseDO.class);
+			
+			Root<PurchaseDO> root=query.from(PurchaseDO.class);
+			
+			query.select(root);
+			
+			purchaseList=session.createQuery(query).getResultList();
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getPurchaseList()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getPurchaseList()::end");
+		return purchaseList;
+	}
+	
+	
+	public List<PurchaseDO> getPurchaseList(String month){
+		LOGGER.info("InvoiceDao::getPurchaseList()::start");
+		 
+		List<PurchaseDO> purchaseList=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<PurchaseDO> query=builder.createQuery(PurchaseDO.class);
+			
+			Root<PurchaseDO> root=query.from(PurchaseDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("month"), month);
+			
+			query.where(predicate);
+			
+			purchaseList=session.createQuery(query).getResultList();
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getPurchaseList()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getPurchaseList()::end");
+		return purchaseList;
+	}
+	
+	public PurchaseDO getPurchaseById(String purchaseId) {
+		LOGGER.info("InvoiceDao::getPurchaseById()::start");
+		
+		PurchaseDO purchseDO=null;
+		
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<PurchaseDO> query=builder.createQuery(PurchaseDO.class);
+			
+			Root<PurchaseDO> root=query.from(PurchaseDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("purchaseId"), purchaseId);
+			
+			query.where(predicate);
+			
+			purchseDO=session.createQuery(query).getSingleResult();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getPurchaseById()::");
+		}
+		
+		
+		
+		LOGGER.info("InvoiceDao::getPurchaseById()::end");
+		return purchseDO;
+	}
+	
+	public List<SupplierDO> getAllSuppliers() {
+		LOGGER.info("InvoiceDao::getAllSuppliers()::start");
+		List<SupplierDO> list=null;
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<SupplierDO> query=builder.createQuery(SupplierDO.class);
+			
+			Root<SupplierDO> root=query.from(SupplierDO.class);
+			
+			query.select(root);
+			
+			list=session.createQuery(query).getResultList();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getAllSuppliers()::"+e);
+		}
+		
+		LOGGER.info("InvoiceDao::getAllSuppliers()::end");
+		return list;
+	}
+	
+	public SupplierDO getSuppliersById(String supplierId) {
+		LOGGER.info("InvoiceDao::getSuppliersById()::start");
+		SupplierDO supplierDO=null;
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<SupplierDO> query=builder.createQuery(SupplierDO.class);
+			
+			Root<SupplierDO> root=query.from(SupplierDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("supplierId"), supplierId);
+			
+			query.where(predicate);
+			
+			supplierDO=session.createQuery(query).uniqueResult();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getSuppliersById()::"+e);
+		}
+		
+		LOGGER.info("InvoiceDao::getSuppliersById()::end");
+		return supplierDO;
+	}
 
 	public Session getSession() {
 		Session session = null;
