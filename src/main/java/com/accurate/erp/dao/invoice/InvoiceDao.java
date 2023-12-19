@@ -1030,6 +1030,42 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao::getSuppliersById()::end");
 		return supplierDO;
 	}
+	
+	public String saveCustomer(CustomerDO customerdo) {
+		LOGGER.info("InvoiceDao::saveCustomer()::start");
+		String result = "success";
+		try {
+			Session session=getSession();
+			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(customerdo);
+			session.flush();
+			tx.commit();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in ::saveCustomer()::");
+			return "failure";
+		}
+		LOGGER.info("InvoiceDao::saveCustomer()::end");
+		return result;
+	}
+	
+	public String saveProduct(ProductDO prodDO) {
+		LOGGER.info("InvoiceDao::saveProduct()::start");
+		String result = "success";
+		try {
+			Session session=getSession();
+			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(prodDO);
+			session.flush();
+			tx.commit();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in ::saveProduct()::");
+			return "failure";
+		}
+		LOGGER.info("InvoiceDao::saveProduct()::end");
+		return result;
+	}
 
 	public Session getSession() {
 		Session session = null;

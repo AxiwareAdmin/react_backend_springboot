@@ -75,6 +75,41 @@ public class CustomerDO {
 	@Column(name="payment_terms")
 	String termsAndCondition;
 	
+	@Column(name="stateCode")
+	String stateCode;
+	
+	@Column(name="Country")
+	String Country;
+	
+	@Column(name="ShippingCustomer_Name")
+	String ShippingCustomerName;
+	
+	@Column(name="ShippingCity")
+	String shippingCity;
+	
+	@Column(name="ShippingPincode")
+	Integer shippingPincode;
+	
+	@Column(name="ShippingstateCode")
+	String ShippingstateCode;
+	
+	@Column(name="ShippingCountry")
+	String shippingCountry;
+	
+	@Column(name="Accounting_Group")
+	String accountingGroup;
+	
+	@Column(name="User_Id")
+	Integer userId;
+	
+	@Column(name="Register_Id")
+	Integer RegisterId;
+	
+	@Column(name="Created_Date")
+	String createdDate;
+	
+	@Column(name="Dr_Cr")
+	String DrCr;
 	
 	
 	
@@ -238,11 +273,106 @@ public class CustomerDO {
 		this.contactNo = contactNo;
 	}
 
+	public String getStateCode() {
+		return stateCode;
+	}
+
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
+	}
+
+	public String getShippingCustomerName() {
+		return ShippingCustomerName;
+	}
+
+	public void setShippingCustomerName(String shippingCustomerName) {
+		ShippingCustomerName = shippingCustomerName;
+	}
+
+	public String getShippingCity() {
+		return shippingCity;
+	}
+
+	public void setShippingCity(String shippingCity) {
+		this.shippingCity = shippingCity;
+	}
+
+	public Integer getShippingPincode() {
+		return shippingPincode;
+	}
+
+	public void setShippingPincode(Integer shippingPincode) {
+		this.shippingPincode = shippingPincode;
+	}
+
+	public String getShippingstateCode() {
+		return ShippingstateCode;
+	}
+
+	public void setShippingstateCode(String shippingstateCode) {
+		ShippingstateCode = shippingstateCode;
+	}
+
+	public String getShippingCountry() {
+		return shippingCountry;
+	}
+
+	public void setShippingCountry(String shippingCountry) {
+		this.shippingCountry = shippingCountry;
+	}
+
+	public String getAccountingGroup() {
+		return accountingGroup;
+	}
+
+	public void setAccountingGroup(String accountingGroup) {
+		this.accountingGroup = accountingGroup;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public Integer getRegisterId() {
+		return RegisterId;
+	}
+
+	public void setRegisterId(Integer registerId) {
+		RegisterId = registerId;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getDrCr() {
+		return DrCr;
+	}
+
+	public void setDrCr(String drCr) {
+		DrCr = drCr;
+	}
+
 	@Override
 	public String toString() {
-		return "CustomerDO [gstNo=" + gstNo + ", address1=" + address1 + ", address2=" + address2 + ", city=" + city
-				+ ", pincode=" + pincode + ", state=" + state + ", country=" + country + ", email=" + email
-				+ ", contactNo=" + contactNo + ", customerId=" + customerId + ", customerName=" + customerName + "]";
+		return "CustomerDO [gstNo=" + gstNo + ", shippingGstNo=" + shippingGstNo + ", address1=" + address1
+				+ ", address2=" + address2 + ", city=" + city + ", pincode=" + pincode + ", state=" + state
+				+ ", shippingState=" + shippingState + ", country=" + country + ", email=" + email + ", contactNo="
+				+ contactNo + ", customerId=" + customerId + ", customerName=" + customerName + ", shippingAddress1="
+				+ shippingAddress1 + ", termsAndCondition=" + termsAndCondition + ", stateCode=" + stateCode
+				+ ", Country=" + Country + ", ShippingCustomerName=" + ShippingCustomerName + ", shippingCity="
+				+ shippingCity + ", shippingPincode=" + shippingPincode + ", ShippingstateCode=" + ShippingstateCode
+				+ ", shippingCountry=" + shippingCountry + ", accountingGroup=" + accountingGroup + ", userId=" + userId
+				+ ", RegisterId=" + RegisterId + ", createdDate=" + createdDate + ", DrCr=" + DrCr
+				+ ", shippingAddress2=" + shippingAddress2 + ", poNumber=" + poNumber + ", remarks=" + remarks + "]";
 	}
 	
 	

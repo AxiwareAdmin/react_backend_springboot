@@ -593,4 +593,46 @@ public class InvoiceController {
 		return new ResponseEntity<EmployeeDO>(employee,HttpStatus.OK);
 	}
 	
+	//add customer details code start
+	
+	@PostMapping(value="/addCustomerDetails",consumes= {"application/json"})
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> saveCustomer(@RequestBody Map<String, Object> inputJson) throws ParseException{
+		
+		System.out.print(inputJson);
+		
+		String msg=invoiceService.saveCustomer(inputJson);
+		
+		JSONObject jsonObj=new JSONObject();
+		if(msg.equals("success")) {
+		jsonObj.put("res", "success");
+		}else {
+			jsonObj.put("res", "failure");
+		}
+		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+	}
+	// add customer details code end
+	
+	//add customer details code start
+	
+		@PostMapping(value="/addProductDetails",consumes= {"application/json"})
+		@CrossOrigin(origins={"*"})
+		public ResponseEntity<?> saveProduct(@RequestBody Map<String, Object> inputJson) throws ParseException{
+			
+			System.out.print(inputJson);
+			
+			String msg=invoiceService.saveProduct(inputJson);
+			
+			JSONObject jsonObj=new JSONObject();
+			if(msg.equals("success")) {
+			jsonObj.put("res", "success");
+			}else {
+				jsonObj.put("res", "failure");
+			}
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+		// add customer details code end
+		
+	
+	
 }

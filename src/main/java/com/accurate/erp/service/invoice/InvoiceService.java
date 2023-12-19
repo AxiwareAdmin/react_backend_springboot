@@ -422,4 +422,154 @@ public class InvoiceService {
 	public List<SupplierDO> getAllSuppliers(){
 		return invoiceDao.getAllSuppliers();
 	}
+	
+	// added code for save customer details start
+	
+public String saveCustomer(Map<String, Object> inputJson) throws ParseException {
+	
+	LOGGER.info("InvoiceService::saveCustomer()::start");
+	String result = "success";
+	
+	try {
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+		
+		CustomerDO CustomerdO=new CustomerDO();
+		
+		
+		Object customerName=inputJson.get("customerName");
+		Object gstNo=inputJson.get("gstNo");
+		Object shippingGstNo=inputJson.get("shippingGstNo");
+		Object address1=inputJson.get("address1");
+		Object address2=inputJson.get("address2");
+		Object city=inputJson.get("city");
+		Object pincode=inputJson.get("pincode");
+		Object state=inputJson.get("state");
+		Object shippingState=inputJson.get("shippingState");
+		Object country=inputJson.get("country");
+		Object email=inputJson.get("email");
+		Object contactNo=inputJson.get("contactNo");
+		Object shippingAddress1=inputJson.get("shippingAddress1");
+		Object paymentTerms=inputJson.get("paymentTerms");
+		
+		if(customerName != null)
+			CustomerdO.setCustomerName(customerName.toString());
+		if(gstNo != null)
+			CustomerdO.setGstNo(gstNo.toString());
+		if(shippingGstNo != null)
+			CustomerdO.setShippingGstNo(shippingGstNo.toString());
+		if(address1 != null)
+			CustomerdO.setAddress1(address1.toString());
+		if(address2 != null)
+			CustomerdO.setAddress2(address2.toString());
+		if(city != null)
+			CustomerdO.setCity(city.toString());
+		if(pincode != null)
+			CustomerdO.setPincode(Integer.parseInt(pincode.toString()));
+		if(state != null)
+			CustomerdO.setState(state.toString());
+		if(shippingState != null)
+			CustomerdO.setShippingState(shippingState.toString());
+		if(country != null)
+			CustomerdO.setCountry(country.toString());
+		if(email != null)
+			CustomerdO.setEmail(email.toString());
+		if(contactNo != null)
+			CustomerdO.setContactNo(contactNo.toString());
+		if(shippingAddress1 != null)
+			CustomerdO.setShippingAddress1(shippingAddress1.toString());
+		if(paymentTerms != null)
+			CustomerdO.setTermsAndCondition(paymentTerms.toString());
+		
+		CustomerdO.setStateCode("1234");
+		CustomerdO.setCountry("India");
+		CustomerdO.setShippingCustomerName("Raju");
+		CustomerdO.setShippingCity("Goa");
+		CustomerdO.setShippingPincode(1234);
+		CustomerdO.setShippingstateCode("1111");
+		CustomerdO.setShippingCountry("US");
+		CustomerdO.setAccountingGroup("Y");
+		CustomerdO.setUserId(121212);
+		CustomerdO.setRegisterId(21212);
+		CustomerdO.setDrCr("CR");
+		
+		
+		
+		result = invoiceDao.saveCustomer(CustomerdO);
+	}catch(Exception e) {
+		LOGGER.error("Exception occured in InvoiceService :: saveCustomer()");
+		return "failure";
+	}
+		
+		return result;
+}
+	
+	// added code for save customer details end
+
+    //added code for save product start
+
+public String saveProduct(Map<String, Object> inputJson) throws ParseException {
+	
+	LOGGER.info("InvoiceService::saveProduct()::start");
+	String result = "success";
+	
+	try {
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+		
+		ProductDO productDO=new ProductDO();
+		
+		
+		Object productName=inputJson.get("productName");
+		Object productDescription=inputJson.get("productDescription");
+		Object productType=inputJson.get("productType");
+		Object partCode=inputJson.get("partCode");
+		Object hsnCode=inputJson.get("hsnCode");
+		Object unit=inputJson.get("unit");
+		Object unitVarchar=inputJson.get("unitVarchar");
+		Object rate=inputJson.get("rate");
+		Object category=inputJson.get("category");
+		Object applicableTax=inputJson.get("applicableTax");
+		Object openingStock=inputJson.get("openingStock");
+		
+		
+		if(productName != null)
+			productDO.setProductName(productName.toString());
+		if(productDescription != null)
+			productDO.setProductDescription(productDescription.toString());
+		if(productType != null)
+			productDO.setProductType(productType.toString());
+		if(partCode != null)
+			productDO.setPartCode(partCode.toString());
+		if(hsnCode != null)
+			productDO.setHsnCode(hsnCode.toString());
+		if(unit != null)
+			productDO.setUnit(Integer.parseInt(unit.toString()));
+		if(unitVarchar != null)
+			productDO.setUnitVarchar(unitVarchar.toString());
+		if(rate != null)
+			productDO.setRate(new BigDecimal(rate.toString()));
+		if(category != null)
+			productDO.setCategory(category.toString());
+		if(applicableTax != null)
+			productDO.setApplicableTax(new BigDecimal(applicableTax.toString()));
+		if(openingStock != null)
+			productDO.setOpeningStock(Integer.parseInt(openingStock.toString()));
+		
+		productDO.setUserId(21212);
+		productDO.setRegisterId(12121);
+		productDO.setCreatedDate(new Date(0));
+		productDO.setCreatedBy("sachin");
+		
+				
+		result = invoiceDao.saveProduct(productDO);
+	}catch(Exception e) {
+		LOGGER.error("Exception occured in InvoiceService :: saveProduct()");
+		return "failure";
+	}
+		
+		return result;
+}
+
+   // added code for save product code end
 }

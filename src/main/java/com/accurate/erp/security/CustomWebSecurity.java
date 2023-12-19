@@ -54,6 +54,7 @@ public class CustomWebSecurity extends WebSecurityConfigurerAdapter {
 //		super.configure(http);
 	}
 
+	
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration=new CorsConfiguration();
 		
