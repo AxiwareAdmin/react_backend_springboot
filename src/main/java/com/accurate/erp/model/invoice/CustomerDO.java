@@ -78,9 +78,6 @@ public class CustomerDO {
 	@Column(name="stateCode")
 	String stateCode;
 	
-	@Column(name="Country")
-	String Country;
-	
 	@Column(name="ShippingCustomer_Name")
 	String ShippingCustomerName;
 	
@@ -249,14 +246,6 @@ public class CustomerDO {
 		this.state = state;
 	}
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -360,6 +349,14 @@ public class CustomerDO {
 	public void setDrCr(String drCr) {
 		DrCr = drCr;
 	}
+	
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
 
 	@Override
 	public String toString() {
@@ -368,7 +365,7 @@ public class CustomerDO {
 				+ ", shippingState=" + shippingState + ", country=" + country + ", email=" + email + ", contactNo="
 				+ contactNo + ", customerId=" + customerId + ", customerName=" + customerName + ", shippingAddress1="
 				+ shippingAddress1 + ", termsAndCondition=" + termsAndCondition + ", stateCode=" + stateCode
-				+ ", Country=" + Country + ", ShippingCustomerName=" + ShippingCustomerName + ", shippingCity="
+				+ ", ShippingCustomerName=" + ShippingCustomerName + ", shippingCity="
 				+ shippingCity + ", shippingPincode=" + shippingPincode + ", ShippingstateCode=" + ShippingstateCode
 				+ ", shippingCountry=" + shippingCountry + ", accountingGroup=" + accountingGroup + ", userId=" + userId
 				+ ", RegisterId=" + RegisterId + ", createdDate=" + createdDate + ", DrCr=" + DrCr

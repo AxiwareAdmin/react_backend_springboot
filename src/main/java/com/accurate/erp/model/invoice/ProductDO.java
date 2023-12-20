@@ -49,7 +49,7 @@ public class ProductDO {
 	String productType;
 	
 	@Column(name="part_code")
-	String partCode;
+	Integer partCode;
 	
 	@Column(name = "HSN_Code")
 	String hsnCode;
@@ -133,11 +133,11 @@ public class ProductDO {
 		this.productType = productType;
 	}
 
-	public String getPartCode() {
+	public Integer getPartCode() {
 		return partCode;
 	}
 
-	public void setPartCode(String partCode) {
+	public void setPartCode(Integer partCode) {
 		this.partCode = partCode;
 	}
 

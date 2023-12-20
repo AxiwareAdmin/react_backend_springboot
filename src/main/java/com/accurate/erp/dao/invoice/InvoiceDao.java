@@ -1042,7 +1042,7 @@ public class InvoiceDao {
 			tx.commit();
 			
 		}catch(Exception e) {
-			LOGGER.error("Exception occured in ::saveCustomer()::");
+			LOGGER.error("Exception occured in ::saveCustomer()::"+e);
 			return "failure";
 		}
 		LOGGER.info("InvoiceDao::saveCustomer()::end");
@@ -1060,7 +1060,7 @@ public class InvoiceDao {
 			tx.commit();
 			
 		}catch(Exception e) {
-			LOGGER.error("Exception occured in ::saveProduct()::");
+			LOGGER.error("Exception occured in ::saveProduct()::"+e);
 			return "failure";
 		}
 		LOGGER.info("InvoiceDao::saveProduct()::end");

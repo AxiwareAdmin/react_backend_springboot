@@ -482,7 +482,7 @@ public String saveCustomer(Map<String, Object> inputJson) throws ParseException 
 			CustomerdO.setTermsAndCondition(paymentTerms.toString());
 		
 		CustomerdO.setStateCode("1234");
-		CustomerdO.setCountry("India");
+		CustomerdO.setCreatedDate("12-Dec-23");
 		CustomerdO.setShippingCustomerName("Raju");
 		CustomerdO.setShippingCity("Goa");
 		CustomerdO.setShippingPincode(1234);
@@ -492,12 +492,13 @@ public String saveCustomer(Map<String, Object> inputJson) throws ParseException 
 		CustomerdO.setUserId(121212);
 		CustomerdO.setRegisterId(21212);
 		CustomerdO.setDrCr("CR");
+		CustomerdO.setPoNumber("11111");
 		
 		
 		
 		result = invoiceDao.saveCustomer(CustomerdO);
 	}catch(Exception e) {
-		LOGGER.error("Exception occured in InvoiceService :: saveCustomer()");
+		LOGGER.error("Exception occured in InvoiceService :: saveCustomer()"+e);
 		return "failure";
 	}
 		
@@ -540,9 +541,9 @@ public String saveProduct(Map<String, Object> inputJson) throws ParseException {
 		if(productType != null)
 			productDO.setProductType(productType.toString());
 		if(partCode != null)
-			productDO.setPartCode(partCode.toString());
-		if(hsnCode != null)
-			productDO.setHsnCode(hsnCode.toString());
+			productDO.setPartCode(Integer.parseInt(partCode.toString()));
+		//if(hsnCode != null)
+		//	productDO.setHsnCode(hsnCode.toString());
 		if(unit != null)
 			productDO.setUnit(Integer.parseInt(unit.toString()));
 		if(unitVarchar != null)
@@ -564,7 +565,7 @@ public String saveProduct(Map<String, Object> inputJson) throws ParseException {
 				
 		result = invoiceDao.saveProduct(productDO);
 	}catch(Exception e) {
-		LOGGER.error("Exception occured in InvoiceService :: saveProduct()");
+		LOGGER.error("Exception occured in InvoiceService :: saveProduct()"+e);
 		return "failure";
 	}
 		
