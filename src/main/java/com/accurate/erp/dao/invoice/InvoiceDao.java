@@ -1041,6 +1041,23 @@ public class InvoiceDao {
 			session.flush();
 			tx.commit();
 			
+            Session session1=getSession();	
+			
+			CriteriaBuilder criteriaBuilder=session1.getCriteriaBuilder();
+			
+			CriteriaQuery<CustomerDO> query=criteriaBuilder.createQuery(CustomerDO.class);
+			
+			Root<CustomerDO> root=query.from(CustomerDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=criteriaBuilder.equal(root.get("customerName"), customerdo.getCustomerName());
+			
+			query.where(predicate);
+			
+			CustomerDO cust = session1.createQuery(query).getSingleResult();
+			
+			result = cust.getCustomerId().toString();			
 		}catch(Exception e) {
 			LOGGER.error("Exception occured in ::saveCustomer()::"+e);
 			return "failure";
@@ -1051,13 +1068,31 @@ public class InvoiceDao {
 	
 	public String saveProduct(ProductDO prodDO) {
 		LOGGER.info("InvoiceDao::saveProduct()::start");
-		String result = "success";
+		String result = "";
 		try {
 			Session session=getSession();
 			Transaction tx=session.beginTransaction();
 			session.saveOrUpdate(prodDO);
 			session.flush();
 			tx.commit();
+			
+            Session session1=getSession();	
+			
+			CriteriaBuilder criteriaBuilder=session1.getCriteriaBuilder();
+			
+			CriteriaQuery<ProductDO> query=criteriaBuilder.createQuery(ProductDO.class);
+			
+			Root<ProductDO> root=query.from(ProductDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=criteriaBuilder.equal(root.get("productName"), prodDO.getProductName());
+			
+			query.where(predicate);
+			
+			ProductDO prod =session1.createQuery(query).getSingleResult();
+			
+			result = prod.getInvoiceProductId().toString();
 			
 		}catch(Exception e) {
 			LOGGER.error("Exception occured in ::saveProduct()::"+e);

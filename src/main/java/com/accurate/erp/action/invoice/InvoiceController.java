@@ -604,8 +604,8 @@ public class InvoiceController {
 		String msg=invoiceService.saveCustomer(inputJson);
 		
 		JSONObject jsonObj=new JSONObject();
-		if(msg.equals("success")) {
-		jsonObj.put("res", "success");
+		if(!msg.equals("")) {
+		jsonObj.put("res", msg);
 		}else {
 			jsonObj.put("res", "failure");
 		}
@@ -624,8 +624,8 @@ public class InvoiceController {
 			String msg=invoiceService.saveProduct(inputJson);
 			
 			JSONObject jsonObj=new JSONObject();
-			if(msg.equals("success")) {
-			jsonObj.put("res", "success");
+			if(!msg.equals("")) {
+			jsonObj.put("res", msg);
 			}else {
 				jsonObj.put("res", "failure");
 			}
