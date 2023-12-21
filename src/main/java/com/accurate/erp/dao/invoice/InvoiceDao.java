@@ -525,6 +525,26 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao::saveInvoice::end");
 		return "success";
 	}
+	
+	
+	public String savePurchase(PurchaseDO purchaseDO) {
+		LOGGER.info("InvoiceDao::saveInvoice::start");
+
+		try {
+			Session session=getSession();
+			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(purchaseDO);
+			session.flush();
+			tx.commit();
+
+		} catch (Exception e) {
+			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);
+			return "failure";
+		}
+
+		LOGGER.info("InvoiceDao::saveInvoice::end");
+		return "success";
+	}
 
 	@SuppressWarnings("deprecation")
 	@Transactional
@@ -728,6 +748,36 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao::getUserDO()::End");
 		return userDO;
 	}
+	
+	
+	public List<InvoiceDO> getInvoiceByFinancialYear(String financialYear) {
+		LOGGER.info("InvoiceDao::getInvoiceByFinancialYear()::Start");
+		List<InvoiceDO> invoiceDO=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<InvoiceDO> query=criteriaBuilder.createQuery(InvoiceDO.class);
+			
+			Root<InvoiceDO> root=query.from(InvoiceDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
+			
+			query.where(predicate);
+			
+			invoiceDO=session.createQuery(query).getResultList();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getInvoiceByFinancialYear()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getInvoiceByFinancialYear()::End");
+		return invoiceDO;
+	}
+	
 		public String getCustomerEmail(String custName) {
 		
         LOGGER.info("InvoiceDao::getCustomerEmail::start");
@@ -825,6 +875,59 @@ public class InvoiceDao {
 		return documentSeqMasterDO;
 	}
 	
+	public DocumentSeqMasterDO getDocMasterById(Integer id) {
+		DocumentSeqMasterDO doc=null;
+		try {
+		Session session=getSession();	
+		
+		CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+		
+		CriteriaQuery<DocumentSeqMasterDO> query=criteriaBuilder.createQuery(DocumentSeqMasterDO.class);
+		
+		Root<DocumentSeqMasterDO> root=query.from(DocumentSeqMasterDO.class);
+		
+		query.select(root);
+		
+		Predicate predicate=criteriaBuilder.equal(root.get("documentSeqId"), id);
+		
+		query.where(predicate);
+		
+		doc=session.createQuery(query).getSingleResult();
+		}
+		catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getDocMasterById()::"+e);
+		}
+		
+		return doc;
+	}
+	
+	
+	public DocumentSeqMasterDO getDocMasterByName(String name) {
+		DocumentSeqMasterDO doc=null;
+		try {
+		Session session=getSession();	
+		
+		CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+		
+		CriteriaQuery<DocumentSeqMasterDO> query=criteriaBuilder.createQuery(DocumentSeqMasterDO.class);
+		
+		Root<DocumentSeqMasterDO> root=query.from(DocumentSeqMasterDO.class);
+		
+		query.select(root);
+		
+		Predicate predicate=criteriaBuilder.equal(root.get("documentName"), name);
+		
+		query.where(predicate);
+		
+		doc=session.createQuery(query).getSingleResult();
+		}
+		catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getDocMasterById()::"+e);
+		}
+		
+		return doc;
+	}
+	
 	public String saveDocMaster(DocumentSeqMasterDO docmentseqmasterdo) {
 		LOGGER.info("InvoiceDao::saveDocMaster::start");
 		
@@ -832,9 +935,11 @@ public class InvoiceDao {
 			
 			Session session=getSession();
 			Transaction tx=session.beginTransaction();
+//			DocumentSeqMasterDO doc=session.get(DocumentSeqMasterDO.class, docmentseqmasterdo.getDocumentSeqId());
 			session.saveOrUpdate(docmentseqmasterdo);
-			session.flush();
 			tx.commit();
+//			session.flush();
+			session.close();
 			
 		}catch(Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveDocMaster::"+e);
@@ -1029,6 +1134,77 @@ public class InvoiceDao {
 		
 		LOGGER.info("InvoiceDao::getSuppliersById()::end");
 		return supplierDO;
+	}
+	
+	public String saveCustomer(CustomerDO customerdo) {
+		LOGGER.info("InvoiceDao::saveCustomer()::start");
+		String result = "success";
+		try {
+			Session session=getSession();
+			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(customerdo);
+			session.flush();
+			tx.commit();
+
+            Session session1=getSession();	
+
+			CriteriaBuilder criteriaBuilder=session1.getCriteriaBuilder();
+
+			CriteriaQuery<CustomerDO> query=criteriaBuilder.createQuery(CustomerDO.class);
+
+			Root<CustomerDO> root=query.from(CustomerDO.class);
+
+			query.select(root);
+
+			Predicate predicate=criteriaBuilder.equal(root.get("customerName"), customerdo.getCustomerName());
+
+			query.where(predicate);
+
+			CustomerDO cust = session1.createQuery(query).getSingleResult();
+
+			result = cust.getCustomerId().toString();			
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in ::saveCustomer()::"+e);
+			return "failure";
+		}
+		LOGGER.info("InvoiceDao::saveCustomer()::end");
+		return result;
+	}
+
+	public String saveProduct(ProductDO prodDO) {
+		LOGGER.info("InvoiceDao::saveProduct()::start");
+		String result = "";
+		try {
+			Session session=getSession();
+			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(prodDO);
+			session.flush();
+			tx.commit();
+
+            Session session1=getSession();	
+
+			CriteriaBuilder criteriaBuilder=session1.getCriteriaBuilder();
+
+			CriteriaQuery<ProductDO> query=criteriaBuilder.createQuery(ProductDO.class);
+
+			Root<ProductDO> root=query.from(ProductDO.class);
+
+			query.select(root);
+
+			Predicate predicate=criteriaBuilder.equal(root.get("productName"), prodDO.getProductName());
+
+			query.where(predicate);
+
+			ProductDO prod =session1.createQuery(query).getSingleResult();
+
+			result = prod.getInvoiceProductId().toString();
+
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in ::saveProduct()::"+e);
+			return "failure";
+		}
+		LOGGER.info("InvoiceDao::saveProduct()::end");
+		return result;
 	}
 
 	public Session getSession() {

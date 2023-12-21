@@ -1,12 +1,18 @@
 package com.accurate.erp.model.purchase;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Table(name = "purchase")
@@ -43,7 +49,7 @@ public class PurchaseDO {
 	String poNo;
 	
 	@Column(name="po_Date")
-	String poDate;
+	Date poDate;
 	
 	@Column(name="payment_terms")
 	String paymentTerms;
@@ -67,16 +73,30 @@ public class PurchaseDO {
 	String otherDiscount;
 	
 	@Column(name="taxable_value")
-	String taxableValue;
+	BigDecimal taxableValue;
 	
 	@Column(name="invoice_value")
-	String invoiceValue;
+	BigDecimal invoiceValue;
 	
 	@Column(name="purchase_product_id")
 	String purchaseProductId;
 	
 	@Column(name="month")
 	String month;
+	
+	@OneToMany(mappedBy = "purchaseDO",fetch = FetchType.EAGER,cascade= CascadeType.ALL)
+	List<PurchaseProductDO> purchaseProductDOs=new ArrayList<>();
+	
+	
+	
+
+	public List<PurchaseProductDO> getPurchaseProductDOs() {
+		return purchaseProductDOs;
+	}
+
+	public void setPurchaseProductDOs(List<PurchaseProductDO> purchaseProductDOs) {
+		this.purchaseProductDOs = purchaseProductDOs;
+	}
 
 	public Integer getPurchaseId() {
 		return purchaseId;
@@ -150,11 +170,11 @@ public class PurchaseDO {
 		this.poNo = poNo;
 	}
 
-	public String getPoDate() {
+	public Date getPoDate() {
 		return poDate;
 	}
 
-	public void setPoDate(String poDate) {
+	public void setPoDate(Date poDate) {
 		this.poDate = poDate;
 	}
 
@@ -214,19 +234,21 @@ public class PurchaseDO {
 		this.otherDiscount = otherDiscount;
 	}
 
-	public String getTaxableValue() {
+	
+
+	public BigDecimal getTaxableValue() {
 		return taxableValue;
 	}
 
-	public void setTaxableValue(String taxableValue) {
+	public void setTaxableValue(BigDecimal taxableValue) {
 		this.taxableValue = taxableValue;
 	}
 
-	public String getInvoiceValue() {
+	public BigDecimal getInvoiceValue() {
 		return invoiceValue;
 	}
 
-	public void setInvoiceValue(String invoiceValue) {
+	public void setInvoiceValue(BigDecimal invoiceValue) {
 		this.invoiceValue = invoiceValue;
 	}
 

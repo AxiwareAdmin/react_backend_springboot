@@ -8,22 +8,21 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="document_seq_master")
-	
+@Table(name="documnet_seq")
 public class DocumentSeqMasterDO {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "document_seq_Id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "doc_Id")
 	Integer documentSeqId;
 	
-	@Column(name = "Document_Name")
+	@Column(name = "module")
 	String documentName;
 	
-	@Column(name = "Prefix_1")
+	@Column(name = "Prefix1")
 	String prefix1;
 	
-	@Column(name = "Prefix_2")
+	@Column(name = "Prefix2")
 	String prefix2;
 	
 	@Column(name = "Series")
@@ -32,6 +31,11 @@ public class DocumentSeqMasterDO {
 	@Column(name = "Mode")
 	String mode;
 
+	@Column(name="financial_year")
+	String financialYear;
+	
+	@Column(name="isActive")
+	String isActive;
 	public Integer getDocumentSeqId() {
 		return documentSeqId;
 	}
@@ -78,6 +82,22 @@ public class DocumentSeqMasterDO {
 
 	public void setMode(String mode) {
 		this.mode = mode;
+	}
+
+	public String getFinancialYear() {
+		return financialYear;
+	}
+
+	public void setFinancialYear(String financialYear) {
+		this.financialYear = financialYear;
+	}
+
+	public String getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(String isActive) {
+		this.isActive = isActive;
 	}
 	
 }

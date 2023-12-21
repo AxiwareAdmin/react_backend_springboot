@@ -22,6 +22,7 @@ import com.accurate.erp.model.invoice.InvoiceProductDO;
 import com.accurate.erp.model.invoice.ProductDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
+import com.accurate.erp.model.purchase.PurchaseProductDO;
 import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.utility.mail.SendMail;
 
@@ -146,6 +147,8 @@ public class InvoiceService {
 		
 		Object termsAndCondition=inputJson.get("termsAndCondition");
 		
+		Object financialYear=inputJson.get("financialYear");
+		
 		List<Map<String,Object>> invoiceProd=(List<Map<String,Object>>)inputJson.get("invoiceProducts");
 		
 		List<InvoiceProductDO> invoiceProducts=new ArrayList<>();
@@ -197,6 +200,10 @@ public class InvoiceService {
 		
 		if(sgstValue!=null) {
 			invoiceDO.setSgstValue(new BigDecimal(sgstValue.toString()));
+		}
+		
+		if(financialYear!=null) {
+			invoiceDO.setFinancialYear(financialYear.toString());
 		}
 		
 		if(cgstValue!=null) {
@@ -311,6 +318,242 @@ public class InvoiceService {
 	}
 	
 	
+	
+public String savePurchase(Map<String, Object> inputJson) throws ParseException {
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
+		
+		PurchaseDO purchaseDO=new PurchaseDO();
+		
+		
+		Object purchaseNo=inputJson.get("purchaseNo");
+		
+		
+		Object purchaseId=inputJson.get("purchaseId");
+		
+		Object sgstValue=inputJson.get("sgstValue");
+		
+		Object cgstValue=inputJson.get("cgstValue");
+		
+		Object taxableValue=inputJson.get("taxableValue");
+		
+		Object purchaseValue=inputJson.get("purchaseValue");
+		
+		Object transportCharges=inputJson.get("transportCharges");
+		
+		Object additionalCharges=inputJson.get("additionalCharges");
+		
+		Object discount=inputJson.get("discount");
+		
+		Object otherDiscount=inputJson.get("otherDiscount");
+		
+//		Object shippingAddress=inputJson.get("shippingAddress");
+		
+		Object billingAddress=inputJson.get("billingAddress");
+		
+		Object poNumber=inputJson.get("poNumber");
+		
+		Object customerName=inputJson.get("supplierName");
+		
+		Object purchaseDate=inputJson.get("purchaseDate");
+		
+		Object poDate=inputJson.get("poDate");
+		
+		Object challanNumber=inputJson.get("challanNumber");
+		
+		Object challanDate=inputJson.get("challanDate");
+		
+		Object paymentTerms=inputJson.get("paymentTerms");
+		
+		Object dueDate=inputJson.get("dueDate");
+		
+		Object transportMode=inputJson.get("transportMode");
+		
+		Object vehicleNumber=inputJson.get("vehicleNumber");
+		
+		Object remarks=inputJson.get("remarks");
+		
+		Object state=inputJson.get("state");
+		
+		Object gstNo=inputJson.get("gstNo");
+		
+//		Object shippingGstNo=inputJson.get("shippingGstNo");
+		
+		Object serviceCheck=inputJson.get("serviceCheck");
+		
+//		Object shippingState=inputJson.get("shippingState");
+		
+		Object termsAndCondition=inputJson.get("termsAndCondition");
+		
+		List<Map<String,Object>> purchaseProd=(List<Map<String,Object>>)inputJson.get("purchaseProducts");
+		
+		List<PurchaseProductDO> purchaseProducts=new ArrayList<>();
+		if(purchaseProd!=null && purchaseProd.size()>0) {
+			for(Map<String,Object> tempProd:purchaseProd) {
+				PurchaseProductDO purchaseProduct=new PurchaseProductDO();
+				
+				purchaseProduct.setProductName(tempProd.get("productName").toString());
+				
+				purchaseProduct.setProductDescription(tempProd.get("description").toString());
+				
+				purchaseProduct.setHsnSac(tempProd.get("hsnSac").toString());
+				
+				purchaseProduct.setTax(tempProd.get("tax").toString());
+				
+				purchaseProduct.setQuantity(tempProd.get("quantity").toString());
+				
+				purchaseProduct.setUnit(tempProd.get("unit").toString());
+				
+				purchaseProduct.setRate(tempProd.get("price").toString());
+				
+				purchaseProduct.setAmount(tempProd.get("amount").toString());
+				
+				purchaseProduct.setDiscount(tempProd.get("discount").toString());
+				
+				
+				purchaseProduct.setInvoiceNumber(purchaseNo.toString());
+				
+				purchaseProduct.setInvoiceDate(sdf.parse(purchaseDate.toString()));
+				
+				purchaseProduct.setPurchaseDO(purchaseDO);
+				
+				purchaseProduct.setRegisterId("11111");
+				
+				purchaseProduct.setUserId("22222");
+				
+				purchaseProducts.add(purchaseProduct);
+			}
+			purchaseDO.setPurchaseProductDOs(purchaseProducts);
+		}
+		
+		
+		
+		if(purchaseNo!=null)
+			purchaseDO.setPurchaseNo(purchaseNo.toString());
+		
+		if(purchaseId != null && !purchaseId.equals(""))
+			purchaseDO.setPurchaseId(Integer.parseInt(purchaseId.toString()));
+		
+//		if(sgstValue!=null) {
+//			purchaseDO.setSgstValue(new BigDecimal(sgstValue.toString()));
+//		}
+//		
+//		if(cgstValue!=null) {
+//			invoiceDO.setCgstValue(new BigDecimal(cgstValue.toString()));
+//		}
+		
+		if(taxableValue!=null) {
+			purchaseDO.setTaxableValue(new BigDecimal(taxableValue.toString()));
+		}
+		
+		if(purchaseValue!=null) {
+			purchaseDO.setInvoiceValue(new BigDecimal(purchaseValue.toString()));
+		}
+				
+		if(transportCharges!=null) {
+			purchaseDO.setTransportCharges(transportCharges.toString());
+		}
+		
+		if(additionalCharges!=null) {
+			purchaseDO.setAdditionalCharges(additionalCharges.toString());
+		}
+		
+		if(discount!=null) {
+			purchaseDO.setDiscount(discount.toString());
+		}
+		
+		if(otherDiscount!=null) {
+			purchaseDO.setOtherDiscount(otherDiscount.toString());
+		}
+		
+//		if(shippingAddress!=null) {
+//			invoiceDO.setShippingAddress(shippingAddress.toString());
+//		}
+		
+		if(billingAddress!=null) {
+			purchaseDO.setAddress(billingAddress.toString());
+		}
+		
+		if(poNumber!=null) {
+			purchaseDO.setPoNo(poNumber.toString());
+		}
+		
+		if(customerName!=null) {
+			purchaseDO.setSupplierName(customerName.toString());
+		}
+		
+		if(purchaseDate!=null) {
+			java.util.Date d=sdf.parse(purchaseDate.toString());
+			purchaseDO.setPurchaseDate(d);
+			
+			purchaseDO.setMonth(new SimpleDateFormat("MMM").format(d));
+			
+		}
+		
+		if(poDate!=null) {
+			purchaseDO.setPoDate(sdf.parse(poDate.toString()));
+		}
+		
+//		if(challanNumber!=null) {
+//			purchaseDO.setChallanNo(challanNumber.toString());
+//		}
+//		
+//		if(challanDate!=null) {
+//			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
+//		}
+		
+		if(dueDate!=null) {
+			purchaseDO.setDueDate(sdf.parse(dueDate.toString()));
+		}
+		
+		if(paymentTerms!=null) {
+			purchaseDO.setPaymentTerms(paymentTerms.toString());
+		}
+		
+		/*
+		 * if(transportMode!=null) {
+		 * purchaseDO.setTransportMode(transportMode.toString()); }
+		 * 
+		 * if(vehicleNumber!=null) { purchaseDO.setVehicleNo(vehicleNumber.toString());
+		 * }
+		 */
+		if(remarks!=null) {
+			purchaseDO.setRemarks(remarks.toString());
+		}
+		
+		
+		if(state!=null) {
+			purchaseDO.setState(state.toString());
+		}
+		
+		
+		if(gstNo!=null) {
+			purchaseDO.setGstNo(gstNo.toString());
+		}
+		
+//		if(shippingGstNo!=null) {
+//			invoiceDO.setShippingGstNo(shippingGstNo.toString());
+//		}
+//		
+//		if(serviceCheck!=null) {
+//			invoiceDO.setServiceCheck(serviceCheck.toString());
+//		}
+		
+//		if(shippingState!=null) {
+//			invoiceDO.setShippingState(shippingState.toString());
+//		}
+		
+		if(termsAndCondition!=null) {
+			purchaseDO.setPaymentTerms(termsAndCondition.toString());
+		}
+		
+	
+		
+		return invoiceDao.savePurchase(purchaseDO);
+		
+	}
+	
+	
 	public InvoiceDO getInvoiceDetails(String invId){
 		LOGGER.info("InvoiceService::getInvoiceDetails()::start");
 		return invoiceDao.getInvoiceDetails(invId);
@@ -355,10 +598,11 @@ public class InvoiceService {
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
-		DocumentSeqMasterDO documentmasterdo = new DocumentSeqMasterDO();
 		
 		
 		Object documentId=inputJson.get("DocumentId");
+		
+		DocumentSeqMasterDO documentmasterdo = invoiceDao.getDocMasterById(Integer.parseInt(documentId.toString()));
 		
 		Object documentName=inputJson.get("DocumentName");
 		
@@ -370,6 +614,8 @@ public class InvoiceService {
 		
 		Object modeVal=inputJson.get("ModeVal");
 		
+		Object status=inputJson.get("Status");
+//		
 		if(documentId != null && !documentId.equals(""))
 			documentmasterdo.setDocumentSeqId(Integer.parseInt(documentId.toString()));
 		if(documentName != null && !documentName.equals(""))
@@ -383,9 +629,18 @@ public class InvoiceService {
 		if(modeVal != null && !modeVal.equals(""))
 			documentmasterdo.setMode(modeVal.toString());
 		
+		if(status!=null) {
+			documentmasterdo.setIsActive(status.toString());
+		}
+		
 		
 		return invoiceDao.saveDocMaster(documentmasterdo);
 		
+    }
+    
+    public DocumentSeqMasterDO getDocMasterByName(String name) {
+    	LOGGER.info("InvoiceService::getDocMasterByName()::start");
+    	return invoiceDao.getDocMasterByName(name);
     }
     
     
@@ -422,4 +677,160 @@ public class InvoiceService {
 	public List<SupplierDO> getAllSuppliers(){
 		return invoiceDao.getAllSuppliers();
 	}
+	
+	public List<InvoiceDO> getInvoiceByFinancialYear(String financialYear) {
+		return invoiceDao.getInvoiceByFinancialYear(financialYear);
+	}
+	
+	// added code for save customer details start
+
+	public String saveCustomer(Map<String, Object> inputJson) throws ParseException {
+
+		LOGGER.info("InvoiceService::saveCustomer()::start");
+		String result = "success";
+
+		try {
+
+			SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+
+			CustomerDO CustomerdO=new CustomerDO();
+
+
+			Object customerName=inputJson.get("customerName");
+			Object gstNo=inputJson.get("gstNo");
+			Object shippingGstNo=inputJson.get("shippingGstNo");
+			Object address1=inputJson.get("address1");
+			Object address2=inputJson.get("address2");
+			Object city=inputJson.get("city");
+			Object pincode=inputJson.get("pincode");
+			Object state=inputJson.get("state");
+			Object shippingState=inputJson.get("shippingState");
+			Object country=inputJson.get("country");
+			Object email=inputJson.get("email");
+			Object contactNo=inputJson.get("contactNo");
+			Object shippingAddress1=inputJson.get("shippingAddress1");
+			Object paymentTerms=inputJson.get("paymentTerms");
+
+			if(customerName != null)
+				CustomerdO.setCustomerName(customerName.toString());
+			if(gstNo != null)
+				CustomerdO.setGstNo(gstNo.toString());
+			if(shippingGstNo != null)
+				CustomerdO.setShippingGstNo(shippingGstNo.toString());
+			if(address1 != null)
+				CustomerdO.setAddress1(address1.toString());
+			if(address2 != null)
+				CustomerdO.setAddress2(address2.toString());
+			if(city != null)
+				CustomerdO.setCity(city.toString());
+			if(pincode != null)
+				CustomerdO.setPincode(Integer.parseInt(pincode.toString()));
+			if(state != null)
+				CustomerdO.setState(state.toString());
+			if(shippingState != null)
+				CustomerdO.setShippingState(shippingState.toString());
+			if(country != null)
+				CustomerdO.setCountry(country.toString());
+			if(email != null)
+				CustomerdO.setEmail(email.toString());
+			if(contactNo != null)
+				CustomerdO.setContactNo(contactNo.toString());
+			if(shippingAddress1 != null)
+				CustomerdO.setShippingAddress1(shippingAddress1.toString());
+			if(paymentTerms != null)
+				CustomerdO.setTermsAndCondition(paymentTerms.toString());
+
+			CustomerdO.setStateCode("1234");
+			CustomerdO.setCreatedDate("12-Dec-23");
+			CustomerdO.setShippingCustomerName("Raju");
+			CustomerdO.setShippingCity("Goa");
+			CustomerdO.setShippingPincode(1234);
+			CustomerdO.setShippingstateCode("1111");
+			CustomerdO.setShippingCountry("US");
+			CustomerdO.setAccountingGroup("Y");
+			CustomerdO.setUserId(121212);
+			CustomerdO.setRegisterId(21212);
+			CustomerdO.setDrCr("CR");
+			CustomerdO.setPoNumber("11111");
+
+
+
+			result = invoiceDao.saveCustomer(CustomerdO);
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in InvoiceService :: saveCustomer()"+e);
+			return "failure";
+		}
+
+			return result;
+	}
+
+		// added code for save customer details end
+
+	    //added code for save product start
+
+	public String saveProduct(Map<String, Object> inputJson) throws ParseException {
+
+		LOGGER.info("InvoiceService::saveProduct()::start");
+		String result = "success";
+
+		try {
+
+			SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+
+			ProductDO productDO=new ProductDO();
+
+
+			Object productName=inputJson.get("productName");
+			Object productDescription=inputJson.get("productDescription");
+			Object productType=inputJson.get("productType");
+			Object partCode=inputJson.get("partCode");
+			Object hsnCode=inputJson.get("hsnCode");
+			Object unit=inputJson.get("unit");
+			Object unitVarchar=inputJson.get("unitVarchar");
+			Object rate=inputJson.get("rate");
+			Object category=inputJson.get("category");
+			Object applicableTax=inputJson.get("applicableTax");
+			Object openingStock=inputJson.get("openingStock");
+
+
+			if(productName != null)
+				productDO.setProductName(productName.toString());
+			if(productDescription != null)
+				productDO.setProductDescription(productDescription.toString());
+			if(productType != null)
+				productDO.setProductType(productType.toString());
+			if(partCode != null)
+				productDO.setPartCode(partCode.toString());
+			//if(hsnCode != null)
+			//	productDO.setHsnCode(hsnCode.toString());
+			if(openingStock != null) {
+				productDO.setUnit(Integer.parseInt(openingStock.toString()));
+				productDO.setOpeningStock(Integer.parseInt(openingStock.toString()));
+			}
+			if(unitVarchar != null)
+				productDO.setUnitVarchar(unitVarchar.toString());
+			if(rate != null)
+				productDO.setRate(new BigDecimal(rate.toString()));
+			if(category != null)
+				productDO.setCategory(category.toString());
+			if(applicableTax != null)
+				productDO.setApplicableTax(new BigDecimal(applicableTax.toString()));
+
+
+			productDO.setUserId(21212);
+			productDO.setRegisterId(12121);
+			productDO.setCreatedDate(new Date(0));
+			productDO.setCreatedBy("sachin");
+
+
+			result = invoiceDao.saveProduct(productDO);
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in InvoiceService :: saveProduct()"+e);
+			return "failure";
+		}
+
+			return result;
+	}
+
+	   // added code for save product code end
 }

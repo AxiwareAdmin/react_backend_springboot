@@ -54,12 +54,13 @@ public class CustomWebSecurity extends WebSecurityConfigurerAdapter {
 //		super.configure(http);
 	}
 
+	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration=new CorsConfiguration();
 		
 		configuration.setAllowedOrigins(List.of("*"));
 		configuration.setAllowedMethods(List.of("GET","POST"));
-		configuration.setAllowCredentials(true);
+//		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(List.of("Authorization","Cache-Control","Content-Type"));
 		
 		final UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();

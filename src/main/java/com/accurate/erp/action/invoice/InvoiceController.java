@@ -209,12 +209,12 @@ public class InvoiceController {
 	}
 	
 	
-	@GetMapping(value="/invoices/{month}")
+	@GetMapping(value="/invoices/year/{financialYear}")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getInvoiceList(@PathVariable String month){
-		List<InvoiceDO> invoiceList=invoiceService.getInvoiceListByMonth(month);
-		if(invoiceList!=null && invoiceList.size()>0) {
-		return new ResponseEntity<List<InvoiceDO>>(invoiceList,HttpStatus.OK);
+	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
+		List<InvoiceDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
+		if(invoiceDO!=null) {
+		return new ResponseEntity<List<InvoiceDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
@@ -260,6 +260,27 @@ public class InvoiceController {
 		System.out.print(inputJson);
 		
 		String msg=invoiceService.saveInvoice(inputJson);
+		
+		JSONObject jsonObj=new JSONObject();
+		if(msg.equals("success")) {
+		jsonObj.put("res", "success");
+		}else {
+			jsonObj.put("res", "failure");
+		}
+		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+
+		
+		
+	}
+	
+	
+	@PostMapping(value="/savepurchase",consumes= {"application/json"})
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> savePurchase(@RequestBody Map<String, Object> inputJson) throws ParseException{
+		
+		System.out.print(inputJson);
+		
+		String msg=invoiceService.savePurchase(inputJson);
 		
 		JSONObject jsonObj=new JSONObject();
 		if(msg.equals("success")) {
@@ -331,7 +352,7 @@ public class InvoiceController {
 				for(PurchaseDO purchaseDO : purchaseList) {
 					if(str.equalsIgnoreCase(purchaseDO.getMonth())) {
 						totalInv = totalInv + 1;
-						amount = amount.add(new BigDecimal(purchaseDO.getInvoiceValue()));
+						amount = amount.add(purchaseDO.getInvoiceValue());
 						closingBal = closingBal.add(new BigDecimal(1));
 					}
 				}
@@ -384,7 +405,7 @@ public class InvoiceController {
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 	}
 	
-	
+
 
 	
 	
@@ -495,6 +516,21 @@ public class InvoiceController {
 	  }
 	}
 	
+	@GetMapping(value="/getDocMaster/{documentName}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getDocMaster(@PathVariable String documentName){
+		DocumentSeqMasterDO documentSeqMaster=invoiceService.getDocMasterByName(documentName);
+		if(documentSeqMaster!=null) {
+		return new ResponseEntity<DocumentSeqMasterDO>(documentSeqMaster,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "document seq master data not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		
+	  }
+	}
+	
 	@GetMapping(value="/deleteDocMaster")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> deleteDocMaster(@QueryParam("docId") String docId){
@@ -592,5 +628,47 @@ public class InvoiceController {
 	public ResponseEntity<?> test(@RequestBody EmployeeDO employee){
 		return new ResponseEntity<EmployeeDO>(employee,HttpStatus.OK);
 	}
+	
+	
+
+	//add customer details code start
+
+	@PostMapping(value="/addCustomerDetails",consumes= {"application/json"})
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> saveCustomer(@RequestBody Map<String, Object> inputJson) throws ParseException{
+
+		System.out.print(inputJson);
+
+		String msg=invoiceService.saveCustomer(inputJson);
+
+		JSONObject jsonObj=new JSONObject();
+		if(!msg.equals("")) {
+		jsonObj.put("res", msg);
+		}else {
+			jsonObj.put("res", "failure");
+		}
+		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+	}
+	// add customer details code end
+
+	//add customer details code start
+
+		@PostMapping(value="/addProductDetails",consumes= {"application/json"})
+		@CrossOrigin(origins={"*"})
+		public ResponseEntity<?> saveProduct(@RequestBody Map<String, Object> inputJson) throws ParseException{
+
+			System.out.print(inputJson);
+
+			String msg=invoiceService.saveProduct(inputJson);
+
+			JSONObject jsonObj=new JSONObject();
+			if(!msg.equals("")) {
+			jsonObj.put("res", msg);
+			}else {
+				jsonObj.put("res", "failure");
+			}
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+		// add customer details code end
 	
 }

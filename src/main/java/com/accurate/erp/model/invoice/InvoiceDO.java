@@ -164,6 +164,9 @@ public class InvoiceDO {
 	@Column(name="Created_Date")
 	Date createdDate;
 	
+	@Column(name="financial_year")
+	String financialYear;
+	
 	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.EAGER,cascade= CascadeType.ALL)
 	List<InvoiceProductDO> invoiceProductDO=new ArrayList<>();
 	
@@ -476,6 +479,14 @@ public class InvoiceDO {
 
 	public void setOtherDiscount(BigDecimal otherDiscount) {
 		this.otherDiscount = otherDiscount;
+	}
+
+	public String getFinancialYear() {
+		return financialYear;
+	}
+
+	public void setFinancialYear(String financialYear) {
+		this.financialYear = financialYear;
 	}
 	
 	
