@@ -52,7 +52,7 @@ public class ProductDO {
 	String partCode;
 	
 	@Column(name = "HSN_Code")
-	String hsnCode;
+	Integer hsnCode;
 
 	@Column(name = "Quantity")
 	Integer unit;
@@ -141,11 +141,11 @@ public class ProductDO {
 		this.partCode = partCode;
 	}
 
-	public String getHsnCode() {
+	public Integer getHsnCode() {
 		return hsnCode;
 	}
 
-	public void setHsnCode(String hsnCode) {
+	public void setHsnCode(Integer hsnCode) {
 		this.hsnCode = hsnCode;
 	}
 

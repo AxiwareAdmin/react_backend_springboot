@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -709,6 +710,11 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 			Object email=inputJson.get("email");
 			Object contactNo=inputJson.get("contactNo");
 			Object shippingAddress1=inputJson.get("shippingAddress1");
+			Object shippingCustomerName=inputJson.get("shippingCustomerName");
+			Object shippingAddress2=inputJson.get("shippingAddress2");
+			Object shippingCity=inputJson.get("shippingCity");
+			Object shippingPincode=inputJson.get("shippingPincode");
+			Object shippingCountry=inputJson.get("shippingCountry");
 			Object paymentTerms=inputJson.get("paymentTerms");
 
 			if(customerName != null)
@@ -739,14 +745,21 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 				CustomerdO.setShippingAddress1(shippingAddress1.toString());
 			if(paymentTerms != null)
 				CustomerdO.setTermsAndCondition(paymentTerms.toString());
+			if(shippingCustomerName != null)
+				CustomerdO.setShippingCustomerName(shippingCustomerName.toString());
+			if(shippingAddress2 != null)
+				CustomerdO.setShippingAddress2(shippingAddress2.toString());
+			if(shippingCity != null)
+				CustomerdO.setShippingCity(shippingCity.toString());
+			if(shippingPincode != null)
+				CustomerdO.setShippingPincode(Integer.parseInt(shippingPincode.toString()));
+			if(shippingCountry != null)
+				CustomerdO.setShippingCountry(shippingCountry.toString());
 
 			CustomerdO.setStateCode("1234");
-			CustomerdO.setCreatedDate("12-Dec-23");
-			CustomerdO.setShippingCustomerName("Raju");
-			CustomerdO.setShippingCity("Goa");
-			CustomerdO.setShippingPincode(1234);
-			CustomerdO.setShippingstateCode("1111");
-			CustomerdO.setShippingCountry("US");
+			CustomerdO.setShippingstateCode("1234");
+			Calendar cal = Calendar.getInstance();
+			CustomerdO.setCreatedDate(sdf.format(cal.getTime()));
 			CustomerdO.setAccountingGroup("Y");
 			CustomerdO.setUserId(121212);
 			CustomerdO.setRegisterId(21212);
@@ -801,8 +814,8 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 				productDO.setProductType(productType.toString());
 			if(partCode != null)
 				productDO.setPartCode(partCode.toString());
-			//if(hsnCode != null)
-			//	productDO.setHsnCode(hsnCode.toString());
+			if(hsnCode != null)
+				productDO.setHsnCode(Integer.parseInt(hsnCode.toString()));
 			if(openingStock != null) {
 				productDO.setUnit(Integer.parseInt(openingStock.toString()));
 				productDO.setOpeningStock(Integer.parseInt(openingStock.toString()));
