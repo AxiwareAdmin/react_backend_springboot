@@ -1,6 +1,7 @@
 package com.accurate.erp.helper;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +29,7 @@ public class JwtUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
@@ -38,6 +39,7 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("user", userDetails);
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -51,5 +53,15 @@ public class JwtUtil {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return userDetails!=null && (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+    
+    public Object getClaim(String token) {
+    	Jws<Claims> jws=Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+    	
+    	Claims claims=jws.getBody();
+    	
+    	Object obj=claims.get("user");
+    	
+    	return obj;
     }
 }

@@ -28,6 +28,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -276,6 +277,8 @@ public class InvoiceDao {
 			String status = data.get("status");
 
 			String category = data.get("category");
+			
+			String userId=data.get("userId");
 
 			Session session = getSession();
 
@@ -293,6 +296,7 @@ public class InvoiceDao {
 
 			Predicate statusPredicate = builder.equal(root.get("invoiceStatus"), status);
 
+			Predicate userPredicate=builder.equal(root.get("userId"), userId);
 			Predicate[] predicate = new Predicate[3];
 			List<Predicate> predList = new ArrayList<>();
 			
@@ -310,6 +314,9 @@ public class InvoiceDao {
 				  predList.add(statusPredicate);
 			   }
 			 
+			  if(userId!=null && userId.length()>0) {
+				  predList.add(userPredicate);
+			  }
 
 			Predicate finalPred = builder.and(predList.toArray(new Predicate[0]));
 
@@ -589,7 +596,7 @@ public class InvoiceDao {
 		try {
 
 			Session session = getSession();
-			Query query = session.createNativeQuery("delete from Invoice where Invoice_No ='" + invNo + "'");
+			Query query = session.createNativeQuery("delete from Invoice where Invoice_id ='" + invNo + "'");
 			/*
 			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
 			 * criteria.add(Restrictions.eq("invoiceNo",invNo)); invDo =
@@ -655,7 +662,7 @@ public class InvoiceDao {
 
 			query.select(root);
 
-			Predicate predicate = builder.equal(root.get("invoiceNo"), invNo);
+			Predicate predicate = builder.equal(root.get("invoiceId"), invNo);
 
 			query.where(predicate);
 			
@@ -1207,6 +1214,87 @@ public class InvoiceDao {
 		return result;
 	}
 
+	public List<UserDO> getUserDOsByRegisterId(String registerId){
+		LOGGER.info("InvoiceDao::getUserDOsByUserId():start");
+		List<UserDO> userList=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<UserDO> query=builder.createQuery(UserDO.class);
+			
+			Root<UserDO> root=query.from(UserDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("registerId"), registerId);
+			
+			query.where(predicate);
+			
+			userList=session.createQuery(query).getResultList();
+			
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getUserDOsByUserId()::"+e);
+		}
+		
+		
+		
+		LOGGER.info("InvoiceDao::getUserDOsByUserId():end");
+		
+		return userList;
+	}
+	
+	public boolean cancelInvoiceById(Integer invoiceId) {
+		LOGGER.info("InvoiceDao::calcelInvoice()::start");
+		boolean flag=false;
+		
+		try {
+			
+			Session session=getSession();
+			
+			InvoiceDO invoiceDO=getInvoiceDetails(invoiceId.toString());
+			
+			invoiceDO.setAdditionalCharges("0");
+			
+			invoiceDO.setTransportCharges("0");
+			
+			invoiceDO.setDiscount(BigDecimal.ZERO);
+			
+			invoiceDO.setOtherDiscount(BigDecimal.ZERO);
+			
+			invoiceDO.setSgstValue(BigDecimal.ZERO);
+			
+			invoiceDO.setCgstValue(BigDecimal.ZERO);
+			
+			invoiceDO.setIgstValue(BigDecimal.ZERO);
+			
+			invoiceDO.setTaxableValue(BigDecimal.ZERO);
+			
+			invoiceDO.setInvoiceValue(BigDecimal.ZERO);
+			Transaction transaction=session.beginTransaction();
+			
+			session.saveOrUpdate(invoiceDO);
+			
+			session.flush();
+			
+			transaction.commit();
+			
+			flag=true;
+			
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::cancelInvoiceById()::"+e);
+		}
+		
+		LOGGER.info("InvoiceDao::calcelInvoice()::end");
+		
+		return flag;
+		
+	}
+	
 	public Session getSession() {
 		Session session = null;
 		try {

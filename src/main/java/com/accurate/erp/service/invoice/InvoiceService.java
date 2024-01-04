@@ -20,6 +20,7 @@ import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.InvoiceProductDO;
 import com.accurate.erp.model.invoice.ProductDO;
+import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
 import com.accurate.erp.model.purchase.PurchaseProductDO;
@@ -81,7 +82,7 @@ public class InvoiceService {
 		return invoiceDao.getProductById(prodId);
 	}
 	
-	public String saveInvoice(Map<String, Object> inputJson) throws ParseException {
+	public String saveInvoice(Map<String, Object> inputJson,String registerId,String userId,String userName) throws ParseException {
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
@@ -312,6 +313,15 @@ public class InvoiceService {
 		if(termsAndCondition!=null) {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
 		}
+		
+		invoiceDO.setRegisterId(Integer.parseInt(registerId));
+		
+		invoiceDO.setUserId(Integer.parseInt(userId));
+		
+		invoiceDO.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
+		
+		invoiceDO.setCreatedBy(userName);
+		
 		
 		return invoiceDao.saveInvoice(invoiceDO);
 		
@@ -833,4 +843,13 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 	}
 
 	   // added code for save product code end
+	
+	
+	public List<UserDO> getUserDOsByRegisterId(String registerId){
+		return invoiceDao.getUserDOsByRegisterId(registerId);
+	}
+	
+	public boolean cancelInvoiceById(Integer invoiceId) {
+		return invoiceDao.cancelInvoiceById(invoiceId);
+	}
 }

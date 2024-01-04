@@ -170,11 +170,41 @@ public class InvoiceDO {
 	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.EAGER,cascade= CascadeType.ALL)
 	List<InvoiceProductDO> invoiceProductDO=new ArrayList<>();
 	
+	@Column(name="register_id")
+	Integer registerId;
 	
+	@Column(name="user_id")
+	Integer userId;
 	
+	@Column(name="createdby")
+	String createdBy;
 	
 	
 
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Integer getRegisterId() {
+		return registerId;
+	}
+
+	public void setRegisterId(Integer registerId) {
+		this.registerId = registerId;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
 	public String getServiceCheck() {
 		return serviceCheck;

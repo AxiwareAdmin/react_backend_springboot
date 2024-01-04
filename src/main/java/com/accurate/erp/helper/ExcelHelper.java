@@ -18,12 +18,12 @@ import com.accurate.erp.model.purchase.PurchaseDO;
 
 public class ExcelHelper {
 		public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-	  static String[] HEADERS = { "Sr. No", "Invoice No.", "Invoice Date", "Customer Name","Due Date" };
+	  static String[] HEADERS = { "Sr. No", "Invoice No.", "Invoice Date", "Customer Name","Due Date" ,"Invoice Value","SGST","CGST","IGST"};
 	  static String SHEET = "Invoices";
 	  
 	  static String PURCHASE_SHEET="purchases";
 	  
-	  static String[] PURCHASE_HEADERS = { "Sr. No", "Purchase No.", "Purchase Date", "Supplier Name","Due Date" };
+	  static String[] PURCHASE_HEADERS = { "Sr. No", "Purchase No.", "Purchase Date", "Supplier Name","Due Date"};
 
 	  
 	  public static ByteArrayInputStream invoicesToExcel(List<InvoiceDO> invoiceList) {
@@ -65,6 +65,14 @@ public class ExcelHelper {
 				  
 				  else
 					  row.createCell(4).setCellValue("");
+				  
+				  row.createCell(5).setCellValue(invoice.getInvoiceValue().doubleValue());
+				  
+				  row.createCell(6).setCellValue(invoice.getSgstValue().doubleValue());
+				  
+				  row.createCell(7).setCellValue(invoice.getCgstValue().doubleValue());
+				  
+				  row.createCell(8).setCellValue(invoice.getIgstValue().doubleValue());
 				  
 				
 				  

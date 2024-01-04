@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,19 +40,23 @@ import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.EmployeeDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.ProductDO;
+import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
 import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.security.service.CustomUserDetailsService;
 import com.accurate.erp.service.excel.ExcelService;
 import com.accurate.erp.service.invoice.InvoiceService;
+
+import io.jsonwebtoken.Claims;
+
 import com.accurate.erp.model.invoice.InvoiceProductDO;
 
 @RestController
 public class InvoiceController {
 	private final static Logger LOGGER=LoggerFactory.getLogger(InvoiceController.class);
 	private final static String [] month = {"Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar"};
-	
+	private final static String[] completeMonth= {"April","May","June","July","August","Sepetember","October","November","December","January","February","March"};
 	@Autowired
 	InvoiceService invoiceService;
 	
@@ -180,8 +185,8 @@ public class InvoiceController {
 	@GetMapping("/purchases/{month}")
 	@CrossOrigin(origins = {"*"})
 	public ResponseEntity<?> getPurchasesByMonth(@PathVariable String month){
-		
-		List<PurchaseDO> list=invoiceService.getPurchaseList(month);
+
+		List<PurchaseDO> list=invoiceService.getPurchaseList(month.substring(0,3));
 		
 		if(list!=null && list.size()>0) {
 			return new ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK);
@@ -223,6 +228,22 @@ public class InvoiceController {
 		}
 	}
 	
+	@GetMapping(value="/invoices/{month}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getInvoiceListByMonth(@PathVariable String month){
+		List<InvoiceDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3));
+		if(invoiceDO!=null) {
+		return new ResponseEntity<List<InvoiceDO>>(invoiceDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Invoices are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
+	
+	
 	
 	
 	@GetMapping(value="/invoiceproducts")
@@ -255,11 +276,25 @@ public class InvoiceController {
 
 	@PostMapping(value="/saveInvoice",consumes= {"application/json"})
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> saveInvoice(@RequestBody Map<String, Object> inputJson) throws ParseException{
+	public ResponseEntity<?> saveInvoice(@RequestBody Map<String, Object> inputJson,HttpServletRequest request) throws ParseException{
 		
 		System.out.print(inputJson);
+		String token=request.getHeader("Authorization").split(" ")[1];
 		
-		String msg=invoiceService.saveInvoice(inputJson);
+		
+		  Claims claims= jwtUtil.extractAllClaims(token);
+		  
+		  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+		  
+		  String registerId=map.get("registerId").toString();
+		  
+		  String userId=map.get("userId").toString();
+		  
+		  String userName=map.get("userName").toString();
+		  
+		String msg=invoiceService.saveInvoice(inputJson,registerId,userId,userName);
+		
+		
 		
 		JSONObject jsonObj=new JSONObject();
 		if(msg.equals("success")) {
@@ -268,9 +303,6 @@ public class InvoiceController {
 			jsonObj.put("res", "failure");
 		}
 		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
-
-		
-		
 	}
 	
 	
@@ -305,13 +337,13 @@ public class InvoiceController {
 				
 			});*/
 			List<String> salesobj = new ArrayList<>();
-			for(String str  : month) {
+			for(String str  : completeMonth) {
 				JSONObject jsonObj=new JSONObject();
 				Integer totalInv = 0;
 				BigDecimal closingBal = new BigDecimal(0);
 				BigDecimal amount = new BigDecimal(0);
 				for(InvoiceDO invdo : invoiceList) {
-					if(str.equalsIgnoreCase(invdo.getMonth())) {
+					if(str.substring(0,3).equalsIgnoreCase(invdo.getMonth())) {
 						totalInv = totalInv + 1;
 						amount = amount.add(invdo.getInvoiceValue());
 						closingBal = closingBal.add(new BigDecimal(1));
@@ -344,13 +376,13 @@ public class InvoiceController {
 				
 			});*/
 			List<String> salesobj = new ArrayList<>();
-			for(String str  : month) {
+			for(String str  : completeMonth) {
 				JSONObject jsonObj=new JSONObject();
 				Integer totalInv = 0;
 				BigDecimal closingBal = new BigDecimal(0);
 				BigDecimal amount = new BigDecimal(0);
 				for(PurchaseDO purchaseDO : purchaseList) {
-					if(str.equalsIgnoreCase(purchaseDO.getMonth())) {
+					if(str.substring(0,3).equalsIgnoreCase(purchaseDO.getMonth())) {
 						totalInv = totalInv + 1;
 						amount = amount.add(purchaseDO.getInvoiceValue());
 						closingBal = closingBal.add(new BigDecimal(1));
@@ -451,6 +483,22 @@ public class InvoiceController {
 	            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
 	            .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
 	            .body(file);
+	}
+	
+	@PostMapping("/getFilterInvoices")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> getFilterInvoices(@RequestBody Map<String,String> data){
+		List<InvoiceDO> list=invoiceService.getInvoiceList(data);
+		
+		if(list!=null && list.size()>0) {
+			return new ResponseEntity<List<InvoiceDO>>(list,HttpStatus.OK);
+		}
+		
+		
+		JSONObject jsonObj=new JSONObject();
+		jsonObj.put("res", "Invoice Details are not found");
+		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+
 	}
 	
 	
@@ -623,6 +671,36 @@ public class InvoiceController {
 		
 	}
 	
+	//register id is nothing but client id which can have multiple users and this method is getting all the users for a client nased on one of the users
+	@GetMapping("/getusersbyregistrid")
+	public ResponseEntity<?> getUserListByUserIdForSameClient(HttpServletRequest request) {
+		String token=request.getHeader("Authorization").split(" ")[1];
+		
+		
+		  Claims claims= jwtUtil.extractAllClaims(token);
+		  
+		  LinkedHashMap<String,String> map=claims.get("user",LinkedHashMap.class);
+		  
+		  String registerId=map.get("registerId").toString();
+		 
+		
+//		UserDO userDO=(UserDO)jwtUtil.getClaim(token);
+//		
+//		
+//		String registerId=userDO.getRegisterId();
+		List<UserDO> userList=invoiceService.getUserDOsByRegisterId(registerId);
+		
+		if(userList!=null) {
+			return new ResponseEntity<List<UserDO>>(userList,HttpStatus.OK);
+		}
+		
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("res", "Users not found");
+		return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
+		
+		
+	}
+	
 	@GetMapping("/employee")
 	@CrossOrigin(origins = {"*"})
 	public ResponseEntity<?> test(@RequestBody EmployeeDO employee){
@@ -670,5 +748,19 @@ public class InvoiceController {
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 		// add customer details code end
+		
+		@PostMapping(value = "/cancelInvoice/{invoiceId}")
+		@CrossOrigin(origins={"*"})
+		public ResponseEntity<?> cancelInvoice(@PathVariable String invoiceId){
+			boolean flag=invoiceService.cancelInvoiceById(Integer.parseInt(invoiceId));
+			JSONObject jsonObj=new JSONObject();
+			if(flag==true) {
+				jsonObj.put("res", "success");
+			}else {
+				jsonObj.put("res", "failure");
+			}
+			
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
 	
 }

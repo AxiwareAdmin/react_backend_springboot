@@ -55,6 +55,9 @@ public class UserDO implements UserDetails {
 	@Column(name="user_status")
 	String userStatus;
 	
+	@Column(name="register_id")
+	String registerId;
+	
 	@Transient
 	List<GrantedAuthority> authorities;
 	
@@ -67,6 +70,8 @@ public class UserDO implements UserDetails {
 		password=userDO.getPassword();
 		userName=userDO.getLoginId();
 		userStatus=userDO.getUserStatus();
+		userId=userDO.getUserId();
+		registerId=userDO.getRegisterId();
 	}
 
 
@@ -187,5 +192,15 @@ public class UserDO implements UserDetails {
 		// TODO Auto-generated method stub
 		return userStatus.toLowerCase().equals("active");
 	}
+
+	public String getRegisterId() {
+		return registerId;
+	}
+
+	public void setRegisterId(String registerId) {
+		this.registerId = registerId;
+	}
+	
+	
 
 }
