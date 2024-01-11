@@ -519,10 +519,11 @@ public class InvoiceDao {
 			invoiceDO.setCity("Mum");
 			invoiceDO.setIgstValue(new BigDecimal(1));
 			Session session=getSession();
-			Transaction tx=session.beginTransaction();
+			
+//			Transaction tx=session.beginTransaction();
 			session.saveOrUpdate(invoiceDO);
-			session.flush();
-			tx.commit();
+//			session.flush();
+//			tx.commit();
 
 		} catch (Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);

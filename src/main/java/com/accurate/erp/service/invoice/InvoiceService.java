@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 //import org.apache.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +30,7 @@ import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.utility.mail.SendMail;
 
 @Service
+@Transactional
 public class InvoiceService {
 	private static final Logger LOGGER=LogManager.getLogger(InvoiceService.class);
 
@@ -89,10 +92,16 @@ public class InvoiceService {
 		InvoiceDO invoiceDO=new InvoiceDO();
 		
 		
+		
 		Object invoiceNo=inputJson.get("invoiceNo");
 		
 		
 		Object invoiceId=inputJson.get("invoiceId");
+		
+		//TO make sure invoice updates on edit
+		if(invoiceId!=null && invoiceId.toString().length()>0) {
+			invoiceDO=invoiceDao.getInvoiceDetails(invoiceId.toString());
+		}
 		
 		Object sgstValue=inputJson.get("sgstValue");
 		
@@ -150,7 +159,23 @@ public class InvoiceService {
 		
 		Object financialYear=inputJson.get("financialYear");
 		
+		
+		Object additionalChargesGst=inputJson.get("otherChargesGstRate");
+		
+		Object transportChargesGst=inputJson.get("transportGstRate");
+		
 		List<Map<String,Object>> invoiceProd=(List<Map<String,Object>>)inputJson.get("invoiceProducts");
+		
+		
+		
+		
+		
+		if(invoiceNo!=null)
+		invoiceDO.setInvoiceNo(invoiceNo.toString());
+		
+		if(invoiceId != null && !invoiceId.equals(""))
+			invoiceDO.setInvoiceId(Integer.parseInt(invoiceId.toString()));
+		
 		
 		List<InvoiceProductDO> invoiceProducts=new ArrayList<>();
 		if(invoiceProd!=null && invoiceProd.size()>0) {
@@ -191,13 +216,6 @@ public class InvoiceService {
 			invoiceDO.setInvoiceProductDO(invoiceProducts);
 		}
 		
-		
-		
-		if(invoiceNo!=null)
-		invoiceDO.setInvoiceNo(invoiceNo.toString());
-		
-		if(invoiceId != null && !invoiceId.equals(""))
-			invoiceDO.setInvoiceId(Integer.parseInt(invoiceId.toString()));
 		
 		if(sgstValue!=null) {
 			invoiceDO.setSgstValue(new BigDecimal(sgstValue.toString()));
@@ -312,6 +330,14 @@ public class InvoiceService {
 		
 		if(termsAndCondition!=null) {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
+		}
+		
+		if(additionalChargesGst!=null) {
+			invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.toString()));
+		}
+		
+		if(transportChargesGst!=null) {
+			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
 		}
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
@@ -590,6 +616,7 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 		try {
 		
 				String toMailId = invoiceDao.getCustomerEmail(custName);
+				toMailId="nadimk784@gmail.com";
 				String subject = "Testing mail for Invoice No "+invNo;
 				String body ="<html><body><p>Dear "+custName+"</p><br/>Please check your invoice is in paid state"
 						+ ".please check invoice is correct or not <br/>Thanks & regards,<br/>"

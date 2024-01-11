@@ -158,6 +158,28 @@ public class InvoiceDO {
 	@Column(name="Month")
 	String month;
 	
+	@Column(name="transportGst")
+	Integer transportGst;
+	
+	@Column(name="additionalChargesGst")
+	Integer additionalChargesGst;
+	
+	public Integer getTransportGst() {
+		return transportGst;
+	}
+
+	public void setTransportGst(Integer transportGst) {
+		this.transportGst = transportGst;
+	}
+
+	public Integer getAdditionalChargesGst() {
+		return additionalChargesGst;
+	}
+
+	public void setAdditionalChargesGst(Integer additionalChargesGst) {
+		this.additionalChargesGst = additionalChargesGst;
+	}
+
 	@Column(name="service_invoice")
 	String serviceCheck;
 	
@@ -167,7 +189,7 @@ public class InvoiceDO {
 	@Column(name="financial_year")
 	String financialYear;
 	
-	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.EAGER,cascade= CascadeType.ALL)
+	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.EAGER,cascade= CascadeType.ALL,orphanRemoval = true)
 	List<InvoiceProductDO> invoiceProductDO=new ArrayList<>();
 	
 	@Column(name="register_id")
@@ -219,7 +241,8 @@ public class InvoiceDO {
 	}
 
 	public void setInvoiceProductDO(List<InvoiceProductDO> invoiceProductDO) {
-		this.invoiceProductDO = invoiceProductDO;
+		this.invoiceProductDO.clear();
+		this.invoiceProductDO.addAll(invoiceProductDO);
 	}
 
 	public Date getCreatedDate() {
