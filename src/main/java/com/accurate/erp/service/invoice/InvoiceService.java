@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.accurate.erp.dao.invoice.InvoiceDao;
+import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.InvoiceProductDO;
@@ -781,8 +782,8 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 			CustomerdO.setCreatedDate("12-Dec-23");
 			CustomerdO.setShippingCustomerName("Raju");
 			CustomerdO.setShippingCity("Goa");
-			CustomerdO.setShippingPincode(1234);
-			CustomerdO.setShippingstateCode("1111");
+			CustomerdO.setShippingPinCode(1234);
+			CustomerdO.setShippingStateCode("1111");
 			CustomerdO.setShippingCountry("US");
 			CustomerdO.setAccountingGroup("Y");
 			CustomerdO.setUserId(121212);
@@ -876,7 +877,19 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 		return invoiceDao.getUserDOsByRegisterId(registerId);
 	}
 	
+	public UserDO getUserByUserId(String userId) {
+		return invoiceDao.getUserByUserId(userId);
+	}
+	
 	public boolean cancelInvoiceById(Integer invoiceId) {
 		return invoiceDao.cancelInvoiceById(invoiceId);
+	}
+	
+	public ClientDO getClientDoByRegisterId(String registerId) {
+		return invoiceDao.getClientDoByRegisterId(registerId);
+	}
+	
+	public CustomerDO getCustomerByName(String custName) {
+		return invoiceDao.getCustomerByName(custName);
 	}
 }

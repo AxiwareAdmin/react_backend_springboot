@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.accurate.erp.dto.security.AuthenticationRequest;
 import com.accurate.erp.helper.JwtUtil;
+import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.EmployeeDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
@@ -90,6 +91,20 @@ public class InvoiceController {
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getCustomer(@PathVariable Integer custId){
 		CustomerDO customerDO=invoiceService.getCustomerById(custId);
+		if(customerDO!=null) {
+		return new ResponseEntity<CustomerDO>(customerDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Customers are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping(value="/customer/custname/{custname}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getCustomerByName(@PathVariable String custname){
+		CustomerDO customerDO=invoiceService.getCustomerByName(custname);
 		if(customerDO!=null) {
 		return new ResponseEntity<CustomerDO>(customerDO,HttpStatus.OK);
 		}
@@ -671,8 +686,34 @@ public class InvoiceController {
 		
 	}
 	
+	@GetMapping("/user")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> getUserDetails(HttpServletRequest request){
+		
+		String token=request.getHeader("Authorization").split(" ")[1];
+		
+		
+		  Claims claims= jwtUtil.extractAllClaims(token);
+		  
+		  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+		  
+		  String userId=map.get("userId").toString();
+		
+		UserDO userDO=invoiceService.getUserByUserId(userId);
+		
+		
+		if(userDO!=null) {
+			return new ResponseEntity<UserDO>(userDO,HttpStatus.OK);
+		}
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("res", "User not found");
+		return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
+		
+	}
+	
 	//register id is nothing but client id which can have multiple users and this method is getting all the users for a client nased on one of the users
 	@GetMapping("/getusersbyregistrid")
+	@CrossOrigin(origins = {"*"})
 	public ResponseEntity<?> getUserListByUserIdForSameClient(HttpServletRequest request) {
 		String token=request.getHeader("Authorization").split(" ")[1];
 		
@@ -699,6 +740,27 @@ public class InvoiceController {
 		return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
 		
 		
+	}
+	
+	@GetMapping("/getClientDOForUser")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> getClientDOForUser(HttpServletRequest request){
+		  String token=request.getHeader("Authorization").split(" ")[1];
+		  Claims claims= jwtUtil.extractAllClaims(token);
+		  
+		  LinkedHashMap<String,String> map=claims.get("user",LinkedHashMap.class);
+		  
+		  String registerId=map.get("registerId").toString();
+		  
+		  ClientDO clientDO=invoiceService.getClientDoByRegisterId(registerId);
+		  
+		  if(clientDO!=null) {
+			  return new ResponseEntity<ClientDO>(clientDO,HttpStatus.OK);
+		  }
+		  
+			JSONObject jsonObject=new JSONObject();
+			jsonObject.put("res", "client not found");
+			return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
 	}
 	
 	@GetMapping("/employee")

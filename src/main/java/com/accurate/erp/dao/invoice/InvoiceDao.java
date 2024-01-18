@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.accurate.erp.action.invoice.InvoiceController;
+import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.ProductDO;
@@ -757,6 +758,34 @@ public class InvoiceDao {
 		return userDO;
 	}
 	
+	public UserDO getUserByUserId(String userId) {
+		LOGGER.info("InvoiceDao::getUserByUserId()::Start");
+		UserDO userDO=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<UserDO> query=criteriaBuilder.createQuery(UserDO.class);
+			
+			Root<UserDO> root=query.from(UserDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=criteriaBuilder.equal(root.get("userId"), userId);
+			
+			query.where(predicate);
+			
+			userDO=session.createQuery(query).getSingleResult();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getUserByUserId()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getUserByUserId()::End");
+		return userDO;
+	}
+	
 	
 	public List<InvoiceDO> getInvoiceByFinancialYear(String financialYear) {
 		LOGGER.info("InvoiceDao::getInvoiceByFinancialYear()::Start");
@@ -1294,6 +1323,67 @@ public class InvoiceDao {
 		
 		return flag;
 		
+	}
+	
+	public ClientDO getClientDoByRegisterId(String registerId) {
+		LOGGER.info("invoiceDao::getClientDoByRegisterId()::start");
+		ClientDO clientDO=null;
+		
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<ClientDO> query=builder.createQuery(ClientDO.class);
+			
+			Root<ClientDO> root=query.from(ClientDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("clientId"), registerId);
+			
+			query.where(predicate);
+			
+			clientDO=session.createQuery(query).getSingleResult();
+			
+		}catch(Exception e) {
+			LOGGER.error("Excpetion in invoiceDao::getClientDoByRegisterId()::"+e);
+		}
+		
+		LOGGER.info("invoiceDao::getClientDoByRegisterId()::end");
+		return clientDO;
+	}
+	
+	public CustomerDO getCustomerByName(String custName) {
+		LOGGER.info("invoiceDao::getCustomerByName()::start");
+		
+		CustomerDO custDO=null;
+		
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<CustomerDO> query=builder.createQuery(CustomerDO.class);
+			
+			Root<CustomerDO> root=query.from(CustomerDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("customerName"), custName);
+			
+			query.where(predicate);
+			
+			custDO=session.createQuery(query).getSingleResult();
+			
+			
+		}catch(Exception e) {
+			
+		}
+		
+		return custDO;
 	}
 	
 	public Session getSession() {

@@ -28,9 +28,19 @@ public class UserDO implements UserDetails {
 	@Column(name="user_name")
 	String userName;
 	
+	@Column(name="account_number")
+	String accountNumber;
+	
+	@Column(name="ifsc")
+	String ifscCode;
+	
+	
 	
 	@Column(name="designation")
 	String designation;
+	
+	@Column(name="bank_name")
+	String bankName;
 	
 	@Column(name="department")
 	String dept;
@@ -199,6 +209,34 @@ public class UserDO implements UserDetails {
 
 	public void setRegisterId(String registerId) {
 		this.registerId = registerId;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getIfscCode() {
+		return ifscCode;
+	}
+
+	public void setIfscCode(String ifscCode) {
+		this.ifscCode = ifscCode;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public void setAuthorities(List<GrantedAuthority> authorities) {
+		this.authorities = authorities;
 	}
 	
 	

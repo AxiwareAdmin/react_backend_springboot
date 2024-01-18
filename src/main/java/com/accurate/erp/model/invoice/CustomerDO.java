@@ -59,6 +59,13 @@ public class CustomerDO {
 
 	@Column(name="contact_no")
 	String contactNo;
+	
+	@Column(name="contact_person")
+	String contactPerson;
+	
+	@Column(name="vendor_code")
+	String vendorCode;
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,10 +93,10 @@ public class CustomerDO {
 	String shippingCity;
 
 	@Column(name="ShippingPincode")
-	Integer shippingPincode;
+	Integer shippingPinCode;
 
 	@Column(name="ShippingstateCode")
-	String ShippingstateCode;
+	String ShippingStateCode;
 
 	@Column(name="ShippingCountry")
 	String shippingCountry;
@@ -108,6 +115,12 @@ public class CustomerDO {
 
 	@Column(name="Dr_Cr")
 	String DrCr;
+	
+	@Column(name="shippingcontact_person")
+	String shippingContactPerson;
+	
+	@Column(name="shippingContact_no")
+	String shippingContactNumber;
 
 	public String getStateCode() {
 		return stateCode;
@@ -133,20 +146,22 @@ public class CustomerDO {
 		this.shippingCity = shippingCity;
 	}
 
-	public Integer getShippingPincode() {
-		return shippingPincode;
+
+
+	public Integer getShippingPinCode() {
+		return shippingPinCode;
 	}
 
-	public void setShippingPincode(Integer shippingPincode) {
-		this.shippingPincode = shippingPincode;
+	public void setShippingPinCode(Integer shippingPinCode) {
+		this.shippingPinCode = shippingPinCode;
 	}
 
-	public String getShippingstateCode() {
-		return ShippingstateCode;
+	public String getShippingStateCode() {
+		return ShippingStateCode;
 	}
 
-	public void setShippingstateCode(String shippingstateCode) {
-		ShippingstateCode = shippingstateCode;
+	public void setShippingStateCode(String shippingStateCode) {
+		ShippingStateCode = shippingStateCode;
 	}
 
 	public String getShippingCountry() {
@@ -357,6 +372,42 @@ public class CustomerDO {
 
 	public void setContactNo(String contactNo) {
 		this.contactNo = contactNo;
+	}
+
+	
+	
+	public String getContactPerson() {
+		return contactPerson;
+	}
+
+	public void setContactPerson(String contactPerson) {
+		this.contactPerson = contactPerson;
+	}
+
+	public String getVendorCode() {
+		return vendorCode;
+	}
+
+	public void setVendorCode(String vendorCode) {
+		this.vendorCode = vendorCode;
+	}
+
+	
+	
+	public String getShippingContactPerson() {
+		return shippingContactPerson;
+	}
+
+	public void setShippingContactPerson(String shippingContactPerson) {
+		this.shippingContactPerson = shippingContactPerson;
+	}
+
+	public String getShippingContactNumber() {
+		return shippingContactNumber;
+	}
+
+	public void setShippingContactNumber(String shippingContactNumber) {
+		this.shippingContactNumber = shippingContactNumber;
 	}
 
 	@Override
