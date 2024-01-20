@@ -440,7 +440,7 @@ public class InvoiceDao {
 
 			query.where(predicate);
 
-			Order order = builder.desc(root.get("invoiceDate"));
+			Order order = builder.asc(root.get("invoiceDate"));
 
 			query.orderBy(order);
 
@@ -1178,10 +1178,10 @@ public class InvoiceDao {
 		String result = "success";
 		try {
 			Session session=getSession();
-			Transaction tx=session.beginTransaction();
+//			Transaction tx=session.beginTransaction();
 			session.saveOrUpdate(customerdo);
-			session.flush();
-			tx.commit();
+//			session.flush();
+//			tx.commit();
 
             Session session1=getSession();	
 
@@ -1213,10 +1213,10 @@ public class InvoiceDao {
 		String result = "";
 		try {
 			Session session=getSession();
-			Transaction tx=session.beginTransaction();
+//			Transaction tx=session.beginTransaction();
 			session.saveOrUpdate(prodDO);
-			session.flush();
-			tx.commit();
+//			session.flush();
+//			tx.commit();
 
             Session session1=getSession();	
 
