@@ -971,10 +971,10 @@ public class InvoiceDao {
 		try {
 			
 			Session session=getSession();
-			Transaction tx=session.beginTransaction();
+//			Transaction tx=session.beginTransaction();
 //			DocumentSeqMasterDO doc=session.get(DocumentSeqMasterDO.class, docmentseqmasterdo.getDocumentSeqId());
 			session.saveOrUpdate(docmentseqmasterdo);
-			tx.commit();
+//			tx.commit();
 //			session.flush();
 			session.close();
 			
