@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.accurate.erp.dao.invoice.InvoiceDao;
+import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
@@ -51,6 +52,11 @@ public class InvoiceService {
 		return invoiceDao.getInvoiceList();
 	}
 	
+	public List<CashDO> getCashList(){
+		LOGGER.info("InvoiceService::getCashList()::start");
+		return invoiceDao.getCashList();
+	}
+	
 	public List<InvoiceDO> getInvoiceList(Map<String, String> data){
 		LOGGER.info("InvoiceService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(data);
@@ -70,6 +76,12 @@ public class InvoiceService {
 		LOGGER.info("InvoiceService::getInvoiceListByMonth()::start");
 		return invoiceDao.getInvoiceListByMonth(month);
 	}
+  
+  public List<CashDO> getCashInvoiceListByMonth(String month){
+		LOGGER.info("InvoiceService::getCashInvoiceListByMonth()::start");
+		return invoiceDao.getCashInvoiceListByMonth(month);
+	}
+  
 	public List<ProductDO> getInvoiceProductList(){
 		LOGGER.info("InvoiceService::getInvoiceProductList()::start");
 		return invoiceDao.getInvoiceProductList();
@@ -594,6 +606,11 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 	public InvoiceDO getInvoiceDetails(String invId){
 		LOGGER.info("InvoiceService::getInvoiceDetails()::start");
 		return invoiceDao.getInvoiceDetails(invId);
+	}
+	
+	public CashDO getCashInvoiceDetails(String invId){
+		LOGGER.info("InvoiceService::getInvoiceDetails()::start");
+		return invoiceDao.getCashInvoiceDetails(invId);
 	}
 	
 	public boolean DeleteInvoice(String invNo){

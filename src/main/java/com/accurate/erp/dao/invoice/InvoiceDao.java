@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.accurate.erp.action.invoice.InvoiceController;
+import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
@@ -61,6 +62,22 @@ public class InvoiceDao {
 
 	@Autowired
 	SessionFactory sessionFactory;
+	
+	
+	public Integer getFullYear(Date d){
+        return d.getYear()+1900;
+    }
+    public  String getCurrentFinancialYear() {
+		String fiscalyear = "";
+		Date today = new Date();
+		if (today.getMonth() + 1 <= 3) {
+		  fiscalyear = getFullYear(today) - 1 + "-" + getFullYear(today).toString().substring(2);
+		} else {
+		  fiscalyear = getFullYear(today) + "-" + (getFullYear(today) + 1)+"".substring(2);
+		}
+		return fiscalyear;
+	  }
+	
 
 	@SuppressWarnings("deprecation")
 	@Transactional
@@ -165,8 +182,12 @@ public class InvoiceDao {
 			CriteriaQuery<InvoiceDO> query = builder.createQuery(InvoiceDO.class);
 
 			Root<InvoiceDO> root = query.from(InvoiceDO.class);
+			
+			Predicate pred=builder.equal(root.get("financialYear"), getCurrentFinancialYear());
 
 			query.select(root);
+			
+			query.where(pred);
 
 			invoiceList = session.createQuery(query).getResultList();
 
@@ -180,6 +201,39 @@ public class InvoiceDao {
 		}
 		LOGGER.info("InvoiceDao :: getInvoiceList method end");
 		return invoiceList;
+	}
+	
+	public List<CashDO> getCashList() {
+		LOGGER.info("InvoiceDao :: getCashList :: Start ");
+		List<CashDO> cashList = new ArrayList<CashDO>();
+		try {
+
+			Session session = getSession();
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+
+			CriteriaQuery<CashDO> query = builder.createQuery(CashDO.class);
+
+			Root<CashDO> root = query.from(CashDO.class);
+			
+			Predicate pred=builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+
+			query.select(root);
+			
+			query.where(pred);
+
+			cashList = session.createQuery(query).getResultList();
+
+			/*
+			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
+			 * invoiceList=criteria.list();
+			 */
+
+		} catch (Exception e) {
+			LOGGER.error("Exception occured in InvoiceDao :: getCashList ");
+		}
+		LOGGER.info("InvoiceDao :: getCashList method end");
+		return cashList;
 	}
 	
 	
@@ -419,6 +473,47 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao :: getInvNo method end");
 		return invNo;
 	}
+		
+		
+		public List<CashDO> getCashInvoiceListByMonth(String month) {
+			LOGGER.info("InvoiceDao :: getCashInvoiceListByMonth :: Start ");
+			List<CashDO> cashList = new ArrayList<CashDO>();
+			try {
+
+				Session session = getSession();
+
+				CriteriaBuilder builder = session.getCriteriaBuilder();
+
+				CriteriaQuery<CashDO> query = builder.createQuery(CashDO.class);
+
+				Root<CashDO> root = query.from(CashDO.class);
+
+				query.select(root);
+
+				Predicate predicate1 = builder.equal(root.get("month"), month);
+				
+				Predicate predicate2 = builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+
+				query.where(builder.and(predicate1,predicate2));
+
+				Order order = builder.asc(root.get("invoiceDate"));
+
+				query.orderBy(order);
+
+				cashList = session.createQuery(query).getResultList();
+
+				/*
+				 * Criteria criteria=session.createCriteria(InvoiceDO.class);
+				 * criteria.add(Restrictions.eq("month",month)); invoiceList=criteria.list();
+				 */
+
+			} catch (Exception e) {
+				LOGGER.error("Exception occured in InvoiceDao :: getCashInvoiceListByMonth ");
+			}
+			LOGGER.info("InvoiceDao :: getCashInvoiceListByMonth method end");
+			return cashList;
+		}
+		
 
 
 	public List<InvoiceDO> getInvoiceListByMonth(String month) {
@@ -436,9 +531,11 @@ public class InvoiceDao {
 
 			query.select(root);
 
-			Predicate predicate = builder.equal(root.get("month"), month);
+			Predicate predicate1 = builder.equal(root.get("month"), month);
+			
+			Predicate predicate2 = builder.equal(root.get("financialYear"), getCurrentFinancialYear());
 
-			query.where(predicate);
+			query.where(builder.and(predicate1,predicate2));
 
 			Order order = builder.asc(root.get("invoiceDate"));
 
@@ -554,6 +651,43 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao::saveInvoice::end");
 		return "success";
 	}
+	
+	
+	@SuppressWarnings("deprecation")
+	@Transactional
+	public CashDO getCashInvoiceDetails(String invId) {
+		LOGGER.info("InvoiceDao :: getCashInvoiceDetails :: Start ");
+		CashDO invDO = null;
+		try {
+
+			Session session = getSession();
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+
+			CriteriaQuery<CashDO> query = builder.createQuery(CashDO.class);
+
+			Root<CashDO> root = query.from(CashDO.class);
+
+			query.select(root);
+
+			Predicate predicate = builder.equal(root.get("invoiceId"), invId);
+
+			query.where(predicate);
+
+			invDO = session.createQuery(query).getSingleResult();
+			/*
+			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
+			 * criteria.add(Restrictions.eq("invoiceNo",invNo));
+			 * invDO=(InvoiceDO)criteria.uniqueResult();
+			 */
+
+		} catch (Exception e) {
+			LOGGER.error("Exception occured in InvoiceDao :: getCashInvoiceDetails ");
+		}
+		LOGGER.info("InvoiceDao :: getCashInvoiceDetails method end");
+		return invDO;
+	}
+	
 
 	@SuppressWarnings("deprecation")
 	@Transactional

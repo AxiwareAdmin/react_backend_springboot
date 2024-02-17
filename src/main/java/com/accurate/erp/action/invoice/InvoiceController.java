@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.accurate.erp.dto.security.AuthenticationRequest;
 import com.accurate.erp.helper.JwtUtil;
+import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.EmployeeDO;
@@ -257,6 +258,20 @@ public class InvoiceController {
 		}
 	}
 	
+	@GetMapping(value="/cashInvoices/{month}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getCashInvoiceListByMonth(@PathVariable String month){
+		List<CashDO> invoiceDO=invoiceService.getCashInvoiceListByMonth(month.substring(0,3));
+		if(invoiceDO!=null) {
+		return new ResponseEntity<List<CashDO>>(invoiceDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Invoices are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
 	
 	
 	
@@ -339,6 +354,45 @@ public class InvoiceController {
 
 		
 		
+	}
+	
+	@GetMapping(value="/viewSalesCashReg")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getviewSalesCashReg(){
+		List<CashDO> cashList=invoiceService.getCashList();
+		if(cashList!=null && cashList.size()>0) {
+			
+			/*invoiceList.forEach((ele) ->{
+				
+			});*/
+			List<String> salesobj = new ArrayList<>();
+			for(String str  : completeMonth) {
+				JSONObject jsonObj=new JSONObject();
+				Integer totalInv = 0;
+				BigDecimal closingBal = new BigDecimal(0);
+				BigDecimal amount = new BigDecimal(0);
+				for(CashDO invdo : cashList) {
+					if(str.substring(0,3).equalsIgnoreCase(invdo.getMonth())) {
+						totalInv = totalInv + 1;
+						amount = amount.add(invdo.getInvoiceValue());
+						closingBal = closingBal.add(new BigDecimal(1));
+					}
+				}
+				jsonObj.put("month", str);
+				jsonObj.put("totalInv", totalInv);
+				jsonObj.put("amount", amount);
+				jsonObj.put("closingBal", closingBal);
+				jsonObj.put("progress", 30);
+				salesobj.add(jsonObj.toString());
+			}
+			
+		return new ResponseEntity<List<String>>(salesobj,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Invoices are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
 	}
 	
 	
@@ -429,6 +483,20 @@ public class InvoiceController {
 		InvoiceDO invoicedo=invoiceService.getInvoiceDetails(invId);
 		if(invoicedo!=null) {
 		return new ResponseEntity<InvoiceDO>(invoicedo,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Invoice Details are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping(value="/viewCashInvoice")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getCashInvoiceDetails(@QueryParam("invId") String invId){
+		CashDO invoicedo=invoiceService.getCashInvoiceDetails(invId);
+		if(invoicedo!=null) {
+		return new ResponseEntity<CashDO>(invoicedo,HttpStatus.OK);
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
