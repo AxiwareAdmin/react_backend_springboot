@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -80,6 +81,12 @@ public class ErpApplication {
 	    }
 	 
 	 
+	  @Bean
+	    public CommonsMultipartResolver multipartResolver() {
+	        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+	        resolver.setMaxUploadSize(100 * 1024 * 1024); // Set maximum upload size if needed
+	        return resolver;
+	    }
 
 
 }

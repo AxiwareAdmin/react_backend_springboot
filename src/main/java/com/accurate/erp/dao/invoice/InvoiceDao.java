@@ -1,5 +1,6 @@
 package com.accurate.erp.dao.invoice;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.ProductDO;
+import com.accurate.erp.model.invoice.ProformaInvoiceDO;
 import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
@@ -201,6 +203,36 @@ public class InvoiceDao {
 		}
 		LOGGER.info("InvoiceDao :: getInvoiceList method end");
 		return invoiceList;
+	}
+	
+	public List<ProformaInvoiceDO> getProformaList() {
+		LOGGER.info("InvoiceDao :: getProformaList :: Start ");
+		List<ProformaInvoiceDO> proformaList = new ArrayList<ProformaInvoiceDO>();
+		try {
+
+			Session session = getSession();
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+
+			CriteriaQuery<ProformaInvoiceDO> query = builder.createQuery(ProformaInvoiceDO.class);
+
+			Root<ProformaInvoiceDO> root = query.from(ProformaInvoiceDO.class);
+			
+			Predicate pred=builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+
+			query.select(root);
+			
+			query.where(pred);
+
+			proformaList = session.createQuery(query).getResultList();
+
+
+
+		} catch (Exception e) {
+			LOGGER.error("Exception occured in InvoiceDao :: getProformaList ");
+		}
+		LOGGER.info("InvoiceDao :: getProformaList method end");
+		return proformaList;
 	}
 	
 	public List<CashDO> getCashList() {
@@ -475,6 +507,45 @@ public class InvoiceDao {
 	}
 		
 		
+		public List<ProformaInvoiceDO> getProformaInvoiceListByMonth(String month) {
+			LOGGER.info("InvoiceDao :: getProformaInvoiceListByMonth :: Start ");
+			List<ProformaInvoiceDO> proformaList = new ArrayList<ProformaInvoiceDO>();
+			try {
+
+				Session session = getSession();
+
+				CriteriaBuilder builder = session.getCriteriaBuilder();
+
+				CriteriaQuery<ProformaInvoiceDO> query = builder.createQuery(ProformaInvoiceDO.class);
+
+				Root<ProformaInvoiceDO> root = query.from(ProformaInvoiceDO.class);
+
+				query.select(root);
+
+				Predicate predicate1 = builder.equal(root.get("month"), month);
+				
+				Predicate predicate2 = builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+
+				query.where(builder.and(predicate1,predicate2));
+
+				Order order = builder.asc(root.get("invoiceDate"));
+
+				query.orderBy(order);
+
+				proformaList = session.createQuery(query).getResultList();
+
+				/*
+				 * Criteria criteria=session.createCriteria(InvoiceDO.class);
+				 * criteria.add(Restrictions.eq("month",month)); invoiceList=criteria.list();
+				 */
+
+			} catch (Exception e) {
+				LOGGER.error("Exception occured in InvoiceDao :: getProformaInvoiceListByMonth ");
+			}
+			LOGGER.info("InvoiceDao :: getProformaInvoiceListByMonth method end");
+			return proformaList;
+		}
+		
 		public List<CashDO> getCashInvoiceListByMonth(String month) {
 			LOGGER.info("InvoiceDao :: getCashInvoiceListByMonth :: Start ");
 			List<CashDO> cashList = new ArrayList<CashDO>();
@@ -632,6 +703,33 @@ public class InvoiceDao {
 		return "success";
 	}
 	
+	public String saveCashInvoice(CashDO invoiceDO) {
+		LOGGER.info("InvoiceDao::saveInvoice::start");
+
+		try {
+			CashDO tmp = invoiceDO;
+			CashDO invDO = null;
+			invoiceDO.setInvoiceProductId(1);
+			Calendar cal = Calendar.getInstance();
+			invoiceDO.setMonth(new SimpleDateFormat("MMM").format(cal.getTime()));
+			invoiceDO.setCity("Mum");
+			invoiceDO.setIgstValue(new BigDecimal(1));
+			Session session=getSession();
+			
+//			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(invoiceDO);
+//			session.flush();
+//			tx.commit();
+
+		} catch (Exception e) {
+			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);
+			return "failure";
+		}
+
+		LOGGER.info("InvoiceDao::saveInvoice::end");
+		return "success";
+	}
+	
 	
 	public String savePurchase(PurchaseDO purchaseDO) {
 		LOGGER.info("InvoiceDao::saveInvoice::start");
@@ -650,6 +748,68 @@ public class InvoiceDao {
 
 		LOGGER.info("InvoiceDao::saveInvoice::end");
 		return "success";
+	}
+	
+	public String saveProformaInvoice(ProformaInvoiceDO invoiceDO) {
+		LOGGER.info("InvoiceDao::saveInvoice::start");
+
+		try {
+			ProformaInvoiceDO tmp = invoiceDO;
+			ProformaInvoiceDO invDO = null;
+			invoiceDO.setInvoiceProductId(1);
+			Calendar cal = Calendar.getInstance();
+			invoiceDO.setMonth(new SimpleDateFormat("MMM").format(cal.getTime()));
+			invoiceDO.setCity("Mum");
+			invoiceDO.setIgstValue(new BigDecimal(1));
+			Session session=getSession();
+			
+//			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(invoiceDO);
+//			session.flush();
+//			tx.commit();
+
+		} catch (Exception e) {
+			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);
+			return "failure";
+		}
+
+		LOGGER.info("InvoiceDao::saveInvoice::end");
+		return "success";
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Transactional
+	public ProformaInvoiceDO getProformaInvoiceDetails(String invId) {
+		LOGGER.info("InvoiceDao :: getProformaInvoiceDetails :: Start ");
+		ProformaInvoiceDO invDO = null;
+		try {
+
+			Session session = getSession();
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+
+			CriteriaQuery<ProformaInvoiceDO> query = builder.createQuery(ProformaInvoiceDO.class);
+
+			Root<ProformaInvoiceDO> root = query.from(ProformaInvoiceDO.class);
+
+			query.select(root);
+
+			Predicate predicate = builder.equal(root.get("invoiceId"), invId);
+
+			query.where(predicate);
+
+			invDO = session.createQuery(query).getSingleResult();
+			/*
+			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
+			 * criteria.add(Restrictions.eq("invoiceNo",invNo));
+			 * invDO=(InvoiceDO)criteria.uniqueResult();
+			 */
+
+		} catch (Exception e) {
+			LOGGER.error("Exception occured in InvoiceDao :: getProformaInvoiceDetails ");
+		}
+		LOGGER.info("InvoiceDao :: getProformaInvoiceDetails method end");
+		return invDO;
 	}
 	
 	
@@ -686,6 +846,72 @@ public class InvoiceDao {
 		}
 		LOGGER.info("InvoiceDao :: getCashInvoiceDetails method end");
 		return invDO;
+	}
+	
+	
+/*	@SuppressWarnings("deprecation")
+	@Transactional
+	public Object getClassDetails(String className,String invId) {
+		LOGGER.info("InvoiceDao :: getInvoiceDetails :: Start ");
+		Object invDO = null;
+		try {
+			
+			Class<?> c=Class.forName(className);
+
+			Session session = getSession();
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+
+			CriteriaQuery<?> query = builder.createQuery(c);
+
+			Root<?> root = query.from(c);
+
+			query.select(root);
+
+			Predicate predicate = builder.equal(root.get("invoiceId"), invId);
+
+			query.where(predicate);
+
+			invDO = session.createQuery(query).getSingleResult();
+		
+		} catch (Exception e) {
+			LOGGER.error("Exception occured in InvoiceDao :: getInvoiceDetails ");
+		}
+		LOGGER.info("InvoiceDao :: getInvoiceDetails method end");
+		return invDO;
+	}*/
+	
+	
+	public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
+	    LOGGER.info("InvoiceDao :: getSalesTypeClassDetails :: Start ");
+	    T invDO = null;
+	    try {
+
+	        Session session = getSession();
+	        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+	        // Use the type variable for CriteriaQuery and Root
+	        CriteriaQuery<T> query = builder.createQuery(resultClass);
+	        Root<T> root = query.from(resultClass);
+
+	        // Select all attributes of the entity
+	        query.select(root);
+
+	        Predicate predicate = builder.equal(root.get("invoiceId"), invId);
+	        query.where(predicate);
+
+	        // Adjusted the getResultList() usage
+	        List<T> resultList = session.createQuery(query).getResultList();
+
+	        if (!resultList.isEmpty()) {
+	            invDO = resultList.get(0);
+	        }
+
+	    } catch (Exception e) {
+	        LOGGER.error("Exception occurred in InvoiceDao :: getSalesTypeClassDetails ", e);
+	    }
+	    LOGGER.info("InvoiceDao :: getSalesTypeClassDetails method end");
+	    return invDO;
 	}
 	
 
@@ -725,14 +951,17 @@ public class InvoiceDao {
 	}
 
 	@Transactional
-	public boolean DeleteInvoice(String invNo) {
+	public boolean DeleteInvoice(String invId,String className) {
 		LOGGER.info("InvoiceDao :: DeleteInvoice :: Start ");
 		boolean flag = false;
 		InvoiceDO invDo = null;
 		try {
 
 			Session session = getSession();
-			Query query = session.createNativeQuery("delete from Invoice where Invoice_id ='" + invNo + "'");
+			
+			String idName=className.equalsIgnoreCase("proforma_invoice")?"pi_id":"Invoice_id";
+			
+			Query query = session.createNativeQuery("delete from "+className+" where "+idName+" ='" + invId + "'");
 			/*
 			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
 			 * criteria.add(Restrictions.eq("invoiceNo",invNo)); invDo =
@@ -948,6 +1177,64 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao::getInvoiceByFinancialYear()::End");
 		return invoiceDO;
 	}
+	
+	
+	public List<CashDO> getCashInvoiceByFinancialYear(String financialYear) {
+		LOGGER.info("InvoiceDao::getCashInvoiceByFinancialYear()::Start");
+		List<CashDO> cashDO=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<CashDO> query=criteriaBuilder.createQuery(CashDO.class);
+			
+			Root<CashDO> root=query.from(CashDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
+			
+			query.where(predicate);
+			
+			cashDO=session.createQuery(query).getResultList();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getCashInvoiceByFinancialYear()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getCashInvoiceByFinancialYear()::End");
+		return cashDO;
+	}
+	
+	public List<ProformaInvoiceDO> getProformaInvoiceByFinancialYear(String financialYear) {
+		LOGGER.info("InvoiceDao::getProformaInvoiceByFinancialYear()::Start");
+		List<ProformaInvoiceDO> proformaDO=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<ProformaInvoiceDO> query=criteriaBuilder.createQuery(ProformaInvoiceDO.class);
+			
+			Root<ProformaInvoiceDO> root=query.from(ProformaInvoiceDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
+			
+			query.where(predicate);
+			
+			proformaDO=session.createQuery(query).getResultList();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getProformaInvoiceByFinancialYear()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getProformaInvoiceByFinancialYear()::End");
+		return proformaDO;
+	}
+	
 	
 		public String getCustomerEmail(String custName) {
 		
@@ -1411,7 +1698,8 @@ public class InvoiceDao {
 		return userList;
 	}
 	
-	public boolean cancelInvoiceById(Integer invoiceId) {
+	
+	public boolean cancelInvoiceById(String invoiceType,Integer invoiceId) {
 		LOGGER.info("InvoiceDao::calcelInvoice()::start");
 		boolean flag=false;
 		
@@ -1419,32 +1707,87 @@ public class InvoiceDao {
 			
 			Session session=getSession();
 			
-			InvoiceDO invoiceDO=getInvoiceDetails(invoiceId.toString());
+			Class<?> className=null;
 			
-			invoiceDO.setAdditionalCharges("0");
+			if(invoiceType.equals("CASH")) {
+				className=CashDO.class;
+			}
+			else if(invoiceType.equals("GST")) {
+				className=InvoiceDO.class;
+			}
+			else if(invoiceType.equals("PROFORMA")) {
+				className=ProformaInvoiceDO.class;
+			}
 			
-			invoiceDO.setTransportCharges("0");
 			
-			invoiceDO.setDiscount(BigDecimal.ZERO);
+//			InvoiceDO invoiceDO=getInvoiceDetails(invoiceId.toString());
 			
-			invoiceDO.setOtherDiscount(BigDecimal.ZERO);
+			Object invoiceDO=getSalesTypeClassDetails(className, invoiceId.toString());
 			
-			invoiceDO.setSgstValue(BigDecimal.ZERO);
+			String[] methodNames1 = {"setAdditionalCharges","setTransportCharges"};
 			
-			invoiceDO.setCgstValue(BigDecimal.ZERO);
+			for(String methodName:methodNames1) {
+				   Method method = invoiceDO.getClass().getMethod(methodName,String.class);
+		            
+		            method.invoke(invoiceDO,"0");
+		            
+			}
 			
-			invoiceDO.setIgstValue(BigDecimal.ZERO);
+			String[] methodNames2 = {"setDiscount","setOtherDiscount","setSgstValue",
+					"setCgstValue","setIgstValue","setTaxableValue","setInvoiceValue"};
 			
-			invoiceDO.setTaxableValue(BigDecimal.ZERO);
 			
-			invoiceDO.setInvoiceValue(BigDecimal.ZERO);
-			Transaction transaction=session.beginTransaction();
+			for(String methodName:methodNames2) {
+				   Method method = invoiceDO.getClass().getMethod(methodName,BigDecimal.class);
+		            
+		            method.invoke(invoiceDO,BigDecimal.ZERO);
+		            
+			}
 			
+			
+//			Class<?>[] parameterTypes = {String.class}; 
+//			
+//			 Method[] methods = invoiceDO.getClass().getDeclaredMethods();
+//
+//		        
+//		        for (Method method : methods) {
+//		            System.out.println(method.getName());
+//		            
+//		            Class<?>[] parameterTypes1 = method.getParameterTypes();
+//
+//		            // Print the parameter types
+//		            System.out.println("Parameter types for method " + method.getName() + ":");
+//		            for (Class<?> parameterType : parameterTypes1) {
+//		                System.out.println(parameterType.getName());
+//		            }
+//		        }
+			
+         
+            
+            System.out.println("done.");
+            
+			
+//			invoiceDO.setAdditionalCharges("0");
+//			
+//			invoiceDO.setTransportCharges("0");
+//			
+//			invoiceDO.setDiscount(BigDecimal.ZERO);
+//			
+//			invoiceDO.setOtherDiscount(BigDecimal.ZERO);
+//			
+//			invoiceDO.setSgstValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setCgstValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setIgstValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setTaxableValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setInvoiceValue(BigDecimal.ZERO);
+//			
 			session.saveOrUpdate(invoiceDO);
-			
-			session.flush();
-			
-			transaction.commit();
+//			
+
 			
 			flag=true;
 			
@@ -1458,6 +1801,54 @@ public class InvoiceDao {
 		return flag;
 		
 	}
+	
+//	public boolean cancelInvoiceById(Integer invoiceId) {
+//		LOGGER.info("InvoiceDao::calcelInvoice()::start");
+//		boolean flag=false;
+//		
+//		try {
+//			
+//			Session session=getSession();
+//			
+//			InvoiceDO invoiceDO=getInvoiceDetails(invoiceId.toString());
+//			
+//			invoiceDO.setAdditionalCharges("0");
+//			
+//			invoiceDO.setTransportCharges("0");
+//			
+//			invoiceDO.setDiscount(BigDecimal.ZERO);
+//			
+//			invoiceDO.setOtherDiscount(BigDecimal.ZERO);
+//			
+//			invoiceDO.setSgstValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setCgstValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setIgstValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setTaxableValue(BigDecimal.ZERO);
+//			
+//			invoiceDO.setInvoiceValue(BigDecimal.ZERO);
+////			Transaction transaction=session.beginTransaction();
+//			
+//			session.saveOrUpdate(invoiceDO);
+//			
+////			session.flush();
+////			
+////			transaction.commit();
+//			
+//			flag=true;
+//			
+//			
+//		}catch(Exception e) {
+//			LOGGER.error("Exception in InvoiceDao::cancelInvoiceById()::"+e);
+//		}
+//		
+//		LOGGER.info("InvoiceDao::calcelInvoice()::end");
+//		
+//		return flag;
+//		
+//	}
 	
 	public ClientDO getClientDoByRegisterId(String registerId) {
 		LOGGER.info("invoiceDao::getClientDoByRegisterId()::start");

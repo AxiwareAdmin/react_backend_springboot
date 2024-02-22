@@ -34,12 +34,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="cash_sale_products")
-public class CashSaleProductDO {
+@Table(name="proforma_invoice_products")
+public class ProformaInvoiceProductDO {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="invoice_product_id")
+	@Column(name="pi_product_id")
 	Integer invoiceProductId;
 	
 	@Column(name="product_name")
@@ -78,7 +78,7 @@ public class CashSaleProductDO {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="invoice_id")
-	CashDO invoiceDO;
+	ProformaInvoiceDO invoiceDO;
 	
 	@Column(name="month")
 	String month;
@@ -200,26 +200,12 @@ public class CashSaleProductDO {
 		return invoiceDO;
 	}
 */
-	
-	
-//	public CashDO getInvoiceDO() {
-//		return invoiceDO;
-//	}
-
-	public void setInvoiceDO(CashDO invoiceDO) {
+	public void setInvoiceDO(ProformaInvoiceDO invoiceDO) {
 		this.invoiceDO = invoiceDO;
 	}
 
 	public String getMonth() {
 		return month;
-	}
-
-//	public CashDO getCashDO() {
-//		return cashDO;
-//	}
-
-	public void setCashDO(CashDO cashDO) {
-		this.invoiceDO = cashDO;
 	}
 
 	public void setMonth(String month) {

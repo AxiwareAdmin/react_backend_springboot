@@ -8,8 +8,18 @@ import java.util.List;
 import java.util.Set;
 
 
+/*import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;*/
 
 import org.hibernate.annotations.Cascade;
+//import javax.persistence.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -17,7 +27,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.CascadeType;
 
-
+/*import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;*/
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,17 +47,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "cash_sale")
-public class CashDO {
+@Table(name = "proforma_invoice")
+public class ProformaInvoiceDO {
+	
+
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Invoice_id")
+	@Column(name = "pi_id")
 	Integer invoiceId;
 
-	@Column(name = "Invoice_No")
+	@Column(name = "pi_No")
 	String invoiceNo;
 
-	@Column(name = "Invoice_Date")
+	@Column(name = "pi_Date")
 	Date invoiceDate;
 
 	@Column(name = "Customer_Name")
@@ -139,21 +160,27 @@ public class CashDO {
 	@Column(name="Month")
 	String month;
 	
-	/*
-	 * @Column(name="transportGst") Integer transportGst;
-	 * 
-	 * @Column(name="additionalChargesGst") Integer additionalChargesGst;
-	 * 
-	 * public Integer getTransportGst() { return transportGst; }
-	 * 
-	 * public void setTransportGst(Integer transportGst) { this.transportGst =
-	 * transportGst; }
-	 * 
-	 * public Integer getAdditionalChargesGst() { return additionalChargesGst; }
-	 * 
-	 * public void setAdditionalChargesGst(Integer additionalChargesGst) {
-	 * this.additionalChargesGst = additionalChargesGst; }
-	 */
+	@Column(name="transportGst")
+	Integer transportGst;
+	
+	@Column(name="additionalChargesGst")
+	Integer additionalChargesGst;
+	
+	public Integer getTransportGst() {
+		return transportGst;
+	}
+
+	public void setTransportGst(Integer transportGst) {
+		this.transportGst = transportGst;
+	}
+
+	public Integer getAdditionalChargesGst() {
+		return additionalChargesGst;
+	}
+
+	public void setAdditionalChargesGst(Integer additionalChargesGst) {
+		this.additionalChargesGst = additionalChargesGst;
+	}
 
 	@Column(name="service_invoice")
 	String serviceCheck;
@@ -166,7 +193,7 @@ public class CashDO {
 	
 	@JsonProperty("invoiceProductDO")
 	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.EAGER,cascade= CascadeType.ALL,orphanRemoval = true)
-	List<CashSaleProductDO> invoiceProductDO=new ArrayList<>();
+	List<ProformaInvoiceProductDO> invoiceProductDO=new ArrayList<>();
 	
 	@Column(name="register_id")
 	Integer registerId;
@@ -212,15 +239,13 @@ public class CashDO {
 		this.serviceCheck = serviceCheck;
 	}
 
-	
-
-	public List<CashSaleProductDO> getCashSaleProductDO() {
+	public List<ProformaInvoiceProductDO> getInvoiceProductDO() {
 		return invoiceProductDO;
 	}
 
-	public void setCashSaleProductDO(List<CashSaleProductDO> cashSaleProductDO) {
+	public void setInvoiceProductDO(List<ProformaInvoiceProductDO> invoiceProductDO) {
 		this.invoiceProductDO.clear();
-		this.invoiceProductDO.addAll(cashSaleProductDO);
+		this.invoiceProductDO.addAll(invoiceProductDO);
 	}
 
 	public Date getCreatedDate() {
