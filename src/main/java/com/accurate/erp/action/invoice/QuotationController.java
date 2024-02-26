@@ -58,6 +58,20 @@ public class QuotationController {
 	@Autowired
 	JwtUtil jwtUtil;
 	
+	@GetMapping(value="/Quotations/year/{financialYear}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
+		List<QuotationDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
+		if(invoiceDO!=null) {
+		return new ResponseEntity<List<QuotationDO>>(invoiceDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Quotation are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
 	@GetMapping(value="/allQuotations")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getAllInvoiceList(){
@@ -199,6 +213,42 @@ public class QuotationController {
 		}
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 	}
+	
+	@GetMapping(value = "/cancelQuotation")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> cancelInvoice(@QueryParam("QuoId") String invoiceId){
+		
+		
+		
+		boolean flag=invoiceService.cancelInvoiceById(Integer.parseInt(invoiceId));
+		JSONObject jsonObj=new JSONObject();
+		if(flag==true) {
+			jsonObj.put("res", "success");
+		}else {
+			jsonObj.put("res", "failure");
+		}
+		
+		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/deleteQuo")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getDeleteInvoice(@QueryParam("QuoId") String invoiceId){
+		String className=null;
+			
+		
+		boolean flag=invoiceService.DeleteInvoice(invoiceId);
+		
+		JSONObject jsonObj=new JSONObject();
+		
+		if(flag) {
+			jsonObj.put("res", "sucess");
+		}else {
+			jsonObj.put("res", "failure");
+		}
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+	}
+	
 	
 	
 	

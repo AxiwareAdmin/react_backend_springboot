@@ -342,10 +342,9 @@ public class QuotationDAO {
 	}
     
     @Transactional
-	public boolean DeleteInvoice(String invId,String className) {
+	public boolean DeleteInvoice(String invId) {
 		LOGGER.info("QuotationDAO :: DeleteInvoice :: Start ");
 		boolean flag = false;
-		InvoiceDO invDo = null;
 		try {
 
 			Session session = getSession();
@@ -486,7 +485,7 @@ public String getCustomerEmail(String custName) {
 		
 	}
 
-public boolean cancelInvoiceById(String invoiceType,Integer invoiceId) {
+public boolean cancelInvoiceById(Integer invoiceId) {
 	LOGGER.info("QuotationDAO::calcelInvoice()::start");
 	boolean flag=false;
 	
@@ -533,6 +532,36 @@ public boolean cancelInvoiceById(String invoiceType,Integer invoiceId) {
 	return flag;
 	
 }
+
+public List<QuotationDO> getInvoiceByFinancialYear(String financialYear) {
+	LOGGER.info("QuotationDAO::getInvoiceByFinancialYear()::Start");
+	List<QuotationDO> invoiceDO=null;
+	
+	try {
+		Session session=getSession();
+		
+		CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+		
+		CriteriaQuery<QuotationDO> query=criteriaBuilder.createQuery(QuotationDO.class);
+		
+		Root<QuotationDO> root=query.from(QuotationDO.class);
+		
+		query.select(root);
+		
+		Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
+		
+		query.where(predicate);
+		
+		invoiceDO=session.createQuery(query).getResultList();
+		
+	}catch(Exception e) {
+		LOGGER.error("Exception in QuotationDAO::getInvoiceByFinancialYear()::"+e);
+	}
+	LOGGER.info("QuotationDAO::getInvoiceByFinancialYear()::End");
+	return invoiceDO;
+}
+
+
 
 
 

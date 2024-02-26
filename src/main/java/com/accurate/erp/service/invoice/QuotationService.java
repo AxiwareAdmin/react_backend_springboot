@@ -370,9 +370,13 @@ public class QuotationService {
 	
 	
 	
-	public boolean DeleteInvoice(String invId,String className){
+	public boolean DeleteInvoice(String invId){
 		LOGGER.info("QuotationService::DeleteInvoice()::start");
-		return invoiceDao.DeleteInvoice(invId,className);
+		return invoiceDao.DeleteInvoice(invId);
+	}
+	
+	public List<QuotationDO> getInvoiceByFinancialYear(String financialYear) {
+		return invoiceDao.getInvoiceByFinancialYear(financialYear);
 	}
 	
 	
@@ -404,8 +408,8 @@ public class QuotationService {
 	
 	
     
-	public boolean cancelInvoiceById(String invoiceType,Integer invoiceId) {
-		return invoiceDao.cancelInvoiceById(invoiceType,invoiceId);
+	public boolean cancelInvoiceById(Integer invoiceId) {
+		return invoiceDao.cancelInvoiceById(invoiceId);
 	}
 	
 	
