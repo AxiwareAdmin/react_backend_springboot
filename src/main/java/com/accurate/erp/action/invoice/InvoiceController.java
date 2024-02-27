@@ -2,6 +2,7 @@ package com.accurate.erp.action.invoice;
 
 import org.springframework.http.MediaType;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -118,6 +119,22 @@ public class InvoiceController {
 		}
 	}
 	
+	
+	@GetMapping(value="/supplier/suppliername/{supplierName}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getSupplierByName(@PathVariable String supplierName){
+		SupplierDO customerDO=invoiceService.getSupplierByName(supplierName);
+		if(customerDO!=null) {
+		return new ResponseEntity<SupplierDO>(customerDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Customers are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
+	
 	@GetMapping(value="/supplier/{supplierId}")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getSuplierById(@PathVariable String supplierId){
@@ -174,7 +191,7 @@ public class InvoiceController {
 		}
 	}
 	
-	@GetMapping("/purchase/{id}")
+	@GetMapping("/purchase/id/{id}")
 	@CrossOrigin(origins = {"*"})
 	public ResponseEntity<?> getPurchaseById(@PathVariable String id){
 		PurchaseDO purchaseDO=invoiceService.getPurchaseById(id);
@@ -453,11 +470,24 @@ public class InvoiceController {
 	
 	@PostMapping(value="/savepurchase",consumes= {"application/json"})
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> savePurchase(@RequestBody Map<String, Object> inputJson) throws ParseException{
+	public ResponseEntity<?> savePurchase(HttpServletRequest request,@RequestBody Map<String, Object> inputJson) throws ParseException{
 		
 		System.out.print(inputJson);
 		
-		String msg=invoiceService.savePurchase(inputJson);
+		String token=request.getHeader("Authorization").split(" ")[1];
+		
+		
+		  Claims claims= jwtUtil.extractAllClaims(token);
+		  
+		  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+		  
+		  String registerId=map.get("registerId").toString();
+		  
+		  String userId=map.get("userId").toString();
+		  
+		  String userName=map.get("userName").toString();
+		
+		String msg=invoiceService.savePurchase(inputJson,registerId,userId,userName);
 		
 		JSONObject jsonObj=new JSONObject();
 		if(msg.equals("success")) {
@@ -614,8 +644,9 @@ public class InvoiceController {
 				jsonObj.put("totalInv", totalInv);
 				jsonObj.put("amount", amount);
 				jsonObj.put("closingBal", closingBal);
+				MathContext precision = new MathContext(2);
 				if(totalInv>0)
-				jsonObj.put("progress", amount.divide(new BigDecimal(totalInv)).multiply(new BigDecimal(100)));
+				jsonObj.put("progress", amount.divide(new BigDecimal(totalInv),precision).multiply(new BigDecimal(100)));
 				else
 					jsonObj.put("progress","0");
 				salesobj.add(jsonObj.toString());
@@ -674,7 +705,7 @@ public class InvoiceController {
 	
 	@GetMapping(value="/deletePurchase/{id}")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> deletePurchase(@PathVariable String purchaseId){
+	public ResponseEntity<?> deletePurchase(@PathVariable("id") String purchaseId){
 		boolean flag=invoiceService.deletePurchase(purchaseId);
 		
 		JSONObject jsonObj=new JSONObject();
@@ -1095,6 +1126,25 @@ public class InvoiceController {
 			
 			
 			boolean flag=invoiceService.cancelInvoiceById(invoiceType,Integer.parseInt(invoiceId));
+			JSONObject jsonObj=new JSONObject();
+			if(flag==true) {
+				jsonObj.put("res", "success");
+			}else {
+				jsonObj.put("res", "failure");
+			}
+			
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+		
+		
+
+		@PostMapping(value = "/cancelPurchase/{id}")
+		@CrossOrigin(origins={"*"})
+		public ResponseEntity<?> cancelPurchase(@PathVariable("id") String invoiceId){
+			
+			
+			
+			boolean flag=invoiceService.cancelPurchaseById(Integer.parseInt(invoiceId));
 			JSONObject jsonObj=new JSONObject();
 			if(flag==true) {
 				jsonObj.put("res", "success");

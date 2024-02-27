@@ -736,10 +736,10 @@ public class InvoiceDao {
 
 		try {
 			Session session=getSession();
-			Transaction tx=session.beginTransaction();
+//			Transaction tx=session.beginTransaction();
 			session.saveOrUpdate(purchaseDO);
-			session.flush();
-			tx.commit();
+//			session.flush();
+//			tx.commit();
 
 		} catch (Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);
@@ -979,7 +979,7 @@ public class InvoiceDao {
 	}
 	
 	public boolean deletePurchase(String purchaseId) {
-		LOGGER.info("InvoiceDao :: DeleteInvoice :: Start ");
+		LOGGER.info("InvoiceDao :: deletePurchase :: Start ");
 		boolean flag = false;
 		InvoiceDO invDo = null;
 		try {
@@ -998,7 +998,7 @@ public class InvoiceDao {
 			LOGGER.error("Exception occured in InvoiceDao :: DeleteInvoice ");
 			flag = false;
 		}
-		LOGGER.info("InvoiceDao :: DeleteInvoice method end");
+		LOGGER.info("InvoiceDao :: deletePurchase method end");
 		return flag;
 	}
 	
@@ -1699,6 +1699,55 @@ public class InvoiceDao {
 	}
 	
 	
+	public boolean cancelPurchaseById(Integer invoiceId) {
+		LOGGER.info("InvoiceDao::cancelPurchaseById()::start");
+		boolean flag=false;
+		
+		try {
+			
+			Session session=getSession();
+			
+			Class<?> className=null;
+			
+			PurchaseDO purchaseDO=getPurchaseById(invoiceId.toString());
+            
+			
+			purchaseDO.setAdditionalCharges("0");
+			
+			purchaseDO.setTransportCharges("0");
+			
+			purchaseDO.setDiscount("0");
+			
+			purchaseDO.setOtherDiscount("0");
+			
+			purchaseDO.setSgstValue(BigDecimal.ZERO);
+			
+			purchaseDO.setCgstValue(BigDecimal.ZERO);
+			
+			purchaseDO.setIgstValue(BigDecimal.ZERO);
+			
+			purchaseDO.setTaxableValue(BigDecimal.ZERO);
+			
+			purchaseDO.setInvoiceValue(BigDecimal.ZERO);
+//			
+			session.saveOrUpdate(purchaseDO);
+//			
+
+			
+			flag=true;
+			
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::cancelPurchaseById()::"+e);
+		}
+		
+		LOGGER.info("InvoiceDao::cancelPurchaseById()::end");
+		
+		return flag;
+		
+	}
+	
+	
 	public boolean cancelInvoiceById(String invoiceType,Integer invoiceId) {
 		LOGGER.info("InvoiceDao::calcelInvoice()::start");
 		boolean flag=false;
@@ -1878,6 +1927,37 @@ public class InvoiceDao {
 		
 		LOGGER.info("invoiceDao::getClientDoByRegisterId()::end");
 		return clientDO;
+	}
+	
+	public SupplierDO getSupplierByName(String supplierName) {
+		LOGGER.info("invoiceDao::getSupplierByName()::start");
+		
+		SupplierDO custDO=null;
+		
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<SupplierDO> query=builder.createQuery(SupplierDO.class);
+			
+			Root<SupplierDO> root=query.from(SupplierDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("supplierName"), supplierName);
+			
+			query.where(predicate);
+			
+			custDO=session.createQuery(query).getSingleResult();
+			
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getSupplierByName()::"+e);
+		}
+		
+		return custDO;
 	}
 	
 	public CustomerDO getCustomerByName(String custName) {

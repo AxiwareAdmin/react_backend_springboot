@@ -80,7 +80,7 @@ public class SendMail {
 			    propvls.put("mail.smtp.auth", "true");
 			    propvls.put("mail.smtp.starttls.enable", "true");
 			    propvls.put("mail.smtp.host", smtphost);
-			    propvls.put("mail.smtp.port", "25");
+			    propvls.put("mail.smtp.port", "587");
 			
 			Session sessionobj = Session.getInstance(propvls,
 				       new javax.mail.Authenticator() {

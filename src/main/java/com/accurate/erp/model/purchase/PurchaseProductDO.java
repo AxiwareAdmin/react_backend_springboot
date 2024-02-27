@@ -76,6 +76,8 @@ public class PurchaseProductDO {
 	
 	@Column(name="user_id")
 	String userId;
+	
+
 
 	public Integer getPurchaseProductId() {
 		return purchaseProductId;

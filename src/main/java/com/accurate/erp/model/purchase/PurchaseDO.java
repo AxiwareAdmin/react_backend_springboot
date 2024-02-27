@@ -81,10 +81,117 @@ public class PurchaseDO {
 	@Column(name="purchase_product_id")
 	String purchaseProductId;
 	
+	
+	@Column(name="purchase_status")
+	String purchaseStatus;
+	
+	
+	@Column(name = "CGST_Value")
+	BigDecimal cgstValue;
+	
+	@Column(name = "SGST_Value")
+	BigDecimal sgstValue;
+	
+	@Column(name = "IGST_Value")
+	BigDecimal igstValue;
+	
+	
+	@Column(name="register_id")
+	Integer registerId;
+	
+	@Column(name="user_id")
+	Integer userId;
+	
+	@Column(name="createdby")
+	String createdBy;
+	
+	@Column(name="created_date")
+	Date createdDate;
+	
+	@Column(name="financial_year")
+	String financialYear;
+	
+	
+	
+	
+	
+	
+	public String getFinancialYear() {
+		return financialYear;
+	}
+
+	public void setFinancialYear(String financialYear) {
+		this.financialYear = financialYear;
+	}
+
+	public Integer getRegisterId() {
+		return registerId;
+	}
+
+	public void setRegisterId(Integer registerId) {
+		this.registerId = registerId;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public BigDecimal getCgstValue() {
+		return cgstValue;
+	}
+
+	public void setCgstValue(BigDecimal cgstValue) {
+		this.cgstValue = cgstValue;
+	}
+
+	public BigDecimal getSgstValue() {
+		return sgstValue;
+	}
+
+	public void setSgstValue(BigDecimal sgstValue) {
+		this.sgstValue = sgstValue;
+	}
+
+	public BigDecimal getIgstValue() {
+		return igstValue;
+	}
+
+	public void setIgstValue(BigDecimal igstValue) {
+		this.igstValue = igstValue;
+	}
+
+	public String getPurchaseStatus() {
+		return purchaseStatus;
+	}
+
+	public void setPurchaseStatus(String purchaseStatus) {
+		this.purchaseStatus = purchaseStatus;
+	}
+
 	@Column(name="month")
 	String month;
 	
-	@OneToMany(mappedBy = "purchaseDO",fetch = FetchType.EAGER,cascade= CascadeType.ALL)
+	@OneToMany(mappedBy = "purchaseDO",fetch = FetchType.EAGER,cascade= CascadeType.ALL,orphanRemoval = true)
 	List<PurchaseProductDO> purchaseProductDOs=new ArrayList<>();
 	
 	
@@ -95,7 +202,8 @@ public class PurchaseDO {
 	}
 
 	public void setPurchaseProductDOs(List<PurchaseProductDO> purchaseProductDOs) {
-		this.purchaseProductDOs = purchaseProductDOs;
+		this.purchaseProductDOs.clear();
+		this.purchaseProductDOs.addAll(purchaseProductDOs);
 	}
 
 	public Integer getPurchaseId() {

@@ -957,7 +957,7 @@ public String saveProforma(Map<String, Object> inputJson,String registerId,Strin
 	
 	
 	
-public String savePurchase(Map<String, Object> inputJson) throws ParseException {
+public String savePurchase(Map<String, Object> inputJson,String registerID,String userId,String userName) throws ParseException {
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 		
@@ -969,13 +969,20 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 		
 		Object purchaseId=inputJson.get("purchaseId");
 		
+		
+		if(purchaseId!=null && purchaseId.toString().length()>0) {
+			purchaseDO=getPurchaseById(purchaseId.toString());
+//				invoiceDO=invoiceDao.getInvoiceDetails(invoiceId.toString());
+		}
+		
+		
 		Object sgstValue=inputJson.get("sgstValue");
 		
 		Object cgstValue=inputJson.get("cgstValue");
 		
 		Object taxableValue=inputJson.get("taxableValue");
 		
-		Object purchaseValue=inputJson.get("purchaseValue");
+		Object purchaseValue=inputJson.get("invoiceValue");
 		
 		Object transportCharges=inputJson.get("transportCharges");
 		
@@ -996,18 +1003,18 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 		Object purchaseDate=inputJson.get("purchaseDate");
 		
 		Object poDate=inputJson.get("poDate");
-		
-		Object challanNumber=inputJson.get("challanNumber");
-		
-		Object challanDate=inputJson.get("challanDate");
+//		
+//		Object challanNumber=inputJson.get("challanNumber");
+//		
+//		Object challanDate=inputJson.get("challanDate");
 		
 		Object paymentTerms=inputJson.get("paymentTerms");
 		
 		Object dueDate=inputJson.get("dueDate");
 		
-		Object transportMode=inputJson.get("transportMode");
-		
-		Object vehicleNumber=inputJson.get("vehicleNumber");
+//		Object transportMode=inputJson.get("transportMode");
+//		
+//		Object vehicleNumber=inputJson.get("vehicleNumber");
 		
 		Object remarks=inputJson.get("remarks");
 		
@@ -1023,8 +1030,14 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 		
 		Object termsAndCondition=inputJson.get("termsAndCondition");
 		
-		List<Map<String,Object>> purchaseProd=(List<Map<String,Object>>)inputJson.get("purchaseProducts");
+		Object financialYear=inputJson.get("financialYear");
 		
+		java.util.Date d=sdf.parse(purchaseDate.toString());
+		
+		
+		
+		List<Map<String,Object>> purchaseProd=(List<Map<String,Object>>)inputJson.get("purchaseProducts");
+//		purchaseDO.getPurchaseProductDOs().clear();
 		List<PurchaseProductDO> purchaseProducts=new ArrayList<>();
 		if(purchaseProd!=null && purchaseProd.size()>0) {
 			for(Map<String,Object> tempProd:purchaseProd) {
@@ -1055,9 +1068,16 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 				
 				purchaseProduct.setPurchaseDO(purchaseDO);
 				
-				purchaseProduct.setRegisterId("11111");
+				purchaseProduct.setRegisterId(registerID);
 				
-				purchaseProduct.setUserId("22222");
+				purchaseProduct.setUserId(userId);
+				
+				purchaseProduct.setCreatedBy(userName);
+				
+				purchaseProduct.setYear(financialYear.toString());
+				
+				
+				purchaseProduct.setMonth(new SimpleDateFormat("MMM").format(d));
 				
 				purchaseProducts.add(purchaseProduct);
 			}
@@ -1121,7 +1141,6 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 		}
 		
 		if(purchaseDate!=null) {
-			java.util.Date d=sdf.parse(purchaseDate.toString());
 			purchaseDO.setPurchaseDate(d);
 			
 			purchaseDO.setMonth(new SimpleDateFormat("MMM").format(d));
@@ -1185,7 +1204,25 @@ public String savePurchase(Map<String, Object> inputJson) throws ParseException 
 			purchaseDO.setPaymentTerms(termsAndCondition.toString());
 		}
 		
-	
+		if(cgstValue!=null) {
+			purchaseDO.setCgstValue(new BigDecimal(cgstValue.toString()));
+		}
+		
+		if(sgstValue!=null) {
+			purchaseDO.setSgstValue(new BigDecimal(sgstValue.toString()));
+		}
+		
+		purchaseDO.setRegisterId(Integer.parseInt(registerID));
+		
+		purchaseDO.setUserId(Integer.parseInt(userId));
+		
+		purchaseDO.setCreatedDate(sdf.parse(sdf.format(new Date(System.currentTimeMillis()))));
+		
+		purchaseDO.setCreatedBy(userName);
+		
+		purchaseDO.setMonth(new SimpleDateFormat("MMM").format(d));
+		
+		purchaseDO.setFinancialYear(financialYear.toString());
 		
 		return invoiceDao.savePurchase(purchaseDO);
 		
@@ -1217,7 +1254,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	
 	public boolean deletePurchase(String purchaseId){
 		LOGGER.info("InvoiceService::deletePurchase()::start");
-		return invoiceDao.DeleteInvoice(purchaseId,null);
+		return invoiceDao.deletePurchase(purchaseId);
 	}
 	
 	public boolean cloneInvoice(String invNo){
@@ -1509,11 +1546,19 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 		return invoiceDao.cancelInvoiceById(invoiceType,invoiceId);
 	}
 	
+	public boolean cancelPurchaseById(Integer invoiceId) {
+		return invoiceDao.cancelPurchaseById(invoiceId);
+	}
+	
 	public ClientDO getClientDoByRegisterId(String registerId) {
 		return invoiceDao.getClientDoByRegisterId(registerId);
 	}
 	
 	public CustomerDO getCustomerByName(String custName) {
 		return invoiceDao.getCustomerByName(custName);
+	}
+	
+	public SupplierDO getSupplierByName(String supplierName) {
+		return invoiceDao.getSupplierByName(supplierName);
 	}
 }
