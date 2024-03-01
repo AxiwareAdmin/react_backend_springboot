@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.accurate.erp.dao.invoice.InvoiceDao;
 import com.accurate.erp.dao.invoice.QuotationDAO;
+import com.accurate.erp.dao.invoice.SupplierQuotationDAO;
 import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.CashSaleProductDO;
 import com.accurate.erp.model.invoice.ClientDO;
@@ -29,6 +30,8 @@ import com.accurate.erp.model.invoice.ProformaInvoiceDO;
 import com.accurate.erp.model.invoice.ProformaInvoiceProductDO;
 import com.accurate.erp.model.invoice.QuotationDO;
 import com.accurate.erp.model.invoice.QuotationProductDO;
+import com.accurate.erp.model.invoice.SupplierQuotationDO;
+import com.accurate.erp.model.invoice.SupplierQuotationProductsDO;
 import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
@@ -38,25 +41,25 @@ import com.accurate.erp.utility.mail.SendMail;
 
 @Service
 @Transactional
-public class QuotationService {
+public class SupplierQuotationService {
 	
 	private static final Logger LOGGER=LogManager.getLogger(QuotationService.class);
 
 	@Autowired
-	QuotationDAO invoiceDao;
+	SupplierQuotationDAO invoiceDao;
 	
 	@Autowired
 	SendMail sendmail;
 	
 	
 	
-	public List<QuotationDO> getInvoiceList(){
+	public List<SupplierQuotationDO> getInvoiceList(){
 		LOGGER.info("QuotationService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList();
 	}
 	
 	
-	public List<QuotationDO> getInvoiceList(Map<String, String> data){
+	public List<SupplierQuotationDO> getInvoiceList(Map<String, String> data){
 		LOGGER.info("QuotationService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(data);
 	}
@@ -68,7 +71,7 @@ public class QuotationService {
 		return invoiceDao.getInvNo();
 	}
 	
-  public List<QuotationDO> getInvoiceListByMonth(String month){
+  public List<SupplierQuotationDO> getInvoiceListByMonth(String month){
 		LOGGER.info("QuotationService::getInvoiceListByMonth()::start");
 		return invoiceDao.getInvoiceListByMonth(month);
 	}
@@ -78,7 +81,7 @@ public class QuotationService {
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
-		QuotationDO invoiceDO=new QuotationDO();
+		SupplierQuotationDO invoiceDO=new SupplierQuotationDO();
 		
 		Object invoiceNo=inputJson.get("invoiceNo");
 		
@@ -164,10 +167,10 @@ public class QuotationService {
 			invoiceDO.setInvoiceId(Integer.parseInt(invoiceId.toString()));
 		
 		
-		List<QuotationProductDO> invoiceProducts=new ArrayList<>();
+		List<SupplierQuotationProductsDO> invoiceProducts=new ArrayList<>();
 		if(invoiceProd!=null && invoiceProd.size()>0) {
 			for(Map<String,Object> tempProd:invoiceProd) {
-				QuotationProductDO invoiceProduct=new QuotationProductDO();
+				SupplierQuotationProductsDO invoiceProduct=new SupplierQuotationProductsDO();
 				
 				invoiceProduct.setProductName(tempProd.get("productName").toString());
 				
@@ -331,11 +334,15 @@ public class QuotationService {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
 		}
 		
-		/*
-		 * if(additionalChargesGst!=null) {
-		 * invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.
-		 * toString())); }
-		 */
+		if(transportCharges!=null) {
+			invoiceDO.setTransportCharges(transportCharges.toString());
+		}
+		
+		
+		  if(additionalChargesGst!=null) {
+		  invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.
+		  toString())); }
+		 
 		
 		if(transportChargesGst!=null) {
 			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
@@ -363,7 +370,7 @@ public class QuotationService {
 	
 
 	
-	public QuotationDO getInvoiceDetails(String invId){
+	public SupplierQuotationDO getInvoiceDetails(String invId){
 		LOGGER.info("QuotationService::getInvoiceDetails()::start");
 		return invoiceDao.getInvoiceDetails(invId);
 	}
@@ -375,7 +382,7 @@ public class QuotationService {
 		return invoiceDao.DeleteInvoice(invId);
 	}
 	
-	public List<QuotationDO> getInvoiceByFinancialYear(String financialYear) {
+	public List<SupplierQuotationDO> getInvoiceByFinancialYear(String financialYear) {
 		return invoiceDao.getInvoiceByFinancialYear(financialYear);
 	}
 	
