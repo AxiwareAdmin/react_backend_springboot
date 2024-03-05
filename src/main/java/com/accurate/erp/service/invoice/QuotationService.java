@@ -277,14 +277,14 @@ public class QuotationService {
 			invoiceDO.setPoDate(sdf.parse(poDate.toString()));
 		}
 		
-		if(challanNumber!=null) {
-			invoiceDO.setChallanNo(challanNumber.toString());
-		}
-		
-		if(challanDate!=null) {
-			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
-		}
-		
+//		if(challanNumber!=null) {
+//			invoiceDO.setChallanNo(challanNumber.toString());
+//		}
+//		
+//		if(challanDate!=null) {
+//			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
+//		}
+//		
 		if(dueDate!=null) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
@@ -293,13 +293,13 @@ public class QuotationService {
 			invoiceDO.setPaymentTerms(paymentTerms.toString());
 		}
 		
-		if(transportMode!=null) {
-			invoiceDO.setTransportMode(transportMode.toString());
-		}
-		
-		if(vehicleNumber!=null) {
-			invoiceDO.setVehicleNo(vehicleNumber.toString());
-		}
+//		if(transportMode!=null) {
+//			invoiceDO.setTransportMode(transportMode.toString());
+//		}
+//		
+//		if(vehicleNumber!=null) {
+//			invoiceDO.setVehicleNo(vehicleNumber.toString());
+//		}
 		
 		if(remarks!=null) {
 			invoiceDO.setRemarks(remarks.toString());
@@ -331,11 +331,7 @@ public class QuotationService {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
 		}
 		
-		/*
-		 * if(additionalChargesGst!=null) {
-		 * invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.
-		 * toString())); }
-		 */
+		
 		
 		if(transportChargesGst!=null) {
 			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
