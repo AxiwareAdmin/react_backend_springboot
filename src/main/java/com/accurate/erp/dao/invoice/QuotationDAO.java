@@ -120,7 +120,7 @@ public class QuotationDAO {
 		return "success";
 	}
     
-    public List<QuotationDO> getInvoiceList() {
+    public List<QuotationDO> getInvoiceList(String financialYear) {
 		LOGGER.info("QuotationDAO :: getInvoiceList :: Start ");
 		List<QuotationDO> invoiceList = new ArrayList<QuotationDO>();
 		try {
@@ -133,7 +133,7 @@ public class QuotationDAO {
 
 			Root<QuotationDO> root = query.from(QuotationDO.class);
 			
-			Predicate pred=builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
 			query.select(root);
 			
@@ -306,7 +306,7 @@ public class QuotationDAO {
 		return invNo;
 	}
     
-    public List<QuotationDO> getInvoiceListByMonth(String month) {
+    public List<QuotationDO> getInvoiceListByMonth(String month,String financialYear) {
 		LOGGER.info("QuotationDAO :: getInvoiceListByMonth :: Start ");
 		List<QuotationDO> invoiceList = new ArrayList<QuotationDO>();
 		try {
@@ -323,7 +323,7 @@ public class QuotationDAO {
 
 			Predicate predicate1 = builder.equal(root.get("month"), month);
 			
-			Predicate predicate2 = builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+			Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
 			query.where(builder.and(predicate1,predicate2));
 
@@ -373,8 +373,8 @@ public class QuotationDAO {
 		String fInvNo="";
 		try {
 			
-			invtemp = getInvoiceList();
-			gInvNo = invtemp.size();
+//			invtemp = getInvoiceList();
+//			gInvNo = invtemp.size();
 			
 			Session session=getSession();
 			

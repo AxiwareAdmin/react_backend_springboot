@@ -1,4 +1,4 @@
-package com.accurate.erp.service.invoice;
+package com.accurate.erp.service.accounting;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -16,8 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.accurate.erp.dao.accounting.CreditNoteDao;
+import com.accurate.erp.dao.accounting.DebitNoteDao;
+import com.accurate.erp.dao.inventory.MaterialOutwardDao;
 import com.accurate.erp.dao.invoice.InvoiceDao;
 import com.accurate.erp.dao.invoice.QuotationDAO;
+import com.accurate.erp.model.accounting.CreditNoteDO;
+import com.accurate.erp.model.accounting.CreditNoteProductDO;
+import com.accurate.erp.model.accounting.DebitNoteDO;
+import com.accurate.erp.model.accounting.DebitNoteProductDO;
+import com.accurate.erp.model.inventory.MaterialOutwardDO;
+import com.accurate.erp.model.inventory.MaterialOutwardProductDO;
 import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.CashSaleProductDO;
 import com.accurate.erp.model.invoice.ClientDO;
@@ -38,38 +47,38 @@ import com.accurate.erp.utility.mail.SendMail;
 
 @Service
 @Transactional
-public class QuotationService {
+public class CreditNoteService {
 	
-	private static final Logger LOGGER=LogManager.getLogger(QuotationService.class);
+	private static final Logger LOGGER=LogManager.getLogger(CreditNoteService.class);
 
 	@Autowired
-	QuotationDAO invoiceDao;
+	CreditNoteDao invoiceDao;
 	
 	@Autowired
 	SendMail sendmail;
 	
 	
 	
-	public List<QuotationDO> getInvoiceList(String financialYear){
-		LOGGER.info("QuotationService::getInvoiceList()::start");
+	public List<CreditNoteDO> getInvoiceList(String financialYear){
+		LOGGER.info("CreditNoteService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(financialYear);
 	}
 	
 	
-	public List<QuotationDO> getInvoiceList(Map<String, String> data){
-		LOGGER.info("QuotationService::getInvoiceList()::start");
+	public List<CreditNoteDO> financialYearfinancialYear(Map<String, String> data){
+		LOGGER.info("CreditNoteService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(data);
 	}
 	
 	
 	
 		public String getInvNo(){
-		LOGGER.info("QuotationService::getInvNo()::start");
+		LOGGER.info("CreditNoteService::getInvNo()::start");
 		return invoiceDao.getInvNo();
 	}
 	
-  public List<QuotationDO> getInvoiceListByMonth(String month,String financialYear){
-		LOGGER.info("QuotationService::getInvoiceListByMonth()::start");
+  public List<CreditNoteDO> getInvoiceListByMonth(String month,String financialYear){
+		LOGGER.info("CreditNoteService::getInvoiceListByMonth()::start");
 		return invoiceDao.getInvoiceListByMonth(month,financialYear);
 	}
   
@@ -78,7 +87,7 @@ public class QuotationService {
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
-		QuotationDO invoiceDO=new QuotationDO();
+		CreditNoteDO invoiceDO=new CreditNoteDO();
 		
 		Object invoiceNo=inputJson.get("invoiceNo");
 		
@@ -164,10 +173,10 @@ public class QuotationService {
 			invoiceDO.setInvoiceId(Integer.parseInt(invoiceId.toString()));
 		
 		
-		List<QuotationProductDO> invoiceProducts=new ArrayList<>();
+		List<CreditNoteProductDO> invoiceProducts=new ArrayList<>();
 		if(invoiceProd!=null && invoiceProd.size()>0) {
 			for(Map<String,Object> tempProd:invoiceProd) {
-				QuotationProductDO invoiceProduct=new QuotationProductDO();
+				CreditNoteProductDO invoiceProduct=new CreditNoteProductDO();
 				
 				invoiceProduct.setProductName(tempProd.get("productName").toString());
 				
@@ -359,31 +368,31 @@ public class QuotationService {
 	
 
 	
-	public QuotationDO getInvoiceDetails(String invId){
-		LOGGER.info("QuotationService::getInvoiceDetails()::start");
+	public CreditNoteDO getInvoiceDetails(String invId){
+		LOGGER.info("CreditNoteService::getInvoiceDetails()::start");
 		return invoiceDao.getInvoiceDetails(invId);
 	}
 	
 	
 	
 	public boolean DeleteInvoice(String invId){
-		LOGGER.info("QuotationService::DeleteInvoice()::start");
+		LOGGER.info("CreditNoteService::DeleteInvoice()::start");
 		return invoiceDao.DeleteInvoice(invId);
 	}
 	
-	public List<QuotationDO> getInvoiceByFinancialYear(String financialYear) {
+	public List<CreditNoteDO> getInvoiceByFinancialYear(String financialYear) {
 		return invoiceDao.getInvoiceByFinancialYear(financialYear);
 	}
 	
 	
 	
 	public boolean cloneInvoice(String invNo){
-		LOGGER.info("QuotationService::cloneInvoice()::start");
+		LOGGER.info("CreditNoteService::cloneInvoice()::start");
 		return invoiceDao.cloneInvoice(invNo);
 	}
 	
 	public boolean sendMail(String invNo , String custName,MultipartFile file){
-		LOGGER.info("QuotationService::sendMail()::start");
+		LOGGER.info("CreditNoteService::sendMail()::start");
 		boolean flag = false;
 		try {
 		
@@ -397,7 +406,7 @@ public class QuotationService {
 				
 				flag = sendmail.SendMails(toMailId,subject,body,file,invNo);
 		}catch(Exception e) {
-			LOGGER.error("Exception occured in invoiceservice :: sendMail()");
+			LOGGER.error("Exception occured in DebitNoteService :: sendMail()");
 			return flag;
 		}
 		return flag;

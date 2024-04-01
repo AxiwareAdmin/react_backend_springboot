@@ -1,4 +1,4 @@
-package com.accurate.erp.service.invoice;
+package com.accurate.erp.service.po;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -16,60 +16,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.accurate.erp.dao.invoice.InvoiceDao;
 import com.accurate.erp.dao.invoice.QuotationDAO;
-import com.accurate.erp.model.invoice.CashDO;
-import com.accurate.erp.model.invoice.CashSaleProductDO;
-import com.accurate.erp.model.invoice.ClientDO;
-import com.accurate.erp.model.invoice.CustomerDO;
-import com.accurate.erp.model.invoice.InvoiceDO;
-import com.accurate.erp.model.invoice.InvoiceProductDO;
-import com.accurate.erp.model.invoice.ProductDO;
-import com.accurate.erp.model.invoice.ProformaInvoiceDO;
-import com.accurate.erp.model.invoice.ProformaInvoiceProductDO;
+import com.accurate.erp.dao.po.CustomerPurchaseOrderDAO;
 import com.accurate.erp.model.invoice.QuotationDO;
 import com.accurate.erp.model.invoice.QuotationProductDO;
-import com.accurate.erp.model.invoice.UserDO;
-import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
-import com.accurate.erp.model.purchase.PurchaseDO;
-import com.accurate.erp.model.purchase.PurchaseProductDO;
-import com.accurate.erp.model.purchase.SupplierDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderProductDO;
+import com.accurate.erp.service.invoice.QuotationService;
 import com.accurate.erp.utility.mail.SendMail;
+
 
 @Service
 @Transactional
-public class QuotationService {
+public class CustomerPurchaseOrderService {
+
 	
-	private static final Logger LOGGER=LogManager.getLogger(QuotationService.class);
+	private static final Logger LOGGER=LogManager.getLogger(CustomerPurchaseOrderService.class);
 
 	@Autowired
-	QuotationDAO invoiceDao;
+	CustomerPurchaseOrderDAO invoiceDao;
 	
 	@Autowired
 	SendMail sendmail;
 	
 	
 	
-	public List<QuotationDO> getInvoiceList(String financialYear){
-		LOGGER.info("QuotationService::getInvoiceList()::start");
+	public List<CustomerPurchaseOrderDO> getInvoiceList(String financialYear){
+		LOGGER.info("CustomerPurchaseOrderService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(financialYear);
 	}
 	
 	
-	public List<QuotationDO> getInvoiceList(Map<String, String> data){
-		LOGGER.info("QuotationService::getInvoiceList()::start");
+	public List<CustomerPurchaseOrderDO> getInvoiceList(Map<String, String> data){
+		LOGGER.info("CustomerPurchaseOrderService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(data);
 	}
 	
 	
 	
 		public String getInvNo(){
-		LOGGER.info("QuotationService::getInvNo()::start");
+		LOGGER.info("CustomerPurchaseOrderService::getInvNo()::start");
 		return invoiceDao.getInvNo();
 	}
 	
-  public List<QuotationDO> getInvoiceListByMonth(String month,String financialYear){
-		LOGGER.info("QuotationService::getInvoiceListByMonth()::start");
+  public List<CustomerPurchaseOrderDO> getInvoiceListByMonth(String month,String financialYear){
+		LOGGER.info("CustomerPurchaseOrderService::getInvoiceListByMonth()::start");
 		return invoiceDao.getInvoiceListByMonth(month,financialYear);
 	}
   
@@ -78,14 +69,13 @@ public class QuotationService {
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
-		QuotationDO invoiceDO=new QuotationDO();
+		CustomerPurchaseOrderDO invoiceDO=new CustomerPurchaseOrderDO();
 		
 		Object invoiceNo=inputJson.get("invoiceNo");
 		
 		
 		Object invoiceId=inputJson.get("invoiceId");
 		
-		//TO make sure invoice updates on edit
 		if(invoiceId!=null && invoiceId.toString().length()>0) {
 			invoiceDO=invoiceDao.getInvoiceDetails(invoiceId.toString());
 		}
@@ -164,10 +154,10 @@ public class QuotationService {
 			invoiceDO.setInvoiceId(Integer.parseInt(invoiceId.toString()));
 		
 		
-		List<QuotationProductDO> invoiceProducts=new ArrayList<>();
+		List<CustomerPurchaseOrderProductDO> invoiceProducts=new ArrayList<>();
 		if(invoiceProd!=null && invoiceProd.size()>0) {
 			for(Map<String,Object> tempProd:invoiceProd) {
-				QuotationProductDO invoiceProduct=new QuotationProductDO();
+				CustomerPurchaseOrderProductDO invoiceProduct=new CustomerPurchaseOrderProductDO();
 				
 				invoiceProduct.setProductName(tempProd.get("productName").toString());
 				
@@ -235,10 +225,11 @@ public class QuotationService {
 			invoiceDO.setInvoiceValue(new BigDecimal(invoiceValue.toString()));
 		}
 				
-		/*
-		 * if(transportCharges!=null) {
-		 * invoiceDO.setTransportCharges(transportCharges.toString()); }
-		 */
+		
+		if(transportCharges!=null) {
+		 invoiceDO.setTransportCharges(transportCharges.toString()); 
+		 }
+		 
 		
 		if(additionalCharges!=null) {
 			invoiceDO.setAdditionalCharges(additionalCharges.toString());
@@ -260,8 +251,8 @@ public class QuotationService {
 			invoiceDO.setBillingAddress(billingAddress.toString());
 		}
 		
-		if(poNumber!=null) {
-			invoiceDO.setPoNumber(poNumber.toString());
+		if(invoiceNo!=null) {
+			invoiceDO.setPoNumber(invoiceNo.toString());
 		}
 		
 		if(customerName!=null) {
@@ -273,18 +264,11 @@ public class QuotationService {
 			invoiceDO.setInvoiceDate(sdf.parse(invoiceDate.toString()));
 		}
 		
-		if(poDate!=null) {
-			invoiceDO.setPoDate(sdf.parse(poDate.toString()));
+		if(invoiceDate!=null) {
+			invoiceDO.setPoDate(sdf.parse(invoiceDate.toString()));
 		}
 		
-//		if(challanNumber!=null) {
-//			invoiceDO.setChallanNo(challanNumber.toString());
-//		}
-//		
-//		if(challanDate!=null) {
-//			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
-//		}
-//		
+
 		if(dueDate!=null) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
@@ -293,13 +277,7 @@ public class QuotationService {
 			invoiceDO.setPaymentTerms(paymentTerms.toString());
 		}
 		
-//		if(transportMode!=null) {
-//			invoiceDO.setTransportMode(transportMode.toString());
-//		}
-//		
-//		if(vehicleNumber!=null) {
-//			invoiceDO.setVehicleNo(vehicleNumber.toString());
-//		}
+
 		
 		if(remarks!=null) {
 			invoiceDO.setRemarks(remarks.toString());
@@ -337,6 +315,10 @@ public class QuotationService {
 			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
 		}
 		
+		if(additionalChargesGst!=null) {
+			invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.toString()));
+		}
+		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
 		invoiceDO.setUserId(Integer.parseInt(userId));
@@ -359,31 +341,31 @@ public class QuotationService {
 	
 
 	
-	public QuotationDO getInvoiceDetails(String invId){
-		LOGGER.info("QuotationService::getInvoiceDetails()::start");
+	public CustomerPurchaseOrderDO getInvoiceDetails(String invId){
+		LOGGER.info("CustomerPurchaseOrderService::getInvoiceDetails()::start");
 		return invoiceDao.getInvoiceDetails(invId);
 	}
 	
 	
 	
 	public boolean DeleteInvoice(String invId){
-		LOGGER.info("QuotationService::DeleteInvoice()::start");
+		LOGGER.info("CustomerPurchaseOrderService::DeleteInvoice()::start");
 		return invoiceDao.DeleteInvoice(invId);
 	}
 	
-	public List<QuotationDO> getInvoiceByFinancialYear(String financialYear) {
+	public List<CustomerPurchaseOrderDO> getInvoiceByFinancialYear(String financialYear) {
 		return invoiceDao.getInvoiceByFinancialYear(financialYear);
 	}
 	
 	
 	
 	public boolean cloneInvoice(String invNo){
-		LOGGER.info("QuotationService::cloneInvoice()::start");
+		LOGGER.info("CustomerPurchaseOrderService::cloneInvoice()::start");
 		return invoiceDao.cloneInvoice(invNo);
 	}
 	
 	public boolean sendMail(String invNo , String custName,MultipartFile file){
-		LOGGER.info("QuotationService::sendMail()::start");
+		LOGGER.info("CustomerPurchaseOrderService::sendMail()::start");
 		boolean flag = false;
 		try {
 		
@@ -397,7 +379,7 @@ public class QuotationService {
 				
 				flag = sendmail.SendMails(toMailId,subject,body,file,invNo);
 		}catch(Exception e) {
-			LOGGER.error("Exception occured in invoiceservice :: sendMail()");
+			LOGGER.error("Exception occured in CustomerPurchaseOrderService :: sendMail()");
 			return flag;
 		}
 		return flag;
@@ -410,5 +392,12 @@ public class QuotationService {
 	}
 	
 	
+	public List<Map<String,String>> getPONumberByCustomerName(String customerName){
+		return invoiceDao.getPONumberByCustomerName(customerName);
+	}
+	
+	public List<Map<String,String>> getPONumberByCustomerNameForCopy(String customerName){
+		return invoiceDao.getPONumberByCustomerNameForCopy(customerName);
+	}
 
 }

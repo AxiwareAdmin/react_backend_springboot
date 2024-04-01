@@ -1,4 +1,4 @@
-package com.accurate.erp.dao.invoice;
+package com.accurate.erp.dao.po;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,22 +26,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.accurate.erp.action.invoice.InvoiceController;
-import com.accurate.erp.model.invoice.CashDO;
+import com.accurate.erp.dao.invoice.QuotationDAO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
-import com.accurate.erp.model.invoice.InvoiceProductDO;
-import com.accurate.erp.model.invoice.ProformaInvoiceDO;
 import com.accurate.erp.model.invoice.QuotationDO;
 import com.accurate.erp.model.invoice.QuotationProductDO;
-import com.accurate.erp.model.invoice.SupplierQuotationDO;
-import com.accurate.erp.model.invoice.SupplierQuotationProductsDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderProductDO;
+import com.accurate.erp.model.po.SupplierPurchaseOrderDO;
 
 @Repository
-public class SupplierQuotationDAO {
+public class CustomerPurchaseOrderDAO {
 	
-	private final static Logger LOGGER = LogManager.getLogger(SupplierQuotationDAO.class);
+
+	
+	private final static Logger LOGGER = LogManager.getLogger(CustomerPurchaseOrderDAO.class);
 
 	@Autowired
 	SessionFactory sessionFactory;
@@ -62,18 +63,18 @@ public class SupplierQuotationDAO {
 	
     @SuppressWarnings("deprecation")
 	@Transactional
-	public SupplierQuotationDO getInvoiceDetails(String invId) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceDetails :: Start ");
-		SupplierQuotationDO invDO = null;
+	public CustomerPurchaseOrderDO getInvoiceDetails(String invId) {
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceDetails :: Start ");
+		CustomerPurchaseOrderDO invDO = null;
 		try {
 
 			Session session = getSession();
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<CustomerPurchaseOrderDO> query = builder.createQuery(CustomerPurchaseOrderDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<CustomerPurchaseOrderDO> root = query.from(CustomerPurchaseOrderDO.class);
 
 			query.select(root);
 
@@ -89,18 +90,17 @@ public class SupplierQuotationDAO {
 			 */
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceDetails ");
+			LOGGER.error("Exception occured in CustomerPurchaseOrderDAO :: getInvoiceDetails ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceDetails method end");
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceDetails method end");
 		return invDO;
 	}
     
-    public String saveInvoice(SupplierQuotationDO invoiceDO) {
-		LOGGER.info("SupplierQuotationDAO::saveInvoice::start");
+    public String saveInvoice(CustomerPurchaseOrderDO invoiceDO) {
+		LOGGER.info("CustomerPurchaseOrderDAO::saveInvoice::start");
 
 		try {
-			SupplierQuotationDO tmp = invoiceDO;
-			SupplierQuotationDO invDO = null;
+			CustomerPurchaseOrderDO tmp = invoiceDO;
 			invoiceDO.setInvoiceProductId(1);
 			Calendar cal = Calendar.getInstance();
 			invoiceDO.setMonth(new SimpleDateFormat("MMM").format(cal.getTime()));
@@ -114,26 +114,26 @@ public class SupplierQuotationDAO {
 //			tx.commit();
 
 		} catch (Exception e) {
-			LOGGER.info("Exception occured in SupplierQuotationDAO::saveInvoice::" + e);
+			LOGGER.info("Exception occured in CustomerPurchaseOrderDAO::saveInvoice::" + e);
 			return "failure";
 		}
 
-		LOGGER.info("SupplierQuotationDAO::saveInvoice()::end");
+		LOGGER.info("CustomerPurchaseOrderDAO::saveInvoice()::end");
 		return "success";
 	}
     
-    public List<SupplierQuotationDO> getInvoiceList(String financialYear) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList :: Start ");
-		List<SupplierQuotationDO> invoiceList = new ArrayList<SupplierQuotationDO>();
+    public List<CustomerPurchaseOrderDO> getInvoiceList(String financialYear) {
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceList :: Start ");
+		List<CustomerPurchaseOrderDO> invoiceList = new ArrayList<CustomerPurchaseOrderDO>();
 		try {
 
 			Session session = getSession();
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<CustomerPurchaseOrderDO> query = builder.createQuery(CustomerPurchaseOrderDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<CustomerPurchaseOrderDO> root = query.from(CustomerPurchaseOrderDO.class);
 			
 			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
@@ -149,15 +149,15 @@ public class SupplierQuotationDAO {
 			 */
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceList ");
+			LOGGER.error("Exception occured in CustomerPurchaseOrderDAO :: getInvoiceList ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList method end");
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceList method end");
 		return invoiceList;
 	}
     
-    public List<SupplierQuotationDO> getInvoiceList(Map<String, String> data) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList :: Start ");
-		List<SupplierQuotationDO> invoiceList = new ArrayList<SupplierQuotationDO>();
+    public List<CustomerPurchaseOrderDO> getInvoiceList(Map<String, String> data) {
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceList :: Start ");
+		List<CustomerPurchaseOrderDO> invoiceList = new ArrayList<CustomerPurchaseOrderDO>();
 		try {
 
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -183,9 +183,9 @@ public class SupplierQuotationDAO {
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<CustomerPurchaseOrderDO> query = builder.createQuery(CustomerPurchaseOrderDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<CustomerPurchaseOrderDO> root = query.from(CustomerPurchaseOrderDO.class);
 
 			query.select(root);
 
@@ -231,14 +231,14 @@ public class SupplierQuotationDAO {
 			 */
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceList ");
+			LOGGER.error("Exception occured in CustomerPurchaseOrderDAO :: getInvoiceList ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList method end");
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceList method end");
 		return invoiceList;
 	}
     
     public String getInvNo(){
-		LOGGER.info("SupplierQuotationDAO :: getInvNo :: Start ");
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvNo :: Start ");
 		String invNo="";
 		DocumentSeqMasterDO documentSeqMasterDO = null;
 		InvoiceDO invoiceDO = null;
@@ -256,7 +256,7 @@ public class SupplierQuotationDAO {
 			
 			query.select(root);
 			
-			Predicate predicate=builder.equal(root.get("documentName"), "Quotation");
+			Predicate predicate=builder.equal(root.get("documentName"), "Purchase Order");
 			
 			query.where(predicate);
 			
@@ -274,7 +274,7 @@ public class SupplierQuotationDAO {
 			
 			CriteriaQuery<String> query1=builder.createQuery(String.class);
 			
-			Root<SupplierQuotationDO> root2=query1.from(SupplierQuotationDO.class);
+			Root<CustomerPurchaseOrderDO> root2=query1.from(CustomerPurchaseOrderDO.class);
 			query1.select(root2.get("invoiceNo"));
 			
 			query1.orderBy(builder.desc(root2.get("invoiceNo")));
@@ -302,24 +302,24 @@ public class SupplierQuotationDAO {
 			
 			
 		}catch(Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvNo "+e);
+			LOGGER.error("Exception occured in CustomerPurchaseOrderDAO :: getInvNo "+e);
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvNo method end");
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvNo method end");
 		return invNo;
 	}
     
-    public List<SupplierQuotationDO> getInvoiceListByMonth(String month,String financialYear) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceListByMonth :: Start ");
-		List<SupplierQuotationDO> invoiceList = new ArrayList<SupplierQuotationDO>();
+    public List<CustomerPurchaseOrderDO> getInvoiceListByMonth(String month,String financialYear) {
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceListByMonth :: Start ");
+		List<CustomerPurchaseOrderDO> invoiceList = new ArrayList<CustomerPurchaseOrderDO>();
 		try {
 
 			Session session = getSession();
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<CustomerPurchaseOrderDO> query = builder.createQuery(CustomerPurchaseOrderDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<CustomerPurchaseOrderDO> root = query.from(CustomerPurchaseOrderDO.class);
 
 			query.select(root);
 
@@ -337,15 +337,15 @@ public class SupplierQuotationDAO {
 
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceListByMonth ");
+			LOGGER.error("Exception occured in CustomerPurchaseOrderDAO :: getInvoiceListByMonth ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceListByMonth method end");
+		LOGGER.info("CustomerPurchaseOrderDAO :: getInvoiceListByMonth method end");
 		return invoiceList;
 	}
     
     @Transactional
 	public boolean DeleteInvoice(String invId) {
-		LOGGER.info("SupplierQuotationDAO :: DeleteInvoice :: Start ");
+		LOGGER.info("CustomerPurchaseOrderDAO :: DeleteInvoice :: Start ");
 		boolean flag = false;
 		try {
 
@@ -353,24 +353,24 @@ public class SupplierQuotationDAO {
 			
 			//String idName=className.equalsIgnoreCase("proforma_invoice")?"pi_id":"Invoice_id";
 			
-			Query query = session.createNativeQuery("delete from supplier_quotation where Quotation_Id ='" + invId + "'");
+			Query query = session.createNativeQuery("delete from customer_purchase_order where purchase_order_Id ='" + invId + "'");
 			
 			query.executeUpdate();
 			flag = true;
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: DeleteInvoice ");
+			LOGGER.error("Exception occured in CustomerPurchaseOrderDAO :: DeleteInvoice ");
 			flag = false;
 		}
-		LOGGER.info("SupplierQuotationDAO :: DeleteInvoice method end");
+		LOGGER.info("CustomerPurchaseOrderDAO :: DeleteInvoice method end");
 		return flag;
 	}
     
     public boolean cloneInvoice(String invNo) {
-		LOGGER.info("SupplierQuotationDAO :: cloneInvoice :: Start ");
+		LOGGER.info("saveInvoice :: cloneInvoice :: Start ");
 		boolean flag=false;
-		SupplierQuotationDO invDO= new SupplierQuotationDO();
-		List<SupplierQuotationDO> invtemp = new ArrayList<>();
+		CustomerPurchaseOrderDO invDO= new CustomerPurchaseOrderDO();
+		List<CustomerPurchaseOrderDO> invtemp = new ArrayList<>();
 		Integer gInvNo = 0;
 		String fInvNo="";
 		try {
@@ -382,9 +382,9 @@ public class SupplierQuotationDAO {
 			
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<CustomerPurchaseOrderDO> query = builder.createQuery(CustomerPurchaseOrderDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<CustomerPurchaseOrderDO> root = query.from(CustomerPurchaseOrderDO.class);
 
 			query.select(root);
 
@@ -403,10 +403,11 @@ public class SupplierQuotationDAO {
 			fInvNo = getInvNo();
 			invDO.setInvoiceNo(fInvNo);
 					
-			List<SupplierQuotationProductsDO> productdo = new ArrayList<SupplierQuotationProductsDO>();
-			for(SupplierQuotationProductsDO temp : invDO.getInvoiceProductDO()) {
-				SupplierQuotationProductsDO invprod = new SupplierQuotationProductsDO();
+			List<CustomerPurchaseOrderProductDO> productdo = new ArrayList<CustomerPurchaseOrderProductDO>();
+			for(CustomerPurchaseOrderProductDO temp : invDO.getInvoiceProductDO()) {
+				CustomerPurchaseOrderProductDO invprod = new CustomerPurchaseOrderProductDO();
 				invprod = temp;
+				
 				invprod.setInvoiceDO(invDO);
 				invprod.setInvoiceProductId(null);
 				productdo.add(invprod);
@@ -424,16 +425,16 @@ public class SupplierQuotationDAO {
 			
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: cloneInvoice ");
+			LOGGER.error("Exception occured in saveInvoice :: cloneInvoice ");
 			flag = false;
 		}
-		LOGGER.info("SupplierQuotationDAO :: cloneInvoice method end");
+		LOGGER.info("saveInvoice :: cloneInvoice method end");
 		return flag;
 	}
     
-    public boolean saveCloneInv(SupplierQuotationDO invdo) {
+    public boolean saveCloneInv(CustomerPurchaseOrderDO invdo) {
 
-		LOGGER.info("SupplierQuotationDAO::saveCloneInv::start");
+		LOGGER.info("CustomerPurchaseOrderDAO::saveCloneInv::start");
 		try {
 
 //			Session session = getSession();
@@ -445,18 +446,18 @@ public class SupplierQuotationDAO {
 			session.close();
 
 		} catch (Exception e) {
-			LOGGER.info("Exception occured in SupplierQuotationDAO::saveCloneInv::" + e);
+			LOGGER.info("Exception occured in CustomerPurchaseOrderDAO::saveCloneInv::" + e);
 			return false;
 		}
 
-		LOGGER.info("SupplierQuotationDAO::saveCloneInv::end");
+		LOGGER.info("CustomerPurchaseOrderDAO::saveCloneInv::end");
 		return true;
 
 	}
     
 public String getCustomerEmail(String custName) {
 		
-        LOGGER.info("SupplierQuotationDAO::getCustomerEmail::start");
+        LOGGER.info("CustomerPurchaseOrderDAO::getCustomerEmail::start");
         String email = "";
 		try {
 			
@@ -478,17 +479,17 @@ public String getCustomerEmail(String custName) {
 			
 			
 		}catch(Exception e) {
-			LOGGER.info("Exception occured in SupplierQuotationDAO::getCustomerEmail::"+e);
+			LOGGER.info("Exception occured in CustomerPurchaseOrderDAO::getCustomerEmail::"+e);
 			return email;
 		}
 		
-		LOGGER.info("SupplierQuotationDAO::getCustomerEmail::end");
+		LOGGER.info("CustomerPurchaseOrderDAO::getCustomerEmail::end");
 		return email;
 		
 	}
 
 public boolean cancelInvoiceById(Integer invoiceId) {
-	LOGGER.info("SupplierQuotationDAO::calcelInvoice()::start");
+	LOGGER.info("CustomerPurchaseOrderDAO::calcelInvoice()::start");
 	boolean flag=false;
 	
 	try {
@@ -496,7 +497,7 @@ public boolean cancelInvoiceById(Integer invoiceId) {
 		Session session=getSession();
 		
 		
-		SupplierQuotationDO invoiceDO=getInvoiceDetails(invoiceId.toString());
+		CustomerPurchaseOrderDO invoiceDO=getInvoiceDetails(invoiceId.toString());
 		
 		//Object invoiceDO=getSalesTypeClassDetails(className, invoiceId.toString());
 		
@@ -526,27 +527,27 @@ public boolean cancelInvoiceById(Integer invoiceId) {
 		
 		
 	}catch(Exception e) {
-		LOGGER.error("Exception in SupplierQuotationDAO::cancelInvoiceById()::"+e);
+		LOGGER.error("Exception in CustomerPurchaseOrderDAO::cancelInvoiceById()::"+e);
 	}
 	
-	LOGGER.info("SupplierQuotationDAO::calcelInvoice()::end");
+	LOGGER.info("CustomerPurchaseOrderDAO::CustomerPurchaseOrderDAO()::end");
 	
 	return flag;
 	
 }
 
-public List<SupplierQuotationDO> getInvoiceByFinancialYear(String financialYear) {
-	LOGGER.info("SupplierQuotationDAO::getInvoiceByFinancialYear()::Start");
-	List<SupplierQuotationDO> invoiceDO=null;
+public List<CustomerPurchaseOrderDO> getInvoiceByFinancialYear(String financialYear) {
+	LOGGER.info("CustomerPurchaseOrderDAO::getInvoiceByFinancialYear()::Start");
+	List<CustomerPurchaseOrderDO> invoiceDO=null;
 	
 	try {
 		Session session=getSession();
 		
 		CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
 		
-		CriteriaQuery<SupplierQuotationDO> query=criteriaBuilder.createQuery(SupplierQuotationDO.class);
+		CriteriaQuery<CustomerPurchaseOrderDO> query=criteriaBuilder.createQuery(CustomerPurchaseOrderDO.class);
 		
-		Root<SupplierQuotationDO> root=query.from(SupplierQuotationDO.class);
+		Root<CustomerPurchaseOrderDO> root=query.from(CustomerPurchaseOrderDO.class);
 		
 		query.select(root);
 		
@@ -557,12 +558,117 @@ public List<SupplierQuotationDO> getInvoiceByFinancialYear(String financialYear)
 		invoiceDO=session.createQuery(query).getResultList();
 		
 	}catch(Exception e) {
-		LOGGER.error("Exception in SupplierQuotationDAO::getInvoiceByFinancialYear()::"+e);
+		LOGGER.error("Exception in CustomerPurchaseOrderDAO::getInvoiceByFinancialYear()::"+e);
 	}
-	LOGGER.info("SupplierQuotationDAO::getInvoiceByFinancialYear()::End");
+	LOGGER.info("CustomerPurchaseOrderDAO::getInvoiceByFinancialYear()::End");
 	return invoiceDO;
 }
 
+
+public List<Map<String,String>> getPONumberByCustomerName(String supplierName){
+	
+	LOGGER.info("CustomerPurchaseOrderDao::getPONumberByCustomerName()::start");
+	List<CustomerPurchaseOrderDO> pos=null;
+	List<Map<String,String>> list=null;
+	
+	
+	try {
+		
+		
+		Session session=getSession();
+		
+		CriteriaBuilder builder=session.getCriteriaBuilder();
+		
+		CriteriaQuery<CustomerPurchaseOrderDO> query=builder.createQuery(CustomerPurchaseOrderDO.class);
+		
+		Root<CustomerPurchaseOrderDO> root=query.from(CustomerPurchaseOrderDO.class);
+		
+		query.select(root);
+		
+		Predicate predicate=builder.equal(root.get("customerName"),supplierName);
+		
+		Predicate predicate2=builder.equal(root.get("invoiceStatus"), "Not Booked");
+		
+		Predicate predicate3=builder.and(predicate,predicate2);
+		
+		query.where(predicate3);
+		
+		pos=session.createQuery(query).getResultList();
+		
+		
+		list = new ArrayList<Map<String,String>>();
+		
+		for(CustomerPurchaseOrderDO supDO:pos) {
+			Map<String,String> tempMap=new HashMap<>();
+			
+			String poId=supDO.getInvoiceId().toString();
+			
+			String poNumber=supDO.getInvoiceNo().toString();
+			
+			tempMap.put("poId", poId);
+			tempMap.put("poNumber", poNumber);
+			list.add(tempMap);
+			
+		}
+		
+	}catch(Exception e) {
+		LOGGER.error("Exception in CustomerPurchaseOrderDao::getPONumberByCustomerName()::"+e);
+	}
+	LOGGER.info("CustomerPurchaseOrderDao::getPONumberByCustomerName()::end");
+	return list;
+}
+
+
+public List<Map<String,String>> getPONumberByCustomerNameForCopy(String supplierName){
+	
+	LOGGER.info("CustomerPurchaseOrderDao::getPONumberByCustomerNameForCopy()::start");
+	List<CustomerPurchaseOrderDO> pos=null;
+	List<Map<String,String>> list=null;
+	
+	
+	try {
+		
+		
+		Session session=getSession();
+		
+		CriteriaBuilder builder=session.getCriteriaBuilder();
+		
+		CriteriaQuery<CustomerPurchaseOrderDO> query=builder.createQuery(CustomerPurchaseOrderDO.class);
+		
+		Root<CustomerPurchaseOrderDO> root=query.from(CustomerPurchaseOrderDO.class);
+		
+		query.select(root);
+		
+		Predicate predicate=builder.equal(root.get("customerName"),supplierName);
+		
+		
+		
+		query.where(predicate);
+		
+		pos=session.createQuery(query).getResultList();
+		
+		
+		list = new ArrayList<Map<String,String>>();
+		
+		for(CustomerPurchaseOrderDO supDO:pos) {
+			Map<String,String> tempMap=new HashMap<>();
+			
+			String poId=supDO.getInvoiceId().toString();
+			
+			String poNumber=supDO.getInvoiceNo().toString();
+			
+			tempMap.put("poId", poId);
+			tempMap.put("poNumber", poNumber);
+			list.add(tempMap);
+			
+		}
+		
+	}catch(Exception e) {
+		LOGGER.error("Exception in CustomerPurchaseOrderDao::getPONumberByCustomerNameForCopy()::"+e);
+	}
+	LOGGER.info("CustomerPurchaseOrderDao::getPONumberByCustomerNameForCopy()::end");
+	return list;
+}
 
 
 
@@ -591,6 +697,8 @@ public List<SupplierQuotationDO> getInvoiceByFinancialYear(String financialYear)
 			session.close();
 		}
 	}
+
+
 
 
 }

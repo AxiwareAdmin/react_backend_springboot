@@ -1,6 +1,7 @@
 package com.accurate.erp.model.invoice;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -68,6 +69,350 @@ public class UserDO implements UserDetails {
 	@Column(name="register_id")
 	String registerId;
 	
+	@Column(name="joining_date")
+	String joiningDate;
+	
+	
+	@Column(name="employee_id")
+	String employeeId;
+	
+	
+	@Column(name="pan_no")
+	String panNumber;
+	
+	@Column(name="passport_no")
+	String passportNumber;
+	
+	
+	@Column(name="pf_no")
+	String pfNumber;
+	
+	
+	@Column(name="uan_no")
+	String uanNumber;
+	
+	
+	@Column(name="qualification")
+	String qualification;
+	
+	@Column(name="experience")
+	String experience;
+	
+	
+	@Column(name="gender")
+	String gender;
+	
+	
+	@Column(name="birth_date")
+	Date birthDate;
+	
+	@Column(name="branch_1")
+	String branch1;
+	
+	@Column(name="linkedin")
+	String linkedIn;
+	
+	@Column(name="twitter")
+	String twitter;
+	
+	@Column(name="facebook")
+	String facebook;
+	
+	@Column(name="instagram")
+	String instagram;
+	
+	@Column(name="banking")
+	String banking;
+	
+	@Column(name="cashbook")
+	String cashbook;
+	
+	@Column(name="accounting")
+	String accounting;
+	
+	@Column(name="sales")
+	String sales;
+	
+	@Column(name="purchase")
+	String purchase;
+	
+	@Column(name="inventory")
+	String inventory;
+	
+	@Column(name="quotation")
+	String quotation;
+	
+	
+	@Column(name="purchase_order")
+	String purchaseOrder;
+	
+	
+	
+	
+	
+	
+	public String getEmployeeId() {
+		return employeeId;
+	}
+
+
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
+
+
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+
+
+	public String getPassportNumber() {
+		return passportNumber;
+	}
+
+
+
+	public void setPassportNumber(String passportNumber) {
+		this.passportNumber = passportNumber;
+	}
+
+
+
+	public String getPfNumber() {
+		return pfNumber;
+	}
+
+
+
+	public void setPfNumber(String pfNumber) {
+		this.pfNumber = pfNumber;
+	}
+
+
+
+	public String getUanNumber() {
+		return uanNumber;
+	}
+
+
+
+	public void setUanNumber(String uanNumber) {
+		this.uanNumber = uanNumber;
+	}
+
+
+
+	public String getQualification() {
+		return qualification;
+	}
+
+
+
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
+	}
+
+
+
+	public String getExperience() {
+		return experience;
+	}
+
+
+
+	public void setExperience(String experience) {
+		this.experience = experience;
+	}
+
+
+
+	public String getGender() {
+		return gender;
+	}
+
+
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+
+
+	public Date getBirthDate() {
+		return birthDate;
+	}
+
+
+
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
+	}
+
+
+
+	public String getBranch1() {
+		return branch1;
+	}
+
+
+
+	public void setBranch1(String branch1) {
+		this.branch1 = branch1;
+	}
+
+
+
+	public String getLinkedIn() {
+		return linkedIn;
+	}
+
+
+
+	public void setLinkedIn(String linkedIn) {
+		this.linkedIn = linkedIn;
+	}
+
+
+
+	public String getTwitter() {
+		return twitter;
+	}
+
+
+
+	public void setTwitter(String twitter) {
+		this.twitter = twitter;
+	}
+
+
+
+	public String getFacebook() {
+		return facebook;
+	}
+
+
+
+	public void setFacebook(String facebook) {
+		this.facebook = facebook;
+	}
+
+
+
+	public String getInstagram() {
+		return instagram;
+	}
+
+
+
+	public void setInstagram(String instagram) {
+		this.instagram = instagram;
+	}
+
+
+
+	public String getBanking() {
+		return banking;
+	}
+
+
+
+	public void setBanking(String banking) {
+		this.banking = banking;
+	}
+
+
+
+	public String getCashbook() {
+		return cashbook;
+	}
+
+
+
+	public void setCashbook(String cashbook) {
+		this.cashbook = cashbook;
+	}
+
+
+
+	public String getAccounting() {
+		return accounting;
+	}
+
+
+
+	public void setAccounting(String accounting) {
+		this.accounting = accounting;
+	}
+
+
+
+	public String getSales() {
+		return sales;
+	}
+
+
+
+	public void setSales(String sales) {
+		this.sales = sales;
+	}
+
+
+
+	public String getPurchase() {
+		return purchase;
+	}
+
+
+
+	public void setPurchase(String purchase) {
+		this.purchase = purchase;
+	}
+
+
+
+	public String getInventory() {
+		return inventory;
+	}
+
+
+
+	public void setInventory(String inventory) {
+		this.inventory = inventory;
+	}
+
+
+
+	public String getQuotation() {
+		return quotation;
+	}
+
+
+
+	public void setQuotation(String quotation) {
+		this.quotation = quotation;
+	}
+
+
+
+	public String getPurchaseOrder() {
+		return purchaseOrder;
+	}
+
+
+
+	public void setPurchaseOrder(String purchaseOrder) {
+		this.purchaseOrder = purchaseOrder;
+	}
+
 	@Transient
 	List<GrantedAuthority> authorities;
 	
@@ -75,6 +420,20 @@ public class UserDO implements UserDetails {
 		
 	}
 	
+	
+	
+	public String getJoiningDate() {
+		return joiningDate;
+	}
+
+
+
+	public void setJoiningDate(String joiningDate) {
+		this.joiningDate = joiningDate;
+	}
+
+
+
 	public UserDO(UserDO userDO) {
 		authorities=List.of(new SimpleGrantedAuthority(userDO.getDesignation()));
 		password=userDO.getPassword();

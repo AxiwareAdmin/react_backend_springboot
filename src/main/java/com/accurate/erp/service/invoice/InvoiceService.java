@@ -29,6 +29,7 @@ import com.accurate.erp.model.invoice.ProductDO;
 import com.accurate.erp.model.invoice.ProformaInvoiceDO;
 import com.accurate.erp.model.invoice.ProformaInvoiceProductDO;
 import com.accurate.erp.model.invoice.UserDO;
+import com.accurate.erp.model.invoice.UserTO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
 import com.accurate.erp.model.purchase.PurchaseProductDO;
@@ -51,19 +52,19 @@ public class InvoiceService {
 		return invoiceDao.getCustometList();
 	}
 	
-	public List<InvoiceDO> getInvoiceList(){
+	public List<InvoiceDO> getInvoiceList(String financialYear){
 		LOGGER.info("InvoiceService::getInvoiceList()::start");
-		return invoiceDao.getInvoiceList();
+		return invoiceDao.getInvoiceList(financialYear);
 	}
 	
-	public List<CashDO> getCashList(){
+	public List<CashDO> getCashList(String financialYear){
 		LOGGER.info("InvoiceService::getCashList()::start");
-		return invoiceDao.getCashList();
+		return invoiceDao.getCashList(financialYear);
 	}
 	
-	public List<ProformaInvoiceDO> getProformaList(){
+	public List<ProformaInvoiceDO> getProformaList(String financialYear){
 		LOGGER.info("InvoiceService::getProformaList()::start");
-		return invoiceDao.getProformaList();
+		return invoiceDao.getProformaList(financialYear);
 	}
 	
 	public List<InvoiceDO> getInvoiceList(Map<String, String> data){
@@ -81,19 +82,19 @@ public class InvoiceService {
 		return invoiceDao.getInvNo();
 	}
 	
-  public List<InvoiceDO> getInvoiceListByMonth(String month){
+  public List<InvoiceDO> getInvoiceListByMonth(String month,String financialYear){
 		LOGGER.info("InvoiceService::getInvoiceListByMonth()::start");
-		return invoiceDao.getInvoiceListByMonth(month);
+		return invoiceDao.getInvoiceListByMonth(month,financialYear);
 	}
   
-  public List<CashDO> getCashInvoiceListByMonth(String month){
+  public List<CashDO> getCashInvoiceListByMonth(String month,String financialYear){
 		LOGGER.info("InvoiceService::getCashInvoiceListByMonth()::start");
-		return invoiceDao.getCashInvoiceListByMonth(month);
+		return invoiceDao.getCashInvoiceListByMonth(month,financialYear);
 	}
   
-  public List<ProformaInvoiceDO> getProformaInvoiceListByMonth(String month){
+  public List<ProformaInvoiceDO> getProformaInvoiceListByMonth(String month,String financialYear){
 		LOGGER.info("InvoiceService::getCashInvoiceListByMonth()::start");
-		return invoiceDao.getProformaInvoiceListByMonth(month);
+		return invoiceDao.getProformaInvoiceListByMonth(month,financialYear);
 	}
   
 	public List<ProductDO> getInvoiceProductList(){
@@ -1347,12 +1348,12 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 		return invoiceDao.getStandardType(module, subModule);
 	}
 	
-	public List<PurchaseDO> getPurchaseList(){
-		return invoiceDao.getPurchaseList();
+	public List<PurchaseDO> getPurchaseList(String financialYear,String flag){
+		return invoiceDao.getPurchaseList(financialYear,flag);
 	}
 	
-	public List<PurchaseDO> getPurchaseList(String month){
-		return invoiceDao.getPurchaseList(month);
+	public List<PurchaseDO> getPurchaseList(String month,String financialYear,String flag){
+		return invoiceDao.getPurchaseList(month,financialYear,flag);
 	}
 	
 	public PurchaseDO getPurchaseById(String purchaseId) {
@@ -1369,6 +1370,14 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	
 	public List<InvoiceDO> getInvoiceByFinancialYear(String financialYear) {
 		return invoiceDao.getInvoiceByFinancialYear(financialYear);
+	}
+	
+	public List<Object[]> getOustandingCustomerByFinancialYear(String financialYear) {
+		return invoiceDao.getOustandingCustomerByFinancialYear(financialYear);
+	}
+	
+	public List<Object[]> getOustandingSuppliersByFinancialYear(String financialYear) {
+		return invoiceDao.getOustandingSuppliersByFinancialYear(financialYear);
 	}
 	
 	public List<CashDO> getCashInvoiceByFinancialYear(String financialYear) {
@@ -1560,5 +1569,29 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	
 	public SupplierDO getSupplierByName(String supplierName) {
 		return invoiceDao.getSupplierByName(supplierName);
+	}
+	
+	public List<Map<String,String>> getPONumberBySupplierName(String supplierName){
+		return invoiceDao.getPONumberBySupplierName(supplierName);
+	}
+	
+	public List<Map<String,String>> getPONumberBySupplierNameForCopy(String supplierName){
+		return invoiceDao.getPONumberBySupplierNameForCopy(supplierName);
+	}
+	
+	public UserTO getUserTOByUserId(String userId) {
+		return invoiceDao.getUserTOByUserId(userId);
+	}
+	
+	public void setFinancialYearByRegisterId(String registerId,String financialYear) {
+		invoiceDao.setFinancialYearByRegisterId(registerId, financialYear);
+	}
+	
+	public String saveClient(ClientDO clientDO) {
+		return invoiceDao.saveClient(clientDO);
+	}
+	
+	public List<UserDO> getUserList(){
+		return invoiceDao.getUserList();
 	}
 }

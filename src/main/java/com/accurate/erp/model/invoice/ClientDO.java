@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity(name = "registration")
 public class ClientDO {
@@ -90,6 +91,30 @@ public class ClientDO {
 	
 	@Column(name="website")
 	String website;
+	
+	@Transient
+	byte[] logo;
+	
+	@Transient
+	byte[] signature;
+	
+	
+
+	public byte[] getLogo() {
+		return logo;
+	}
+
+	public void setLogo(byte[] logo) {
+		this.logo = logo;
+	}
+
+	public byte[] getSignature() {
+		return signature;
+	}
+
+	public void setSignature(byte[] signature) {
+		this.signature = signature;
+	}
 
 	public Integer getClientId() {
 		return clientId;

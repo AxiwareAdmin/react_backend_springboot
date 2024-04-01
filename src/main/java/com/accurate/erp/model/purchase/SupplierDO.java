@@ -55,6 +55,16 @@ public class SupplierDO {
 	
 	@Column(name="remark")
 	String remarks;
+	
+	@Column(name="contact_no")
+	String contactNumber;
+	
+	@Column(name="contact_person")
+	String contactPerson;
+	
+	
+	@Column(name="email")
+	String email;
 
 	public Integer getSupplierId() {
 		return supplierId;
@@ -159,6 +169,32 @@ public class SupplierDO {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
+
+	public String getContactNumber() {
+		return contactNumber;
+	}
+
+	public void setContactNumber(String contactNumber) {
+		this.contactNumber = contactNumber;
+	}
+
+	public String getContactPerson() {
+		return contactPerson;
+	}
+
+	public void setContactPerson(String contactPerson) {
+		this.contactPerson = contactPerson;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	
 	
 	
 	

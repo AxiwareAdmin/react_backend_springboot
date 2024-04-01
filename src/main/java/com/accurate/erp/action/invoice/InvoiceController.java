@@ -1,10 +1,18 @@
 package com.accurate.erp.action.invoice;
 
 import org.springframework.http.MediaType;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -64,6 +73,9 @@ public class InvoiceController {
 	private final static String[] completeMonth= {"April","May","June","July","August","Sepetember","October","November","December","January","February","March"};
 	@Autowired
 	InvoiceService invoiceService;
+	
+	@Value("${FILE_UPLOAD_LOCATION}")
+	String fileUploadPath;
 	
 	@Autowired
 	ExcelService excelService;
@@ -165,8 +177,11 @@ public class InvoiceController {
 	
 	@GetMapping(value="/allInvoices")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getAllInvoiceList(){
-		List<InvoiceDO> invoiceList=invoiceService.getInvoiceList();
+	public ResponseEntity<?> getAllInvoiceList(@RequestBody Map<String,String> map){
+			
+			String financialYear=map.get("financialYear");
+		
+		List<InvoiceDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
 		return new ResponseEntity<List<InvoiceDO>>(invoiceList,HttpStatus.OK);
 		}
@@ -177,10 +192,12 @@ public class InvoiceController {
 		}
 	}
 	
-	@GetMapping("/purchases")
+	@PostMapping("/purchases")
 	@CrossOrigin(origins = {"*"})
-	public ResponseEntity<?> getAllPurchase(){
-		List<PurchaseDO> list=invoiceService.getPurchaseList();
+	public ResponseEntity<?> getAllPurchase(@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<PurchaseDO> list=invoiceService.getPurchaseList(financialYear,"");
 		
 		if(list!=null && list.size()>0) {
 			return new ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK);
@@ -205,23 +222,15 @@ public class InvoiceController {
 		return ResponseEntity.ok(jsonObj.toString());
 		
 	}
-	/*
-	 * @GetMapping("/purchases")
-	 * 
-	 * @CrossOrigin(origins = {"*"}) public ResponseEntity<?> getPurchase(){
-	 * List<PurchaseDO> list=invoiceService.getPurchaseList();
-	 * 
-	 * if(list!=null && list.size()>0) { return new
-	 * ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK); }else { JSONObject
-	 * jsonObj=new JSONObject(); jsonObj.put("res", "purchases not found"); return
-	 * ResponseEntity.ok(jsonObj.toString()); } }
-	 */
-	
-	@GetMapping("/purchases/{month}")
-	@CrossOrigin(origins = {"*"})
-	public ResponseEntity<?> getPurchasesByMonth(@PathVariable String month){
 
-		List<PurchaseDO> list=invoiceService.getPurchaseList(month.substring(0,3));
+	
+	@PostMapping("/purchases/{month}")
+	@CrossOrigin(origins = {"*"})
+	public ResponseEntity<?> getPurchasesByMonth(@PathVariable String month,@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+
+		List<PurchaseDO> list=invoiceService.getPurchaseList(month.substring(0,3),financialYear,"");
 		
 		if(list!=null && list.size()>0) {
 			return new ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK);
@@ -263,6 +272,37 @@ public class InvoiceController {
 		}
 	}
 	
+	@GetMapping(value="/outstandingCustomer/year/{financialYear}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getOutstandingCusomerList(@PathVariable String financialYear){
+		List<Object[]> invoiceDO=invoiceService.getOustandingCustomerByFinancialYear(financialYear);
+		if(invoiceDO!=null) {
+		return new ResponseEntity<List<Object[]>>(invoiceDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Customers are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping(value="/outstandingSupplier/year/{financialYear}")
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> getOutstandingSupplierList(@PathVariable String financialYear){
+		List<Object[]> invoiceDO=invoiceService.getOustandingSuppliersByFinancialYear(financialYear) ;
+		if(invoiceDO!=null) {
+		return new ResponseEntity<List<Object[]>>(invoiceDO,HttpStatus.OK);
+		}
+		else {
+			JSONObject jsonObj=new JSONObject();
+			jsonObj.put("res", "Suppliers are not found");
+			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+		}
+	}
+	
+	
+	
+	
 	@GetMapping(value="/cashInvoices/year/{financialYear}")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getCashInvoiceList(@PathVariable String financialYear){
@@ -296,10 +336,12 @@ public class InvoiceController {
 	
 	
 	
-	@GetMapping(value="/invoices/{month}")
+	@PostMapping(value="/invoices/{month}")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getInvoiceListByMonth(@PathVariable String month){
-		List<InvoiceDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3));
+	public ResponseEntity<?> getInvoiceListByMonth(@PathVariable String month,@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<InvoiceDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {
 		return new ResponseEntity<List<InvoiceDO>>(invoiceDO,HttpStatus.OK);
 		}
@@ -310,10 +352,12 @@ public class InvoiceController {
 		}
 	}
 	
-	@GetMapping(value="/cashInvoices/{month}")
+	@PostMapping(value="/cashInvoices/{month}")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getCashInvoiceListByMonth(@PathVariable String month){
-		List<CashDO> invoiceDO=invoiceService.getCashInvoiceListByMonth(month.substring(0,3));
+	public ResponseEntity<?> getCashInvoiceListByMonth(@PathVariable String month,@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<CashDO> invoiceDO=invoiceService.getCashInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {
 		return new ResponseEntity<List<CashDO>>(invoiceDO,HttpStatus.OK);
 		}
@@ -324,10 +368,12 @@ public class InvoiceController {
 		}
 	}
 	
-	@GetMapping(value="/proformaInvoices/{month}")
+	@PostMapping(value="/proformaInvoices/{month}")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getProformaInvoiceListByMonth(@PathVariable String month){
-		List<ProformaInvoiceDO> invoiceDO=invoiceService.getProformaInvoiceListByMonth(month.substring(0,3));
+	public ResponseEntity<?> getProformaInvoiceListByMonth(@PathVariable String month,@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<ProformaInvoiceDO> invoiceDO=invoiceService.getProformaInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {
 		return new ResponseEntity<List<ProformaInvoiceDO>>(invoiceDO,HttpStatus.OK);
 		}
@@ -500,10 +546,12 @@ public class InvoiceController {
 		
 		
 	}
-	@GetMapping(value="/viewSalesProformaReg")
+	@PostMapping(value="/viewSalesProformaReg")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getviewSalesProformaReg(){
-		List<ProformaInvoiceDO> cashList=invoiceService.getProformaList();
+	public ResponseEntity<?> getviewSalesProformaReg(@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<ProformaInvoiceDO> cashList=invoiceService.getProformaList(financialYear);
 		if(cashList!=null && cashList.size()>0) {
 			
 			/*invoiceList.forEach((ele) ->{
@@ -539,10 +587,12 @@ public class InvoiceController {
 		}
 	}
 	
-	@GetMapping(value="/viewSalesCashReg")
+	@PostMapping(value="/viewSalesCashReg")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getviewSalesCashReg(){
-		List<CashDO> cashList=invoiceService.getCashList();
+	public ResponseEntity<?> getviewSalesCashReg(@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<CashDO> cashList=invoiceService.getCashList(financialYear);
 		if(cashList!=null && cashList.size()>0) {
 			
 			/*invoiceList.forEach((ele) ->{
@@ -579,10 +629,13 @@ public class InvoiceController {
 	}
 	
 	
-	@GetMapping(value="/viewSalesReg")
+	@PostMapping(value="/viewSalesReg")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getviewSalesReg(){
-		List<InvoiceDO> invoiceList=invoiceService.getInvoiceList();
+	public ResponseEntity<?> getviewSalesReg(@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		
+		List<InvoiceDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
 			
 			/*invoiceList.forEach((ele) ->{
@@ -618,10 +671,12 @@ public class InvoiceController {
 		}
 	}
 	
-	@GetMapping(value = "/getPurchases")
+	@PostMapping(value = "/getPurchases")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getPurchaseList(){
-		List<PurchaseDO> purchaseList=invoiceService.getPurchaseList();
+	public ResponseEntity<?> getPurchaseList(@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<PurchaseDO> purchaseList=invoiceService.getPurchaseList(financialYear,"");
 		if(purchaseList!=null && purchaseList.size()>0) {
 			
 			/*invoiceList.forEach((ele) ->{
@@ -1038,7 +1093,7 @@ public class InvoiceController {
 	
 	@GetMapping("/getClientDOForUser")
 	@CrossOrigin(origins = {"*"})
-	public ResponseEntity<?> getClientDOForUser(HttpServletRequest request){
+	public ResponseEntity<?> getClientDOForUser(HttpServletRequest request) throws IOException{
 		  String token=request.getHeader("Authorization").split(" ")[1];
 		  Claims claims= jwtUtil.extractAllClaims(token);
 		  
@@ -1047,6 +1102,34 @@ public class InvoiceController {
 		  String registerId=map.get("registerId").toString();
 		  
 		  ClientDO clientDO=invoiceService.getClientDoByRegisterId(registerId);
+//		  
+//		  StringBuilder directory=new StringBuilder(fileUploadPath);
+//		  
+//		  directory.append("\\");
+//		  
+//		  directory.append(registerId);
+//		  
+//		  Path imagePath = Paths.get(directory.toString());
+//		  
+//		  try (DirectoryStream<Path> stream = Files.newDirectoryStream(imagePath)) {
+//	            for (Path file : stream) {
+//	            	
+//	            	if(file.getFileName().toString().contains("LOGO")) {
+//	            		clientDO.setLogo(Files.readAllBytes(file));
+//	            	}
+//	            	
+//	            	if(file.getFileName().toString().contains("SIGNATURE")) {
+//	            		clientDO.setSignature(Files.readAllBytes(file));
+//	            	}
+//	               
+//	                // Process the file here
+//	            }
+//	        } catch (Exception e) {
+//	            // IOException can be thrown during the iteration, fail early
+//	        	LOGGER.error("Exception in InvoiceController::getClientDOForUser()::"+e);
+//	            throw e;
+//	        }
+
 		  
 		  if(clientDO!=null) {
 			  return new ResponseEntity<ClientDO>(clientDO,HttpStatus.OK);
@@ -1155,4 +1238,138 @@ public class InvoiceController {
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	
+		
+		@GetMapping(value="/poBySuppName/{supplierName}")
+		@CrossOrigin(origins = {"*"})
+		public ResponseEntity<?> getPoNumbersBySupplierName(@PathVariable String supplierName){
+			List<Map<String,String>> poNumber=invoiceService.getPONumberBySupplierName(supplierName);
+			
+			return new ResponseEntity<List<Map<String,String>>>(poNumber,HttpStatus.OK);
+		}
+		
+		
+		@GetMapping(value="/poBySuppNameForCopy/{supplierName}")
+		@CrossOrigin(origins = {"*"})
+		public ResponseEntity<?> getPoNumbersBySupplierNameForCopy(@PathVariable String supplierName){
+			List<Map<String,String>> poNumber=invoiceService.getPONumberBySupplierNameForCopy(supplierName);
+			
+			return new ResponseEntity<List<Map<String,String>>>(poNumber,HttpStatus.OK);
+		}
+		
+		
+		@GetMapping(value="/me")
+		@CrossOrigin(origins = {"*"})
+		public ResponseEntity<?> getUserToByUserId(HttpServletRequest request){
+			 String token=request.getHeader("Authorization").split(" ")[1];
+			  Claims claims= jwtUtil.extractAllClaims(token);
+			  
+			  LinkedHashMap<String,Integer> map=claims.get("user",LinkedHashMap.class);
+			  
+			  Integer userId=map.get("userId");
+
+			  UserDO userDO=invoiceService.getUserByUserId(userId.toString());
+			  
+			  if(userDO==null) {
+				  new ResponseEntity<String>("user not found",HttpStatus.OK);
+			  }
+			  
+			return new ResponseEntity<UserDO>(userDO,HttpStatus.OK);
+		}
+		
+		@GetMapping(value="/financialYearList")
+		@CrossOrigin(origins = {"*"})
+		public ResponseEntity<?> getFinancialYearList(){
+			
+			Calendar today = Calendar.getInstance();
+			
+			List<String> financialYearList=new ArrayList<>();
+	        
+	        String fiscalYear;
+	        for(int i=0;i<5;i++){
+	        if ((today.get(Calendar.MONTH) + 1) <= 3) {
+	            fiscalYear = (today.get(Calendar.YEAR) - 1) + "-" + Integer.toString(today.get(Calendar.YEAR)).substring(2);
+	        } else {
+	            fiscalYear = today.get(Calendar.YEAR) + "-" + Integer.toString(today.get(Calendar.YEAR) + 1).substring(2);
+	        }
+	        
+	        financialYearList.add(fiscalYear);
+	        
+	        today.add(Calendar.YEAR, -1);
+	        }
+	        
+	        return new ResponseEntity<List<String>>(financialYearList,HttpStatus.OK);
+			
+		}
+		
+		@PostMapping(value="/setFinancialYear")
+		@CrossOrigin(origins = {"*"})
+		public ResponseEntity<String> setFinancialYear(HttpServletRequest request,@RequestBody Map<String, Object> requestMap){
+			try {
+				String token=request.getHeader("Authorization").split(" ")[1];
+				
+				
+				  Claims claims= jwtUtil.extractAllClaims(token);
+				  
+				  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+				  
+				  String registerId=map.get("registerId").toString();
+				  String financialYear=requestMap.get("financialYear").toString();
+				  
+				  invoiceService.setFinancialYearByRegisterId(registerId, financialYear);
+				  
+				  return new ResponseEntity<String>("success",HttpStatus.OK);
+			}catch(Exception e) {
+				return new ResponseEntity<String>("error",HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+		
+		@PostMapping(value = "/saveClient")
+		@CrossOrigin(origins = {"*"})
+		public String saveClient(@RequestBody ClientDO clientDO) throws IOException {
+			
+			
+//			 String base64UrlEncodedData = clientDO.getLogo().toString();
+//		     byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlEncodedData);
+			String filePath=null;
+			
+			Path path;
+			
+			if(clientDO.getLogo().length>0) {
+			 filePath=fileUploadPath+"\\"+clientDO.getClientId()+"\\"+"LOGO.jpg";
+			 // Convert the byte array to a Path object
+             path = Paths.get(filePath);
+
+            // Write the byte array to the file
+            Files.write(path, clientDO.getLogo());
+			}
+            
+            
+			if(clientDO.getSignature().length>0) {
+            
+            filePath=fileUploadPath+"\\"+clientDO.getClientId()+"\\"+"SIGNATURE.jpg";
+            path = Paths.get(filePath);
+            Files.write(path, clientDO.getSignature());
+			}
+            
+			
+			return invoiceService.saveClient(clientDO);
+		}
+		
+		@GetMapping(value = "/users")
+		@CrossOrigin(origins= {"*"})
+		public ResponseEntity<?> getUserList(){
+			List<UserDO> userList=invoiceService.getUserList();
+			
+			if(userList!=null) {
+				return new ResponseEntity<List<UserDO>>(userList,HttpStatus.OK);
+			}
+			
+
+			JSONObject jsonObject=new JSONObject();
+			jsonObject.put("res", "Users not found");
+			return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
+		}
+		
+		
+		
 }

@@ -1,4 +1,4 @@
-package com.accurate.erp.service.invoice;
+package com.accurate.erp.service.inventory;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -16,8 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.accurate.erp.dao.inventory.MaterialOutwardDao;
 import com.accurate.erp.dao.invoice.InvoiceDao;
 import com.accurate.erp.dao.invoice.QuotationDAO;
+import com.accurate.erp.model.inventory.MaterialOutwardDO;
+import com.accurate.erp.model.inventory.MaterialOutwardProductDO;
 import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.CashSaleProductDO;
 import com.accurate.erp.model.invoice.ClientDO;
@@ -38,25 +41,25 @@ import com.accurate.erp.utility.mail.SendMail;
 
 @Service
 @Transactional
-public class QuotationService {
+public class MaterialOutwardService {
 	
-	private static final Logger LOGGER=LogManager.getLogger(QuotationService.class);
+	private static final Logger LOGGER=LogManager.getLogger(MaterialOutwardService.class);
 
 	@Autowired
-	QuotationDAO invoiceDao;
+	MaterialOutwardDao invoiceDao;
 	
 	@Autowired
 	SendMail sendmail;
 	
 	
 	
-	public List<QuotationDO> getInvoiceList(String financialYear){
+	public List<MaterialOutwardDO> getInvoiceList(String financialYear){
 		LOGGER.info("QuotationService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(financialYear);
 	}
 	
 	
-	public List<QuotationDO> getInvoiceList(Map<String, String> data){
+	public List<MaterialOutwardDO> getInvoiceList(Map<String, String> data){
 		LOGGER.info("QuotationService::getInvoiceList()::start");
 		return invoiceDao.getInvoiceList(data);
 	}
@@ -68,7 +71,7 @@ public class QuotationService {
 		return invoiceDao.getInvNo();
 	}
 	
-  public List<QuotationDO> getInvoiceListByMonth(String month,String financialYear){
+  public List<MaterialOutwardDO> getInvoiceListByMonth(String month,String financialYear){
 		LOGGER.info("QuotationService::getInvoiceListByMonth()::start");
 		return invoiceDao.getInvoiceListByMonth(month,financialYear);
 	}
@@ -78,7 +81,7 @@ public class QuotationService {
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
-		QuotationDO invoiceDO=new QuotationDO();
+		MaterialOutwardDO invoiceDO=new MaterialOutwardDO();
 		
 		Object invoiceNo=inputJson.get("invoiceNo");
 		
@@ -164,10 +167,10 @@ public class QuotationService {
 			invoiceDO.setInvoiceId(Integer.parseInt(invoiceId.toString()));
 		
 		
-		List<QuotationProductDO> invoiceProducts=new ArrayList<>();
+		List<MaterialOutwardProductDO> invoiceProducts=new ArrayList<>();
 		if(invoiceProd!=null && invoiceProd.size()>0) {
 			for(Map<String,Object> tempProd:invoiceProd) {
-				QuotationProductDO invoiceProduct=new QuotationProductDO();
+				MaterialOutwardProductDO invoiceProduct=new MaterialOutwardProductDO();
 				
 				invoiceProduct.setProductName(tempProd.get("productName").toString());
 				
@@ -359,7 +362,7 @@ public class QuotationService {
 	
 
 	
-	public QuotationDO getInvoiceDetails(String invId){
+	public MaterialOutwardDO getInvoiceDetails(String invId){
 		LOGGER.info("QuotationService::getInvoiceDetails()::start");
 		return invoiceDao.getInvoiceDetails(invId);
 	}
@@ -371,7 +374,7 @@ public class QuotationService {
 		return invoiceDao.DeleteInvoice(invId);
 	}
 	
-	public List<QuotationDO> getInvoiceByFinancialYear(String financialYear) {
+	public List<MaterialOutwardDO> getInvoiceByFinancialYear(String financialYear) {
 		return invoiceDao.getInvoiceByFinancialYear(financialYear);
 	}
 	

@@ -1,4 +1,4 @@
-package com.accurate.erp.dao.invoice;
+package com.accurate.erp.dao.inventory;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -25,22 +25,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.accurate.erp.action.invoice.InvoiceController;
-import com.accurate.erp.model.invoice.CashDO;
+import com.accurate.erp.model.inventory.MaterialInwardDO;
+import com.accurate.erp.model.inventory.MaterialInwardProductDO;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
-import com.accurate.erp.model.invoice.InvoiceProductDO;
-import com.accurate.erp.model.invoice.ProformaInvoiceDO;
-import com.accurate.erp.model.invoice.QuotationDO;
-import com.accurate.erp.model.invoice.QuotationProductDO;
-import com.accurate.erp.model.invoice.SupplierQuotationDO;
-import com.accurate.erp.model.invoice.SupplierQuotationProductsDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderProductDO;
+import com.accurate.erp.model.po.SupplierPurchaseOrderDO;
+import com.accurate.erp.model.po.SupplierPurchaseOrderProductDO;
 
 @Repository
-public class SupplierQuotationDAO {
+public class MaterialInwardDao {
+
 	
-	private final static Logger LOGGER = LogManager.getLogger(SupplierQuotationDAO.class);
+	private final static Logger LOGGER = LogManager.getLogger(MaterialInwardDao.class);
 
 	@Autowired
 	SessionFactory sessionFactory;
@@ -62,18 +61,18 @@ public class SupplierQuotationDAO {
 	
     @SuppressWarnings("deprecation")
 	@Transactional
-	public SupplierQuotationDO getInvoiceDetails(String invId) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceDetails :: Start ");
-		SupplierQuotationDO invDO = null;
+	public MaterialInwardDO getInvoiceDetails(String invId) {
+		LOGGER.info("MaterialInwardDao :: getInvoiceDetails :: Start ");
+		MaterialInwardDO invDO = null;
 		try {
 
 			Session session = getSession();
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<MaterialInwardDO> query = builder.createQuery(MaterialInwardDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<MaterialInwardDO> root = query.from(MaterialInwardDO.class);
 
 			query.select(root);
 
@@ -89,18 +88,17 @@ public class SupplierQuotationDAO {
 			 */
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceDetails ");
+			LOGGER.error("Exception occured in MaterialInwardDao :: getInvoiceDetails ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceDetails method end");
+		LOGGER.info("MaterialInwardDao :: getInvoiceDetails method end");
 		return invDO;
 	}
     
-    public String saveInvoice(SupplierQuotationDO invoiceDO) {
-		LOGGER.info("SupplierQuotationDAO::saveInvoice::start");
+    public String saveInvoice(MaterialInwardDO invoiceDO) {
+		LOGGER.info("MaterialInwardDao::saveInvoice::start");
 
 		try {
-			SupplierQuotationDO tmp = invoiceDO;
-			SupplierQuotationDO invDO = null;
+			MaterialInwardDO tmp = invoiceDO;
 			invoiceDO.setInvoiceProductId(1);
 			Calendar cal = Calendar.getInstance();
 			invoiceDO.setMonth(new SimpleDateFormat("MMM").format(cal.getTime()));
@@ -110,30 +108,32 @@ public class SupplierQuotationDAO {
 			
 //			Transaction tx=session.beginTransaction();
 			session.saveOrUpdate(invoiceDO);
+			
+			
 //			session.flush();
 //			tx.commit();
 
 		} catch (Exception e) {
-			LOGGER.info("Exception occured in SupplierQuotationDAO::saveInvoice::" + e);
+			LOGGER.info("Exception occured in MaterialInwardDao::saveInvoice::" + e);
 			return "failure";
 		}
 
-		LOGGER.info("SupplierQuotationDAO::saveInvoice()::end");
+		LOGGER.info("MaterialInwardDao::QuotationDAO::end");
 		return "success";
 	}
     
-    public List<SupplierQuotationDO> getInvoiceList(String financialYear) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList :: Start ");
-		List<SupplierQuotationDO> invoiceList = new ArrayList<SupplierQuotationDO>();
+    public List<MaterialInwardDO> getInvoiceList(String financialYear) {
+		LOGGER.info("MaterialInwardDao :: getInvoiceList :: Start ");
+		List<MaterialInwardDO> invoiceList = new ArrayList<MaterialInwardDO>();
 		try {
 
 			Session session = getSession();
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<MaterialInwardDO> query = builder.createQuery(MaterialInwardDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<MaterialInwardDO> root = query.from(MaterialInwardDO.class);
 			
 			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
@@ -149,15 +149,15 @@ public class SupplierQuotationDAO {
 			 */
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceList ");
+			LOGGER.error("Exception occured in MaterialInwardDao :: getInvoiceList ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList method end");
+		LOGGER.info("MaterialInwardDao :: getInvoiceList method end");
 		return invoiceList;
 	}
     
-    public List<SupplierQuotationDO> getInvoiceList(Map<String, String> data) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList :: Start ");
-		List<SupplierQuotationDO> invoiceList = new ArrayList<SupplierQuotationDO>();
+    public List<MaterialInwardDO> getInvoiceList(Map<String, String> data) {
+		LOGGER.info("MaterialInwardDao :: getInvoiceList :: Start ");
+		List<MaterialInwardDO> invoiceList = new ArrayList<MaterialInwardDO>();
 		try {
 
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -183,9 +183,9 @@ public class SupplierQuotationDAO {
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<MaterialInwardDO> query = builder.createQuery(MaterialInwardDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<MaterialInwardDO> root = query.from(MaterialInwardDO.class);
 
 			query.select(root);
 
@@ -231,17 +231,17 @@ public class SupplierQuotationDAO {
 			 */
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceList ");
+			LOGGER.error("Exception occured in MaterialInwardDao :: getInvoiceList ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceList method end");
+		LOGGER.info("MaterialInwardDao :: getInvoiceList method end");
 		return invoiceList;
 	}
     
     public String getInvNo(){
-		LOGGER.info("SupplierQuotationDAO :: getInvNo :: Start ");
+		LOGGER.info("MaterialInwardDao :: getInvNo :: Start ");
 		String invNo="";
 		DocumentSeqMasterDO documentSeqMasterDO = null;
-		InvoiceDO invoiceDO = null;
+		SupplierPurchaseOrderDO invoiceDO = null;
 		String tempInv = "";
 		List<String> temp;
 		try {
@@ -256,7 +256,7 @@ public class SupplierQuotationDAO {
 			
 			query.select(root);
 			
-			Predicate predicate=builder.equal(root.get("documentName"), "Quotation");
+			Predicate predicate=builder.equal(root.get("documentName"), "Purchase Order");
 			
 			query.where(predicate);
 			
@@ -274,7 +274,7 @@ public class SupplierQuotationDAO {
 			
 			CriteriaQuery<String> query1=builder.createQuery(String.class);
 			
-			Root<SupplierQuotationDO> root2=query1.from(SupplierQuotationDO.class);
+			Root<SupplierPurchaseOrderDO> root2=query1.from(SupplierPurchaseOrderDO.class);
 			query1.select(root2.get("invoiceNo"));
 			
 			query1.orderBy(builder.desc(root2.get("invoiceNo")));
@@ -302,30 +302,30 @@ public class SupplierQuotationDAO {
 			
 			
 		}catch(Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvNo "+e);
+			LOGGER.error("Exception occured in MaterialInwardDao :: getInvNo "+e);
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvNo method end");
+		LOGGER.info("MaterialInwardDao :: getInvNo method end");
 		return invNo;
 	}
     
-    public List<SupplierQuotationDO> getInvoiceListByMonth(String month,String financialYear) {
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceListByMonth :: Start ");
-		List<SupplierQuotationDO> invoiceList = new ArrayList<SupplierQuotationDO>();
+    public List<MaterialInwardDO> getInvoiceListByMonth(String month,String financialYear) {
+		LOGGER.info("MaterialInwardDao :: getInvoiceListByMonth :: Start ");
+		List<MaterialInwardDO> invoiceList = new ArrayList<MaterialInwardDO>();
 		try {
 
 			Session session = getSession();
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<MaterialInwardDO> query = builder.createQuery(MaterialInwardDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<MaterialInwardDO> root = query.from(MaterialInwardDO.class);
 
 			query.select(root);
 
 			Predicate predicate1 = builder.equal(root.get("month"), month);
 			
-			Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
+			Predicate predicate2 = builder.equal(root.get("financialYear"),financialYear);
 
 			query.where(builder.and(predicate1,predicate2));
 
@@ -337,15 +337,15 @@ public class SupplierQuotationDAO {
 
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: getInvoiceListByMonth ");
+			LOGGER.error("Exception occured in MaterialInwardDao :: getInvoiceListByMonth ");
 		}
-		LOGGER.info("SupplierQuotationDAO :: getInvoiceListByMonth method end");
+		LOGGER.info("MaterialInwardDao :: getInvoiceListByMonth method end");
 		return invoiceList;
 	}
     
     @Transactional
 	public boolean DeleteInvoice(String invId) {
-		LOGGER.info("SupplierQuotationDAO :: DeleteInvoice :: Start ");
+		LOGGER.info("MaterialInwardDao :: DeleteInvoice :: Start ");
 		boolean flag = false;
 		try {
 
@@ -353,24 +353,24 @@ public class SupplierQuotationDAO {
 			
 			//String idName=className.equalsIgnoreCase("proforma_invoice")?"pi_id":"Invoice_id";
 			
-			Query query = session.createNativeQuery("delete from supplier_quotation where Quotation_Id ='" + invId + "'");
+			Query query = session.createNativeQuery("delete from material_inward where material_Id ='" + invId + "'");
 			
 			query.executeUpdate();
 			flag = true;
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: DeleteInvoice ");
+			LOGGER.error("Exception occured in MaterialInwardDao :: DeleteInvoice ");
 			flag = false;
 		}
-		LOGGER.info("SupplierQuotationDAO :: DeleteInvoice method end");
+		LOGGER.info("MaterialInwardDao :: DeleteInvoice method end");
 		return flag;
 	}
     
     public boolean cloneInvoice(String invNo) {
-		LOGGER.info("SupplierQuotationDAO :: cloneInvoice :: Start ");
+		LOGGER.info("MaterialInwardDao :: cloneInvoice :: Start ");
 		boolean flag=false;
-		SupplierQuotationDO invDO= new SupplierQuotationDO();
-		List<SupplierQuotationDO> invtemp = new ArrayList<>();
+		MaterialInwardDO invDO= new MaterialInwardDO();
+		List<MaterialInwardDO> invtemp = new ArrayList<>();
 		Integer gInvNo = 0;
 		String fInvNo="";
 		try {
@@ -382,9 +382,9 @@ public class SupplierQuotationDAO {
 			
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery<SupplierQuotationDO> query = builder.createQuery(SupplierQuotationDO.class);
+			CriteriaQuery<MaterialInwardDO> query = builder.createQuery(MaterialInwardDO.class);
 
-			Root<SupplierQuotationDO> root = query.from(SupplierQuotationDO.class);
+			Root<MaterialInwardDO> root = query.from(MaterialInwardDO.class);
 
 			query.select(root);
 
@@ -403,10 +403,11 @@ public class SupplierQuotationDAO {
 			fInvNo = getInvNo();
 			invDO.setInvoiceNo(fInvNo);
 					
-			List<SupplierQuotationProductsDO> productdo = new ArrayList<SupplierQuotationProductsDO>();
-			for(SupplierQuotationProductsDO temp : invDO.getInvoiceProductDO()) {
-				SupplierQuotationProductsDO invprod = new SupplierQuotationProductsDO();
+			List<MaterialInwardProductDO> productdo = new ArrayList<MaterialInwardProductDO>();
+			for(MaterialInwardProductDO temp : invDO.getInvoiceProductDO()) {
+				MaterialInwardProductDO invprod = new MaterialInwardProductDO();
 				invprod = temp;
+				
 				invprod.setInvoiceDO(invDO);
 				invprod.setInvoiceProductId(null);
 				productdo.add(invprod);
@@ -424,16 +425,16 @@ public class SupplierQuotationDAO {
 			
 
 		} catch (Exception e) {
-			LOGGER.error("Exception occured in SupplierQuotationDAO :: cloneInvoice ");
+			LOGGER.error("Exception occured in MaterialInwardDao :: cloneInvoice ");
 			flag = false;
 		}
-		LOGGER.info("SupplierQuotationDAO :: cloneInvoice method end");
+		LOGGER.info("MaterialInwardDao :: cloneInvoice method end");
 		return flag;
 	}
     
-    public boolean saveCloneInv(SupplierQuotationDO invdo) {
+    public boolean saveCloneInv(MaterialInwardDO invdo) {
 
-		LOGGER.info("SupplierQuotationDAO::saveCloneInv::start");
+		LOGGER.info("MaterialInwardDao::saveCloneInv::start");
 		try {
 
 //			Session session = getSession();
@@ -445,18 +446,18 @@ public class SupplierQuotationDAO {
 			session.close();
 
 		} catch (Exception e) {
-			LOGGER.info("Exception occured in SupplierQuotationDAO::saveCloneInv::" + e);
+			LOGGER.info("Exception occured in MaterialInwardDao::saveCloneInv::" + e);
 			return false;
 		}
 
-		LOGGER.info("SupplierQuotationDAO::saveCloneInv::end");
+		LOGGER.info("MaterialInwardDao::saveCloneInv::end");
 		return true;
 
 	}
     
 public String getCustomerEmail(String custName) {
 		
-        LOGGER.info("SupplierQuotationDAO::getCustomerEmail::start");
+        LOGGER.info("MaterialInwardDao::getCustomerEmail::start");
         String email = "";
 		try {
 			
@@ -478,17 +479,17 @@ public String getCustomerEmail(String custName) {
 			
 			
 		}catch(Exception e) {
-			LOGGER.info("Exception occured in SupplierQuotationDAO::getCustomerEmail::"+e);
+			LOGGER.info("Exception occured in MaterialInwardDao::getCustomerEmail::"+e);
 			return email;
 		}
 		
-		LOGGER.info("SupplierQuotationDAO::getCustomerEmail::end");
+		LOGGER.info("MaterialInwardDao::getCustomerEmail::end");
 		return email;
 		
 	}
 
 public boolean cancelInvoiceById(Integer invoiceId) {
-	LOGGER.info("SupplierQuotationDAO::calcelInvoice()::start");
+	LOGGER.info("MaterialInwardDao::calcelInvoice()::start");
 	boolean flag=false;
 	
 	try {
@@ -496,7 +497,7 @@ public boolean cancelInvoiceById(Integer invoiceId) {
 		Session session=getSession();
 		
 		
-		SupplierQuotationDO invoiceDO=getInvoiceDetails(invoiceId.toString());
+		MaterialInwardDO invoiceDO=getInvoiceDetails(invoiceId.toString());
 		
 		//Object invoiceDO=getSalesTypeClassDetails(className, invoiceId.toString());
 		
@@ -526,27 +527,27 @@ public boolean cancelInvoiceById(Integer invoiceId) {
 		
 		
 	}catch(Exception e) {
-		LOGGER.error("Exception in SupplierQuotationDAO::cancelInvoiceById()::"+e);
+		LOGGER.error("Exception in MaterialInwardDao::cancelInvoiceById()::"+e);
 	}
 	
-	LOGGER.info("SupplierQuotationDAO::calcelInvoice()::end");
+	LOGGER.info("MaterialInwardDao::cancelInvoiceById()::end");
 	
 	return flag;
 	
 }
 
-public List<SupplierQuotationDO> getInvoiceByFinancialYear(String financialYear) {
-	LOGGER.info("SupplierQuotationDAO::getInvoiceByFinancialYear()::Start");
-	List<SupplierQuotationDO> invoiceDO=null;
+public List<MaterialInwardDO> getInvoiceByFinancialYear(String financialYear) {
+	LOGGER.info("MaterialInwardDao::getInvoiceByFinancialYear()::Start");
+	List<MaterialInwardDO> invoiceDO=null;
 	
 	try {
 		Session session=getSession();
 		
 		CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
 		
-		CriteriaQuery<SupplierQuotationDO> query=criteriaBuilder.createQuery(SupplierQuotationDO.class);
+		CriteriaQuery<MaterialInwardDO> query=criteriaBuilder.createQuery(MaterialInwardDO.class);
 		
-		Root<SupplierQuotationDO> root=query.from(SupplierQuotationDO.class);
+		Root<MaterialInwardDO> root=query.from(MaterialInwardDO.class);
 		
 		query.select(root);
 		
@@ -557,9 +558,9 @@ public List<SupplierQuotationDO> getInvoiceByFinancialYear(String financialYear)
 		invoiceDO=session.createQuery(query).getResultList();
 		
 	}catch(Exception e) {
-		LOGGER.error("Exception in SupplierQuotationDAO::getInvoiceByFinancialYear()::"+e);
+		LOGGER.error("Exception in MaterialInwardDao::getInvoiceByFinancialYear()::"+e);
 	}
-	LOGGER.info("SupplierQuotationDAO::getInvoiceByFinancialYear()::End");
+	LOGGER.info("MaterialInwardDao::getInvoiceByFinancialYear()::End");
 	return invoiceDO;
 }
 
@@ -591,6 +592,10 @@ public List<SupplierQuotationDO> getInvoiceByFinancialYear(String financialYear)
 			session.close();
 		}
 	}
+
+
+
+
 
 
 }

@@ -1,4 +1,4 @@
-package com.accurate.erp.action.invoice;
+package com.accurate.erp.action.accounting;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -27,26 +27,30 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.accurate.erp.helper.JwtUtil;
+import com.accurate.erp.model.accounting.CreditNoteDO;
+import com.accurate.erp.model.accounting.DebitNoteDO;
+import com.accurate.erp.model.inventory.MaterialOutwardDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.QuotationDO;
-import com.accurate.erp.model.invoice.SupplierQuotationDO;
 import com.accurate.erp.security.service.CustomUserDetailsService;
+import com.accurate.erp.service.accounting.CreditNoteService;
+import com.accurate.erp.service.accounting.DebitNoteService;
 import com.accurate.erp.service.excel.ExcelService;
+import com.accurate.erp.service.inventory.MaterialOutwardService;
 import com.accurate.erp.service.invoice.InvoiceService;
 import com.accurate.erp.service.invoice.QuotationService;
-import com.accurate.erp.service.invoice.SupplierQuotationService;
 
 import io.jsonwebtoken.Claims;
 
 @RestController
-public class SupplierQuotationController {
+public class CreditNoteController {
 	
-	private final static Logger LOGGER=LoggerFactory.getLogger(QuotationController.class);
+	private final static Logger LOGGER=LoggerFactory.getLogger(CreditNoteController.class);
 	private final static String [] month = {"Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar"};
 	private final static String[] completeMonth= {"April","May","June","July","August","Sepetember","October","November","December","January","February","March"};
 	
 	@Autowired
-	SupplierQuotationService invoiceService;
+	CreditNoteService invoiceService;
 	
 	@Autowired
 	ExcelService excelService;
@@ -60,37 +64,38 @@ public class SupplierQuotationController {
 	@Autowired
 	JwtUtil jwtUtil;
 	
-	@GetMapping(value="/supplierQuotations/year/{financialYear}")
+	@GetMapping(value="/creditNote/year/{financialYear}")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
-		List<SupplierQuotationDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
+		List<CreditNoteDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
 		if(invoiceDO!=null) {
-		return new ResponseEntity<List<SupplierQuotationDO>>(invoiceDO,HttpStatus.OK);
+		return new ResponseEntity<List<CreditNoteDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
-			jsonObj.put("res", "Quotation are not found");
+			jsonObj.put("res", "Credit note details are not found");
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
 	
-	@GetMapping(value="/allSupplierQuotations")
+	@GetMapping(value="/allCreditNote")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getAllInvoiceList(@RequestBody Map<String,String> map){
 		
 		String financialYear=map.get("financialYear");
-		List<SupplierQuotationDO> invoiceList=invoiceService.getInvoiceList(financialYear);
+		
+		List<CreditNoteDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
-		return new ResponseEntity<List<SupplierQuotationDO>>(invoiceList,HttpStatus.OK);
+		return new ResponseEntity<List<CreditNoteDO>>(invoiceList,HttpStatus.OK);
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
-			jsonObj.put("res", "Quotations are not found");
+			jsonObj.put("res", "Credit note details are not found");
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
 	
-	@GetMapping(value="/getSupplierQuoNO")
+	@GetMapping(value="/getCreditNoteNo")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getInvNo(){
 		String invNo=invoiceService.getInvNo();
@@ -99,28 +104,28 @@ public class SupplierQuotationController {
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
-			jsonObj.put("res", "Quotations are not found");
+			jsonObj.put("res", "Credit note details are not found");
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
 	
-	@PostMapping(value="/supplierQuotations/{month}")
+	@PostMapping(value="/creditNote/{month}")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getInvoiceListByMonth(@PathVariable String month,@RequestBody Map<String,String> map){
 		
 		String financialYear=map.get("financialYear");
-		List<SupplierQuotationDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
+		List<CreditNoteDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {	
-		return new ResponseEntity<List<SupplierQuotationDO>>(invoiceDO,HttpStatus.OK);
+		return new ResponseEntity<List<CreditNoteDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
-			jsonObj.put("res", "Quotations are not found");
+			jsonObj.put("res", "Credit note details are not found");
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
 	
-	@PostMapping(value="/saveSupplierQuotation",consumes= {"application/json"})
+	@PostMapping(value="/saveCreditNote",consumes= {"application/json"})
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> saveQuotation(@RequestBody Map<String, Object> inputJson,HttpServletRequest request) throws ParseException{
 		
@@ -138,7 +143,7 @@ public class SupplierQuotationController {
 		  
 		  String userName=map.get("userName").toString();
 		  
-		  String msg=invoiceService.saveInvoice(inputJson,registerId,userId,userName);
+		String msg=invoiceService.saveInvoice(inputJson,registerId,userId,userName);
 		
 		
 		
@@ -151,12 +156,12 @@ public class SupplierQuotationController {
 		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 	}
 	
-	@PostMapping(value="/viewSalesRegSupplierQuotation")
+	@PostMapping(value="/viewSalesRegCreditNote")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getviewSalesReg(@RequestBody Map<String,String> map){
 		
 		String financialYear=map.get("financialYear");
-		List<SupplierQuotationDO> invoiceList=invoiceService.getInvoiceList(financialYear);
+		List<CreditNoteDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
 			
 			/*invoiceList.forEach((ele) ->{
@@ -168,7 +173,7 @@ public class SupplierQuotationController {
 				Integer totalInv = 0;
 				BigDecimal closingBal = new BigDecimal(0);
 				BigDecimal amount = new BigDecimal(0);
-				for(SupplierQuotationDO invdo : invoiceList) {
+				for(CreditNoteDO invdo : invoiceList) {
 					if(str.substring(0,3).equalsIgnoreCase(invdo.getMonth())) {
 						totalInv = totalInv + 1;
 						amount = amount.add(invdo.getInvoiceValue());
@@ -187,26 +192,26 @@ public class SupplierQuotationController {
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
-			jsonObj.put("res", "Quotations are not found");
+			jsonObj.put("res", "Credit note details are not found");
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
 	
-	@GetMapping(value="/viewSupplierQuotation")
+	@GetMapping(value="/viewCreditNote")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getInvoiceDetails(@QueryParam("invId") String invId){
-		SupplierQuotationDO invoicedo=invoiceService.getInvoiceDetails(invId);
+		CreditNoteDO invoicedo=invoiceService.getInvoiceDetails(invId);
 		if(invoicedo!=null) {
-		return new ResponseEntity<SupplierQuotationDO>(invoicedo,HttpStatus.OK);
+		return new ResponseEntity<CreditNoteDO>(invoicedo,HttpStatus.OK);
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
-			jsonObj.put("res", "Quotation Details are not found");
+			jsonObj.put("res", "Credit note Details are not found");
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
 	
-	@PostMapping(value="/sendmailSupplierQuotation")
+	@PostMapping(value="/sendmailCreditNote")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> sendMail(@RequestParam("file") MultipartFile file,@RequestParam("invoiceNo") String invoiceNo,@RequestParam("custName") String custName){
 		boolean flag=false;
@@ -222,7 +227,7 @@ public class SupplierQuotationController {
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/cancelSupplierQuotation")
+	@GetMapping(value = "/cancelCreditNote")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> cancelInvoice(@RequestParam("QuoId") String invoiceId){
 		
@@ -239,7 +244,7 @@ public class SupplierQuotationController {
 		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 	}
 	
-	@GetMapping(value="/deleteSupplierQuo")
+	@GetMapping(value="/deleteCreditNote")
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getDeleteInvoice(@RequestParam("QuoId") String invoiceId){
 		String className=null;

@@ -6,12 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -42,7 +44,10 @@ import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.ProductDO;
 import com.accurate.erp.model.invoice.ProformaInvoiceDO;
 import com.accurate.erp.model.invoice.UserDO;
+import com.accurate.erp.model.invoice.UserTO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderDO;
+import com.accurate.erp.model.po.SupplierPurchaseOrderDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
 import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.model.util.StandardTypeDO;
@@ -172,7 +177,7 @@ public class InvoiceDao {
 		return productDO;
 	}
 
-	public List<InvoiceDO> getInvoiceList() {
+	public List<InvoiceDO> getInvoiceList(String financialYear) {
 		LOGGER.info("InvoiceDao :: getInvoiceList :: Start ");
 		List<InvoiceDO> invoiceList = new ArrayList<InvoiceDO>();
 		try {
@@ -185,7 +190,7 @@ public class InvoiceDao {
 
 			Root<InvoiceDO> root = query.from(InvoiceDO.class);
 			
-			Predicate pred=builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+			Predicate pred=builder.equal(root.get("financialYear"),financialYear);
 
 			query.select(root);
 			
@@ -205,7 +210,7 @@ public class InvoiceDao {
 		return invoiceList;
 	}
 	
-	public List<ProformaInvoiceDO> getProformaList() {
+	public List<ProformaInvoiceDO> getProformaList(String financialYear) {
 		LOGGER.info("InvoiceDao :: getProformaList :: Start ");
 		List<ProformaInvoiceDO> proformaList = new ArrayList<ProformaInvoiceDO>();
 		try {
@@ -218,7 +223,7 @@ public class InvoiceDao {
 
 			Root<ProformaInvoiceDO> root = query.from(ProformaInvoiceDO.class);
 			
-			Predicate pred=builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
 			query.select(root);
 			
@@ -235,7 +240,7 @@ public class InvoiceDao {
 		return proformaList;
 	}
 	
-	public List<CashDO> getCashList() {
+	public List<CashDO> getCashList(String financialYear) {
 		LOGGER.info("InvoiceDao :: getCashList :: Start ");
 		List<CashDO> cashList = new ArrayList<CashDO>();
 		try {
@@ -248,7 +253,7 @@ public class InvoiceDao {
 
 			Root<CashDO> root = query.from(CashDO.class);
 			
-			Predicate pred=builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
 			query.select(root);
 			
@@ -507,7 +512,7 @@ public class InvoiceDao {
 	}
 		
 		
-		public List<ProformaInvoiceDO> getProformaInvoiceListByMonth(String month) {
+		public List<ProformaInvoiceDO> getProformaInvoiceListByMonth(String month,String financialYear) {
 			LOGGER.info("InvoiceDao :: getProformaInvoiceListByMonth :: Start ");
 			List<ProformaInvoiceDO> proformaList = new ArrayList<ProformaInvoiceDO>();
 			try {
@@ -524,7 +529,7 @@ public class InvoiceDao {
 
 				Predicate predicate1 = builder.equal(root.get("month"), month);
 				
-				Predicate predicate2 = builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+				Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
 				query.where(builder.and(predicate1,predicate2));
 
@@ -546,7 +551,7 @@ public class InvoiceDao {
 			return proformaList;
 		}
 		
-		public List<CashDO> getCashInvoiceListByMonth(String month) {
+		public List<CashDO> getCashInvoiceListByMonth(String month,String financialYear) {
 			LOGGER.info("InvoiceDao :: getCashInvoiceListByMonth :: Start ");
 			List<CashDO> cashList = new ArrayList<CashDO>();
 			try {
@@ -563,7 +568,7 @@ public class InvoiceDao {
 
 				Predicate predicate1 = builder.equal(root.get("month"), month);
 				
-				Predicate predicate2 = builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+				Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
 				query.where(builder.and(predicate1,predicate2));
 
@@ -587,7 +592,7 @@ public class InvoiceDao {
 		
 
 
-	public List<InvoiceDO> getInvoiceListByMonth(String month) {
+	public List<InvoiceDO> getInvoiceListByMonth(String month,String financialYear) {
 		LOGGER.info("InvoiceDao :: getInvoiceListByMonth :: Start ");
 		List<InvoiceDO> invoiceList = new ArrayList<InvoiceDO>();
 		try {
@@ -604,7 +609,7 @@ public class InvoiceDao {
 
 			Predicate predicate1 = builder.equal(root.get("month"), month);
 			
-			Predicate predicate2 = builder.equal(root.get("financialYear"), getCurrentFinancialYear());
+			Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
 			query.where(builder.and(predicate1,predicate2));
 
@@ -694,6 +699,29 @@ public class InvoiceDao {
 //			session.flush();
 //			tx.commit();
 
+			
+			
+			
+			String poNum=invoiceDO.getPoNumber();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<CustomerPurchaseOrderDO> query=builder.createQuery(CustomerPurchaseOrderDO.class);
+			
+			Root<CustomerPurchaseOrderDO> root=query.from(CustomerPurchaseOrderDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("invoiceNo"), poNum);
+			
+			query.where(predicate);
+			
+			CustomerPurchaseOrderDO custDO=session.createQuery(query).uniqueResult();
+			
+			custDO.setInvoiceStatus("Booked");
+			
+			session.saveOrUpdate(custDO);
+			
 		} catch (Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);
 			return "failure";
@@ -736,10 +764,29 @@ public class InvoiceDao {
 
 		try {
 			Session session=getSession();
-//			Transaction tx=session.beginTransaction();
 			session.saveOrUpdate(purchaseDO);
-//			session.flush();
-//			tx.commit();
+			
+			String poNum=purchaseDO.getPoNo();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<SupplierPurchaseOrderDO> query=builder.createQuery(SupplierPurchaseOrderDO.class);
+			
+			Root<SupplierPurchaseOrderDO> root=query.from(SupplierPurchaseOrderDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("poNumber"), poNum);
+			
+			query.where(predicate);
+			
+			SupplierPurchaseOrderDO suppDO=session.createQuery(query).uniqueResult();
+			
+			suppDO.setInvoiceStatus("Booked");
+			
+			session.saveOrUpdate(suppDO);
+			
+			
 
 		} catch (Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);
@@ -774,6 +821,25 @@ public class InvoiceDao {
 		}
 
 		LOGGER.info("InvoiceDao::saveInvoice::end");
+		return "success";
+	}
+	
+	
+	public String saveClient(ClientDO clientDO) {
+		LOGGER.info("InvoiceDao::saveCustomer::start");
+
+		try {
+			Session session=getSession();
+			
+			session.saveOrUpdate(clientDO);
+
+
+		} catch (Exception e) {
+			LOGGER.info("Exception occured in invoiceDao::saveCustomer::" + e);
+			return "failure";
+		}
+
+		LOGGER.info("InvoiceDao::saveCustomer::end");
 		return "success";
 	}
 	
@@ -1014,9 +1080,6 @@ public class InvoiceDao {
 		String fInvNo="";
 		try {
 			
-			invtemp = getInvoiceList();
-			gInvNo = invtemp.size();
-			
 			Session session=getSession();
 			
 			CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -1178,6 +1241,83 @@ public class InvoiceDao {
 		return invoiceDO;
 	}
 	
+	
+	public List<Object[]> getOustandingCustomerByFinancialYear(String financialYear) {
+		LOGGER.info("InvoiceDao::getOustandingCustomerByFinancialYear()::Start");
+		List<Object[]> invoiceDO=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<Object[]> query=criteriaBuilder.createQuery(Object[].class);
+			
+			Root<InvoiceDO> root=query.from(InvoiceDO.class);
+			
+			
+			
+			query.multiselect(root.get("customerName"), criteriaBuilder.sum(root.get("invoiceValue")),criteriaBuilder.count(root.get("invoiceValue")));
+
+			// Define the grouping expression
+			query.groupBy(root.get("customerName"));
+
+			// Define the condition for invoice status as unpaid
+			Predicate predicate = criteriaBuilder.equal(root.get("invoiceStatus"), "unpaid");
+
+			
+			
+			Predicate predicate1=criteriaBuilder.equal(root.get("financialYear"), financialYear);
+			
+			query.where(criteriaBuilder.and(predicate,predicate1));
+			
+			invoiceDO=session.createQuery(query).getResultList();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getOustandingCustomerByFinancialYear()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getOustandingCustomerByFinancialYear()::End");
+		return invoiceDO;
+	}
+	
+	
+	public List<Object[]> getOustandingSuppliersByFinancialYear(String financialYear) {
+		LOGGER.info("InvoiceDao::getOustandingSuppliersByFinancialYear()::Start");
+		List<Object[]> invoiceDO=null;
+		
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder criteriaBuilder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<Object[]> query=criteriaBuilder.createQuery(Object[].class);
+			
+			Root<PurchaseDO> root=query.from(PurchaseDO.class);
+			
+			
+			
+			query.multiselect(root.get("supplierName"), criteriaBuilder.sum(root.get("invoiceValue")),criteriaBuilder.count(root.get("invoiceValue")));
+
+			// Define the grouping expression
+			query.groupBy(root.get("supplierName"));
+
+			// Define the condition for invoice status as unpaid
+			Predicate predicate = criteriaBuilder.equal(root.get("purchaseStatus"), "unpaid");
+
+			
+			
+			Predicate predicate1=criteriaBuilder.equal(root.get("financialYear"), financialYear);
+			
+			query.where(criteriaBuilder.and(predicate,predicate1));
+			
+			invoiceDO=session.createQuery(query).getResultList();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getOustandingSuppliersByFinancialYear()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getOustandingSuppliersByFinancialYear()::End");
+		return invoiceDO;
+	}
 	
 	public List<CashDO> getCashInvoiceByFinancialYear(String financialYear) {
 		LOGGER.info("InvoiceDao::getCashInvoiceByFinancialYear()::Start");
@@ -1454,7 +1594,7 @@ public class InvoiceDao {
 	}
 	
 	
-	public List<PurchaseDO> getPurchaseList(){
+	public List<PurchaseDO> getPurchaseList(String financialYear,String flag){
 		LOGGER.info("InvoiceDao::getPurchaseList()::start");
 		 
 		List<PurchaseDO> purchaseList=null;
@@ -1468,7 +1608,11 @@ public class InvoiceDao {
 			
 			Root<PurchaseDO> root=query.from(PurchaseDO.class);
 			
+			Predicate pred=builder.equal(root.get("financialYear"),financialYear);
+
 			query.select(root);
+			
+			query.where(pred);
 			
 			purchaseList=session.createQuery(query).getResultList();
 		}catch(Exception e) {
@@ -1479,7 +1623,7 @@ public class InvoiceDao {
 	}
 	
 	
-	public List<PurchaseDO> getPurchaseList(String month){
+	public List<PurchaseDO> getPurchaseList(String month,String financialYear,String flag){
 		LOGGER.info("InvoiceDao::getPurchaseList()::start");
 		 
 		List<PurchaseDO> purchaseList=null;
@@ -1497,7 +1641,10 @@ public class InvoiceDao {
 			
 			Predicate predicate=builder.equal(root.get("month"), month);
 			
-			query.where(predicate);
+			Predicate pred=builder.equal(root.get("financialYear"),financialYear);
+
+			query.select(root);
+			query.where(builder.and(predicate,pred));
 			
 			purchaseList=session.createQuery(query).getResultList();
 		}catch(Exception e) {
@@ -1989,6 +2136,205 @@ public class InvoiceDao {
 		}
 		
 		return custDO;
+	}
+	
+public List<Map<String,String>> getPONumberBySupplierNameForCopy(String supplierName){
+		
+		LOGGER.info("InvoiceDao::getPONumberBySupplierName()::start");
+		List<SupplierPurchaseOrderDO> pos=null;
+		List<Map<String,String>> list=null;
+		
+		
+		try {
+			
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<SupplierPurchaseOrderDO> query=builder.createQuery(SupplierPurchaseOrderDO.class);
+			
+			Root<SupplierPurchaseOrderDO> root=query.from(SupplierPurchaseOrderDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("customerName"),supplierName);
+			
+//			Predicate predicate2=builder.equal(root.get("invoiceStatus"), "Not Booked");
+			
+//			Predicate predicate3=builder.and(predicate,predicate2);
+			
+			query.where(predicate);
+			
+			pos=session.createQuery(query).getResultList();
+			
+			
+			list = new ArrayList<Map<String,String>>();
+			
+			for(SupplierPurchaseOrderDO supDO:pos) {
+				Map<String,String> tempMap=new HashMap<>();
+				
+				String poId=supDO.getInvoiceId().toString();
+				
+				String poNumber=supDO.getInvoiceNo().toString();
+				
+				tempMap.put("poId", poId);
+				tempMap.put("poNumber", poNumber);
+				list.add(tempMap);
+				
+			}
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getPONumberBySupplierName()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getPONumberBySupplierName()::end");
+		return list;
+	}
+	
+	public List<Map<String,String>> getPONumberBySupplierName(String supplierName){
+		
+		LOGGER.info("InvoiceDao::getPONumberBySupplierName()::start");
+		List<SupplierPurchaseOrderDO> pos=null;
+		List<Map<String,String>> list=null;
+		
+		
+		try {
+			
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<SupplierPurchaseOrderDO> query=builder.createQuery(SupplierPurchaseOrderDO.class);
+			
+			Root<SupplierPurchaseOrderDO> root=query.from(SupplierPurchaseOrderDO.class);
+			
+			query.select(root);
+			
+			Predicate predicate=builder.equal(root.get("customerName"),supplierName);
+			
+			Predicate predicate2=builder.equal(root.get("invoiceStatus"), "Not Booked");
+			
+			Predicate predicate3=builder.and(predicate,predicate2);
+			
+			query.where(predicate3);
+			
+			pos=session.createQuery(query).getResultList();
+			
+			
+			list = new ArrayList<Map<String,String>>();
+			
+			for(SupplierPurchaseOrderDO supDO:pos) {
+				Map<String,String> tempMap=new HashMap<>();
+				
+				String poId=supDO.getInvoiceId().toString();
+				
+				String poNumber=supDO.getInvoiceNo().toString();
+				
+				tempMap.put("poId", poId);
+				tempMap.put("poNumber", poNumber);
+				list.add(tempMap);
+				
+			}
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getPONumberBySupplierName()::"+e);
+		}
+		LOGGER.info("InvoiceDao::getPONumberBySupplierName()::end");
+		return list;
+	}
+	
+	
+	public UserTO getUserTOByUserId(String userId) {
+		
+		try {
+		
+		Session session=getSession();
+		
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<UserTO> query = builder.createQuery(UserTO.class);
+        Root<UserDO> userRoot = query.from(UserDO.class);
+        Join<UserDO, ClientDO> clientJoin = userRoot.join("client");
+
+        query.select(builder.construct(
+            UserTO.class,
+            userRoot.get("userId"),
+            userRoot.get("userName"),
+            clientJoin.get("clientName"),
+            userRoot.get("designation")
+        ));
+
+        query.where(builder.equal(userRoot.get("userId"), userId));
+
+        return session.createQuery(query).getSingleResult();
+		}
+		catch(Exception e) {
+			LOGGER.error("Excetion in InvoiceDao::getUserTOByUserId()::"+e);
+		}
+		
+		return null;
+    }
+	
+	public void setFinancialYearByRegisterId(String registerId,String financialYear) {
+		LOGGER.info("InvoiceDao::setFinancialYearByRegisterId()::start");
+		try {
+		Session session=getSession();
+		
+		ClientDO clientDO=null;
+		
+		CriteriaBuilder builder=session.getCriteriaBuilder();
+		
+		CriteriaQuery<ClientDO> query=builder.createQuery(ClientDO.class);
+		
+		Root<ClientDO> root=query.from(ClientDO.class);
+		
+		query.select(root);
+		
+		Predicate predicate=builder.equal(root.get("clientId"), registerId);
+		
+		query.where(predicate);
+		
+		clientDO=session.createQuery(query).getSingleResult();
+		
+		
+		clientDO.setFinancialYear(financialYear);
+		
+		
+		session.saveOrUpdate(clientDO);
+		}
+		catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::setFinancialYearByRegisterId()::"+e);
+		}
+		
+		
+		LOGGER.info("InvoiceDao::setFinancialYearByRegisterId()::end");
+	}
+	
+	public List<UserDO> getUserList(){
+		LOGGER.info("InvoiceDao::getUserList()::start");
+		List<UserDO> userList=null;
+		
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<UserDO> query=builder.createQuery(UserDO.class);
+			
+			Root<UserDO> root=query.from(UserDO.class);
+			
+			query.select(root);
+			
+			userList=session.createQuery(query).getResultList();
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::getUserList()::"+e);
+		}
+		
+		LOGGER.info("InvoiceDao::getUserList()::end");
+		
+		return userList;
 	}
 	
 	public Session getSession() {

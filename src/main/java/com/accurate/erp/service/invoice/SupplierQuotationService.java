@@ -53,9 +53,9 @@ public class SupplierQuotationService {
 	
 	
 	
-	public List<SupplierQuotationDO> getInvoiceList(){
+	public List<SupplierQuotationDO> getInvoiceList(String financialYear){
 		LOGGER.info("QuotationService::getInvoiceList()::start");
-		return invoiceDao.getInvoiceList();
+		return invoiceDao.getInvoiceList(financialYear);
 	}
 	
 	
@@ -71,9 +71,9 @@ public class SupplierQuotationService {
 		return invoiceDao.getInvNo();
 	}
 	
-  public List<SupplierQuotationDO> getInvoiceListByMonth(String month){
+  public List<SupplierQuotationDO> getInvoiceListByMonth(String month,String financialYear){
 		LOGGER.info("QuotationService::getInvoiceListByMonth()::start");
-		return invoiceDao.getInvoiceListByMonth(month);
+		return invoiceDao.getInvoiceListByMonth(month,financialYear);
 	}
   
  	

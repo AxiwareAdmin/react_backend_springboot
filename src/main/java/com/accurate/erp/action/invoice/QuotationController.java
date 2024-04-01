@@ -74,8 +74,10 @@ public class QuotationController {
 	
 	@GetMapping(value="/allQuotations")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getAllInvoiceList(){
-		List<QuotationDO> invoiceList=invoiceService.getInvoiceList();
+	public ResponseEntity<?> getAllInvoiceList(@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<QuotationDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
 		return new ResponseEntity<List<QuotationDO>>(invoiceList,HttpStatus.OK);
 		}
@@ -100,10 +102,12 @@ public class QuotationController {
 		}
 	}
 	
-	@GetMapping(value="/Quotations/{month}")
+	@PostMapping(value="/Quotations/{month}")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getInvoiceListByMonth(@PathVariable String month){
-		List<QuotationDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3));
+	public ResponseEntity<?> getInvoiceListByMonth(@PathVariable String month,@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<QuotationDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {	
 		return new ResponseEntity<List<QuotationDO>>(invoiceDO,HttpStatus.OK);
 		}
@@ -126,13 +130,13 @@ public class QuotationController {
 		  
 		  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
 		  
-		  //String registerId=map.get("registerId").toString();
+		  String registerId=map.get("registerId").toString();
 		  
-		  //String userId=map.get("userId").toString();
+		  String userId=map.get("userId").toString();
 		  
-		  //String userName=map.get("userName").toString();
+		  String userName=map.get("userName").toString();
 		  
-		String msg=invoiceService.saveInvoice(inputJson,"123","121","sachin");
+		String msg=invoiceService.saveInvoice(inputJson,registerId,userId,userName);
 		
 		
 		
@@ -145,10 +149,12 @@ public class QuotationController {
 		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 	}
 	
-	@GetMapping(value="/viewSalesRegQuotation")
+	@PostMapping(value="/viewSalesRegQuotation")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getviewSalesReg(){
-		List<QuotationDO> invoiceList=invoiceService.getInvoiceList();
+	public ResponseEntity<?> getviewSalesReg(@RequestBody Map<String,String> map){
+		
+		String financialYear=map.get("financialYear");
+		List<QuotationDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
 			
 			/*invoiceList.forEach((ele) ->{
