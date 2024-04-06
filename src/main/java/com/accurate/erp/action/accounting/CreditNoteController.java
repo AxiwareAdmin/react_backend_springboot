@@ -69,6 +69,9 @@ public class CreditNoteController {
 	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
 		List<CreditNoteDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<CreditNoteDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -86,6 +89,9 @@ public class CreditNoteController {
 		
 		List<CreditNoteDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
+			invoiceList.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<CreditNoteDO>>(invoiceList,HttpStatus.OK);
 		}
 		else {
@@ -116,6 +122,9 @@ public class CreditNoteController {
 		String financialYear=map.get("financialYear");
 		List<CreditNoteDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {	
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<CreditNoteDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {

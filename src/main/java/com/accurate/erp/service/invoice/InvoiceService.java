@@ -476,7 +476,14 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		
 		List<Map<String,Object>> invoiceProd=(List<Map<String,Object>>)inputJson.get("invoiceProducts");
 		
-		java.util.Date d=sdf.parse(invoiceDate.toString());
+		java.util.Date d=null;
+		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
+			
+			d=sdf.parse(invoiceDate.toString());
+		}
+		else {
+			d=sdf.parse(new java.util.Date().toString());
+		}
 		
 		
 		
@@ -592,10 +599,10 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		
 		if(invoiceDate!=null) {
 			
-			invoiceDO.setInvoiceDate(sdf.parse(invoiceDate.toString()));
+			invoiceDO.setInvoiceDate(d);
 		}
 		
-		if(poDate!=null) {
+		if(poDate!=null && poDate.toString().length()>0) {
 			invoiceDO.setPoDate(sdf.parse(poDate.toString()));
 		}
 		
@@ -603,11 +610,11 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 			invoiceDO.setChallanNo(challanNumber.toString());
 		}
 		
-		if(challanDate!=null) {
+		if(challanDate!=null && challanDate.toString().length()>0) {
 			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
 		}
 		
-		if(dueDate!=null) {
+		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
 		
@@ -660,6 +667,7 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		if(transportChargesGst!=null) {
 			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
 		}
+		invoiceDO.setInvoiceStatus("Overdue");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
@@ -751,7 +759,14 @@ public String saveProforma(Map<String, Object> inputJson,String registerId,Strin
 		
 		Object financialYear=inputJson.get("financialYear");
 		
-		java.util.Date d=sdf.parse(invoiceDate.toString());
+		java.util.Date d=null;
+		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
+			
+			d=sdf.parse(invoiceDate.toString());
+		}
+		else {
+			d=sdf.parse(new java.util.Date().toString());
+		}
 		Object additionalChargesGst=inputJson.get("otherChargesGstRate");
 		
 		Object transportChargesGst=inputJson.get("transportGstRate");
@@ -872,10 +887,10 @@ public String saveProforma(Map<String, Object> inputJson,String registerId,Strin
 		
 		if(invoiceDate!=null) {
 			
-			invoiceDO.setInvoiceDate(sdf.parse(invoiceDate.toString()));
+			invoiceDO.setInvoiceDate(d);
 		}
 		
-		if(poDate!=null) {
+		if(poDate!=null && poDate.toString().length()>0) {
 			invoiceDO.setPoDate(sdf.parse(poDate.toString()));
 		}
 		
@@ -883,11 +898,11 @@ public String saveProforma(Map<String, Object> inputJson,String registerId,Strin
 			invoiceDO.setChallanNo(challanNumber.toString());
 		}
 		
-		if(challanDate!=null) {
+		if(challanDate!=null && challanDate.toString().length()>0) {
 			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
 		}
 		
-		if(dueDate!=null) {
+		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
 		
@@ -1033,9 +1048,14 @@ public String savePurchase(Map<String, Object> inputJson,String registerID,Strin
 		
 		Object financialYear=inputJson.get("financialYear");
 		
-		java.util.Date d=sdf.parse(purchaseDate.toString());
-		
-		
+		java.util.Date d=null;
+		if(purchaseDate!=null && purchaseDate.toString().length()>0) {
+			
+			d=sdf.parse(purchaseDate.toString());
+		}
+		else {
+			d=sdf.parse(new java.util.Date().toString());
+		}
 		
 		List<Map<String,Object>> purchaseProd=(List<Map<String,Object>>)inputJson.get("purchaseProducts");
 //		purchaseDO.getPurchaseProductDOs().clear();
@@ -1141,14 +1161,14 @@ public String savePurchase(Map<String, Object> inputJson,String registerID,Strin
 			purchaseDO.setSupplierName(customerName.toString());
 		}
 		
-		if(purchaseDate!=null) {
+		if(purchaseDate!=null && purchaseDate.toString().length()>0) {
 			purchaseDO.setPurchaseDate(d);
 			
 			purchaseDO.setMonth(new SimpleDateFormat("MMM").format(d));
 			
 		}
 		
-		if(poDate!=null) {
+		if(poDate!=null && poDate.toString().length()>0) {
 			purchaseDO.setPoDate(sdf.parse(poDate.toString()));
 		}
 		
@@ -1160,7 +1180,7 @@ public String savePurchase(Map<String, Object> inputJson,String registerID,Strin
 //			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
 //		}
 		
-		if(dueDate!=null) {
+		if(dueDate!=null && dueDate.toString().length()>0) {
 			purchaseDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
 		

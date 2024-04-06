@@ -27,6 +27,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "cash_sale")
@@ -214,8 +215,25 @@ public class CashDO {
 
 	
 
-	public List<CashSaleProductDO> getCashSaleProductDO() {
-		return invoiceProductDO;
+	@Transient
+	 boolean includeChildren=true; // Condition to determine if children should be included
+
+	    // Getter and setter for includeChildren
+	    public boolean isIncludeChildren() {
+	        return includeChildren;
+	    }
+	    
+	    public void setIncludeChildren(boolean includeChildren) {
+	        this.includeChildren = includeChildren;
+	    }
+
+	public List<CashSaleProductDO> getInvoiceProductDO() {
+		 if (includeChildren) {
+	            return invoiceProductDO;
+	        } else {
+	            return null;
+	        }
+//		 return invoiceProductDO;
 	}
 
 	public void setCashSaleProductDO(List<CashSaleProductDO> cashSaleProductDO) {

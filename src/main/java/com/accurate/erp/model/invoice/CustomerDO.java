@@ -108,7 +108,7 @@ public class CustomerDO {
 	Integer userId;
 
 	@Column(name="Register_Id")
-	Integer RegisterId;
+	Integer registerId;
 
 	@Column(name="Created_Date")
 	String createdDate;
@@ -189,11 +189,11 @@ public class CustomerDO {
 	}
 
 	public Integer getRegisterId() {
-		return RegisterId;
+		return registerId;
 	}
 
 	public void setRegisterId(Integer registerId) {
-		RegisterId = registerId;
+		registerId = registerId;
 	}
 
 	public String getCreatedDate() {

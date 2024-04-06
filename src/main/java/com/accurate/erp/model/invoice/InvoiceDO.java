@@ -43,6 +43,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "invoice")
@@ -189,7 +190,9 @@ public class InvoiceDO {
 	@Column(name="financial_year")
 	String financialYear;
 	
-	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.EAGER,cascade= CascadeType.ALL,orphanRemoval = true)
+
+
+	@OneToMany(mappedBy="invoiceDO",fetch=FetchType.LAZY,cascade= CascadeType.ALL,orphanRemoval = true)
 	List<InvoiceProductDO> invoiceProductDO=new ArrayList<>();
 	
 	@Column(name="register_id")
@@ -235,14 +238,32 @@ public class InvoiceDO {
 	public void setServiceCheck(String serviceCheck) {
 		this.serviceCheck = serviceCheck;
 	}
+	
+	@Transient
+	 boolean includeChildren=true; // Condition to determine if children should be included
+
+	    // Getter and setter for includeChildren
+	    public boolean isIncludeChildren() {
+	        return includeChildren;
+	    }
+	    
+	    public void setIncludeChildren(boolean includeChildren) {
+	        this.includeChildren = includeChildren;
+	    }
 
 	public List<InvoiceProductDO> getInvoiceProductDO() {
-		return invoiceProductDO;
+		 if (includeChildren) {
+	            return invoiceProductDO;
+	        } else {
+	            return null;
+	        }
+//		 return invoiceProductDO;
 	}
 
 	public void setInvoiceProductDO(List<InvoiceProductDO> invoiceProductDO) {
 		this.invoiceProductDO.clear();
 		this.invoiceProductDO.addAll(invoiceProductDO);
+		
 	}
 
 	public Date getCreatedDate() {

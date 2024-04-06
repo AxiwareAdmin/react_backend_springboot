@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <Property name="log-path">/path/to/log/folder</Property>
+        <Property name="log-path">D:</Property>
     </Properties>
 
     <Appenders>
@@ -11,7 +11,7 @@
         </Console>
 
         <!-- File Appender -->
-        <RollingFile name="File" fileName="${log-path}/app.log"
+        <RollingFile name="File" fileName="${log-path}\\app.log"
                      filePattern="${log-path}/app-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
             <Policies>

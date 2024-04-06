@@ -14,6 +14,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.accurate.erp.model.invoice.InvoiceProductDO;
 
 
 
@@ -224,8 +227,25 @@ public class CustomerPurchaseOrderDO {
 		this.serviceCheck = serviceCheck;
 	}
 
+	@Transient
+	 boolean includeChildren=true; // Condition to determine if children should be included
+
+	    // Getter and setter for includeChildren
+	    public boolean isIncludeChildren() {
+	        return includeChildren;
+	    }
+	    
+	    public void setIncludeChildren(boolean includeChildren) {
+	        this.includeChildren = includeChildren;
+	    }
+
 	public List<CustomerPurchaseOrderProductDO> getInvoiceProductDO() {
-		return invoiceProductDO;
+		 if (includeChildren) {
+	            return invoiceProductDO;
+	        } else {
+	            return null;
+	        }
+//		 return invoiceProductDO;
 	}
 
 	public void setInvoiceProductDO(List<CustomerPurchaseOrderProductDO> invoiceProductDO) {

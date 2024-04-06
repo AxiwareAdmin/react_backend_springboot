@@ -65,6 +65,9 @@ public class SupplierQuotationController {
 	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
 		List<SupplierQuotationDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<SupplierQuotationDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -81,6 +84,9 @@ public class SupplierQuotationController {
 		String financialYear=map.get("financialYear");
 		List<SupplierQuotationDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
+			invoiceList.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<SupplierQuotationDO>>(invoiceList,HttpStatus.OK);
 		}
 		else {
@@ -111,6 +117,9 @@ public class SupplierQuotationController {
 		String financialYear=map.get("financialYear");
 		List<SupplierQuotationDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {	
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<SupplierQuotationDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {

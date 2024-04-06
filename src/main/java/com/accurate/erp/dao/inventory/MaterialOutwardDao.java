@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.accurate.erp.filter.CustomValidationFilter;
 import com.accurate.erp.model.inventory.MaterialInwardDO;
 import com.accurate.erp.model.inventory.MaterialInwardProductDO;
 import com.accurate.erp.model.inventory.MaterialOutwardDO;
@@ -139,9 +140,13 @@ public class MaterialOutwardDao {
 			
 			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+	
 			query.select(root);
 			
-			query.where(pred);
+			query.where(builder.and(pred,predicate3));
 
 			invoiceList = session.createQuery(query).getResultList();
 
@@ -323,7 +328,11 @@ public class MaterialOutwardDao {
 			
 			Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
-			query.where(builder.and(predicate1,predicate2));
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+	
+			query.where(builder.and(predicate1,predicate2,predicate3));
 
 			Order order = builder.asc(root.get("invoiceDate"));
 
@@ -548,8 +557,11 @@ public List<MaterialOutwardDO> getInvoiceByFinancialYear(String financialYear) {
 		query.select(root);
 		
 		Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
-		
-		query.where(predicate);
+		  String registerId=CustomValidationFilter.getCurrentRegisterId();
+			
+			Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+
+		query.where(criteriaBuilder.and(predicate,predicate3));
 		
 		invoiceDO=session.createQuery(query).getResultList();
 		

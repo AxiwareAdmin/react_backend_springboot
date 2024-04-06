@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.accurate.erp.dao.invoice.QuotationDAO;
+import com.accurate.erp.filter.CustomValidationFilter;
 import com.accurate.erp.model.invoice.CustomerDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.QuotationDO;
@@ -137,9 +138,13 @@ public class CustomerPurchaseOrderDAO {
 			
 			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+			Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+	
 			query.select(root);
 			
-			query.where(pred);
+			query.where(builder.and(pred,predicate3));
 
 			invoiceList = session.createQuery(query).getResultList();
 
@@ -327,7 +332,11 @@ public class CustomerPurchaseOrderDAO {
 			
 			Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
-			query.where(builder.and(predicate1,predicate2));
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
+			
+			Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+	
+			query.where(builder.and(predicate1,predicate2,predicate3));
 
 			Order order = builder.asc(root.get("invoiceDate"));
 
@@ -472,8 +481,11 @@ public String getCustomerEmail(String custName) {
 			query.select(root.get("email"));
 			
 			Predicate predicate=criteriaBuilder.equal(root.get("customerName"), custName);
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
 			
-			query.where(predicate);
+			Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+
+			query.where(criteriaBuilder.and(predicate,predicate3));
 			
 			email=session.createQuery(query).getSingleResult();
 			
@@ -553,7 +565,11 @@ public List<CustomerPurchaseOrderDO> getInvoiceByFinancialYear(String financialY
 		
 		Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
 		
-		query.where(predicate);
+		String registerId=CustomValidationFilter.getCurrentRegisterId();
+		
+		Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+
+		query.where(criteriaBuilder.and(predicate,predicate3));
 		
 		invoiceDO=session.createQuery(query).getResultList();
 		
@@ -588,10 +604,12 @@ public List<Map<String,String>> getPONumberByCustomerName(String supplierName){
 		Predicate predicate=builder.equal(root.get("customerName"),supplierName);
 		
 		Predicate predicate2=builder.equal(root.get("invoiceStatus"), "Not Booked");
+		String registerId=CustomValidationFilter.getCurrentRegisterId();
 		
-		Predicate predicate3=builder.and(predicate,predicate2);
+		Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+
 		
-		query.where(predicate3);
+		query.where(builder.and(predicate,predicate2,predicate3));
 		
 		pos=session.createQuery(query).getResultList();
 		
@@ -641,9 +659,12 @@ public List<Map<String,String>> getPONumberByCustomerNameForCopy(String supplier
 		
 		Predicate predicate=builder.equal(root.get("customerName"),supplierName);
 		
+	String registerId=CustomValidationFilter.getCurrentRegisterId();
 		
+		Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+
 		
-		query.where(predicate);
+		query.where(builder.and(predicate,predicate3));
 		
 		pos=session.createQuery(query).getResultList();
 		

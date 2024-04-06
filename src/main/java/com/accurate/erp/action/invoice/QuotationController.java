@@ -63,6 +63,9 @@ public class QuotationController {
 	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
 		List<QuotationDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<QuotationDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -79,6 +82,9 @@ public class QuotationController {
 		String financialYear=map.get("financialYear");
 		List<QuotationDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
+			invoiceList.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<QuotationDO>>(invoiceList,HttpStatus.OK);
 		}
 		else {
@@ -108,7 +114,10 @@ public class QuotationController {
 		
 		String financialYear=map.get("financialYear");
 		List<QuotationDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
-		if(invoiceDO!=null) {	
+		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<QuotationDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {

@@ -65,6 +65,9 @@ public class MaterialOutwardController {
 	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
 		List<MaterialOutwardDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<MaterialOutwardDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -81,6 +84,9 @@ public class MaterialOutwardController {
 		String financialYear=map.get("financialYear");
 		List<MaterialOutwardDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
+			invoiceList.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<MaterialOutwardDO>>(invoiceList,HttpStatus.OK);
 		}
 		else {
@@ -111,6 +117,9 @@ public class MaterialOutwardController {
 		String financialYear=map.get("financialYear");
 		List<MaterialOutwardDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {	
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<MaterialOutwardDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {

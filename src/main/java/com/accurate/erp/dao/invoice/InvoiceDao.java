@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.accurate.erp.action.invoice.InvoiceController;
+import com.accurate.erp.filter.CustomValidationFilter;
 import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
@@ -97,8 +98,14 @@ public class InvoiceDao {
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
 			CriteriaQuery<CustomerDO> criteriaQuery = builder.createQuery(CustomerDO.class);
+			
 
 			Root<CustomerDO> root = criteriaQuery.from(CustomerDO.class);
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
+			
+			Predicate predicate1=builder.equal(root.get("registerId"), registerId);
+			
+			criteriaQuery.where(predicate1);
 
 			criteriaQuery.select(root);
 
@@ -190,11 +197,15 @@ public class InvoiceDao {
 
 			Root<InvoiceDO> root = query.from(InvoiceDO.class);
 			
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
+			
+			Predicate predicate1=builder.equal(root.get("registerId"), registerId);
+			
 			Predicate pred=builder.equal(root.get("financialYear"),financialYear);
 
 			query.select(root);
 			
-			query.where(pred);
+			query.where(builder.and(pred,predicate1));
 
 			invoiceList = session.createQuery(query).getResultList();
 
@@ -224,10 +235,15 @@ public class InvoiceDao {
 			Root<ProformaInvoiceDO> root = query.from(ProformaInvoiceDO.class);
 			
 			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
+			
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
+			
+			Predicate predicate1=builder.equal(root.get("registerId"), registerId);
+			
 
 			query.select(root);
 			
-			query.where(pred);
+			query.where(builder.and(pred,predicate1));
 
 			proformaList = session.createQuery(query).getResultList();
 
@@ -255,9 +271,13 @@ public class InvoiceDao {
 			
 			Predicate pred=builder.equal(root.get("financialYear"), financialYear);
 
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
+			
+			Predicate predicate1=builder.equal(root.get("registerId"), registerId);
+			
 			query.select(root);
 			
-			query.where(pred);
+			query.where(builder.and(pred,predicate1));
 
 			cashList = session.createQuery(query).getResultList();
 
@@ -325,8 +345,11 @@ public class InvoiceDao {
 				  predList.add(datePredicate);
 			  }
 			 
-			 
-
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate1=builder.equal(root.get("registerId"), registerId);
+				
+				predList.add(predicate1);
 			Predicate finalPred = builder.and(predList.toArray(new Predicate[0]));
 
 			query.where(finalPred);
@@ -531,7 +554,12 @@ public class InvoiceDao {
 				
 				Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
-				query.where(builder.and(predicate1,predicate2));
+				  String registerId=CustomValidationFilter.getCurrentRegisterId();
+					
+					Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+				
+				
+				query.where(builder.and(predicate1,predicate2,predicate3));
 
 				Order order = builder.asc(root.get("invoiceDate"));
 
@@ -570,7 +598,11 @@ public class InvoiceDao {
 				
 				Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
 
-				query.where(builder.and(predicate1,predicate2));
+				  String registerId=CustomValidationFilter.getCurrentRegisterId();
+					
+					Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+				
+				query.where(builder.and(predicate1,predicate2,predicate3));
 
 				Order order = builder.asc(root.get("invoiceDate"));
 
@@ -596,6 +628,8 @@ public class InvoiceDao {
 		LOGGER.info("InvoiceDao :: getInvoiceListByMonth :: Start ");
 		List<InvoiceDO> invoiceList = new ArrayList<InvoiceDO>();
 		try {
+			
+		
 
 			Session session = getSession();
 
@@ -610,19 +644,20 @@ public class InvoiceDao {
 			Predicate predicate1 = builder.equal(root.get("month"), month);
 			
 			Predicate predicate2 = builder.equal(root.get("financialYear"), financialYear);
+			
+			String registerId=CustomValidationFilter.getCurrentRegisterId();
+			
+			Predicate predicate3=builder.equal(root.get("registerId"), registerId);
 
-			query.where(builder.and(predicate1,predicate2));
+			query.where(builder.and(predicate1,predicate2,predicate3));
 
 			Order order = builder.asc(root.get("invoiceDate"));
 
 			query.orderBy(order);
 
-			invoiceList = session.createQuery(query).getResultList();
+			invoiceList = session.createQuery(query).
+					getResultList();
 
-			/*
-			 * Criteria criteria=session.createCriteria(InvoiceDO.class);
-			 * criteria.add(Restrictions.eq("month",month)); invoiceList=criteria.list();
-			 */
 
 		} catch (Exception e) {
 			LOGGER.error("Exception occured in InvoiceDao :: getInvoiceListByMonth ");
@@ -645,6 +680,11 @@ public class InvoiceDao {
 			Root<ProductDO> root = query.from(ProductDO.class);
 
 			query.select(root);
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+			
+				query.where(predicate3);
 
 			invoiceProductList = session.createQuery(query).getResultList();
 			/*
@@ -718,9 +758,11 @@ public class InvoiceDao {
 			
 			CustomerPurchaseOrderDO custDO=session.createQuery(query).uniqueResult();
 			
+			if(custDO!=null) {
 			custDO.setInvoiceStatus("Booked");
 			
 			session.saveOrUpdate(custDO);
+			}
 			
 		} catch (Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveInvoice::" + e);
@@ -782,9 +824,11 @@ public class InvoiceDao {
 			
 			SupplierPurchaseOrderDO suppDO=session.createQuery(query).uniqueResult();
 			
+			if(suppDO!=null) {
 			suppDO.setInvoiceStatus("Booked");
 			
 			session.saveOrUpdate(suppDO);
+			}
 			
 			
 
@@ -1230,7 +1274,11 @@ public class InvoiceDao {
 			
 			Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
 			
-			query.where(predicate);
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+			
+			query.where(criteriaBuilder.and(predicate,predicate3));
 			
 			invoiceDO=session.createQuery(query).getResultList();
 			
@@ -1269,7 +1317,11 @@ public class InvoiceDao {
 			
 			Predicate predicate1=criteriaBuilder.equal(root.get("financialYear"), financialYear);
 			
-			query.where(criteriaBuilder.and(predicate,predicate1));
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+			
+			query.where(criteriaBuilder.and(predicate,predicate1,predicate3));
 			
 			invoiceDO=session.createQuery(query).getResultList();
 			
@@ -1298,17 +1350,22 @@ public class InvoiceDao {
 			
 			query.multiselect(root.get("supplierName"), criteriaBuilder.sum(root.get("invoiceValue")),criteriaBuilder.count(root.get("invoiceValue")));
 
-			// Define the grouping expression
+
 			query.groupBy(root.get("supplierName"));
 
-			// Define the condition for invoice status as unpaid
-			Predicate predicate = criteriaBuilder.equal(root.get("purchaseStatus"), "unpaid");
+
+			Predicate predicate = criteriaBuilder.equal(root.get("purchaseStatus"), "Overdue");
 
 			
 			
 			Predicate predicate1=criteriaBuilder.equal(root.get("financialYear"), financialYear);
 			
-			query.where(criteriaBuilder.and(predicate,predicate1));
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+			
+			
+			query.where(criteriaBuilder.and(predicate,predicate1,predicate3));
 			
 			invoiceDO=session.createQuery(query).getResultList();
 			
@@ -1336,7 +1393,11 @@ public class InvoiceDao {
 			
 			Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
 			
-			query.where(predicate);
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+			
+			query.where(criteriaBuilder.and(predicate,predicate3));
 			
 			cashDO=session.createQuery(query).getResultList();
 			
@@ -1364,7 +1425,11 @@ public class InvoiceDao {
 			
 			Predicate predicate=criteriaBuilder.equal(root.get("financialYear"), financialYear);
 			
-			query.where(predicate);
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=criteriaBuilder.equal(root.get("registerId"), registerId);
+			
+			query.where(criteriaBuilder.and(predicate,predicate3));
 			
 			proformaDO=session.createQuery(query).getResultList();
 			
@@ -1608,11 +1673,16 @@ public class InvoiceDao {
 			
 			Root<PurchaseDO> root=query.from(PurchaseDO.class);
 			
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+	
+			
 			Predicate pred=builder.equal(root.get("financialYear"),financialYear);
 
 			query.select(root);
 			
-			query.where(pred);
+			query.where(builder.and(pred,predicate3));
 			
 			purchaseList=session.createQuery(query).getResultList();
 		}catch(Exception e) {
@@ -1642,9 +1712,14 @@ public class InvoiceDao {
 			Predicate predicate=builder.equal(root.get("month"), month);
 			
 			Predicate pred=builder.equal(root.get("financialYear"),financialYear);
+			
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+	
 
 			query.select(root);
-			query.where(builder.and(predicate,pred));
+			query.where(builder.and(predicate,pred,predicate3));
 			
 			purchaseList=session.createQuery(query).getResultList();
 		}catch(Exception e) {
@@ -1701,6 +1776,12 @@ public class InvoiceDao {
 			Root<SupplierDO> root=query.from(SupplierDO.class);
 			
 			query.select(root);
+			
+			  String registerId=CustomValidationFilter.getCurrentRegisterId();
+				
+				Predicate predicate3=builder.equal(root.get("registerId"), registerId);
+	
+				query.where(predicate3);
 			
 			list=session.createQuery(query).getResultList();
 			

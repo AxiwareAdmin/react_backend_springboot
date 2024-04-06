@@ -77,6 +77,9 @@ public class InvoiceController {
 	@Value("${FILE_UPLOAD_LOCATION}")
 	String fileUploadPath;
 	
+	@Value("${SEPERATOR}")
+	String seperator;
+	
 	@Autowired
 	ExcelService excelService;
 	
@@ -183,6 +186,9 @@ public class InvoiceController {
 		
 		List<InvoiceDO> invoiceList=invoiceService.getInvoiceList(financialYear);
 		if(invoiceList!=null && invoiceList.size()>0) {
+			invoiceList.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<InvoiceDO>>(invoiceList,HttpStatus.OK);
 		}
 		else {
@@ -200,6 +206,9 @@ public class InvoiceController {
 		List<PurchaseDO> list=invoiceService.getPurchaseList(financialYear,"");
 		
 		if(list!=null && list.size()>0) {
+			list.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 			return new ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK);
 		}else {
 			JSONObject jsonObj=new JSONObject();
@@ -233,6 +242,9 @@ public class InvoiceController {
 		List<PurchaseDO> list=invoiceService.getPurchaseList(month.substring(0,3),financialYear,"");
 		
 		if(list!=null && list.size()>0) {
+			list.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 			return new ResponseEntity<List<PurchaseDO>>(list,HttpStatus.OK);
 		}else {
 			JSONObject jsonObj=new JSONObject();
@@ -262,7 +274,11 @@ public class InvoiceController {
 	@CrossOrigin(origins={"*"})
 	public ResponseEntity<?> getInvoiceList(@PathVariable String financialYear){
 		List<InvoiceDO> invoiceDO=invoiceService.getInvoiceByFinancialYear(financialYear);
+		
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<InvoiceDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -308,6 +324,9 @@ public class InvoiceController {
 	public ResponseEntity<?> getCashInvoiceList(@PathVariable String financialYear){
 		List<CashDO> cashDO=invoiceService.getCashInvoiceByFinancialYear(financialYear);
 		if(cashDO!=null) {
+			cashDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<CashDO>>(cashDO,HttpStatus.OK);
 		}
 		else {
@@ -322,6 +341,9 @@ public class InvoiceController {
 	public ResponseEntity<?> getProformaInvoiceList(@PathVariable String financialYear){
 		List<ProformaInvoiceDO> ProformaDO=invoiceService.getProformaInvoiceByFinancialYear(financialYear);
 		if(ProformaDO!=null) {
+			ProformaDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<ProformaInvoiceDO>>(ProformaDO,HttpStatus.OK);
 		}
 		else {
@@ -343,6 +365,9 @@ public class InvoiceController {
 		String financialYear=map.get("financialYear");
 		List<InvoiceDO> invoiceDO=invoiceService.getInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<InvoiceDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -359,6 +384,9 @@ public class InvoiceController {
 		String financialYear=map.get("financialYear");
 		List<CashDO> invoiceDO=invoiceService.getCashInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<CashDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -375,6 +403,9 @@ public class InvoiceController {
 		String financialYear=map.get("financialYear");
 		List<ProformaInvoiceDO> invoiceDO=invoiceService.getProformaInvoiceListByMonth(month.substring(0,3),financialYear);
 		if(invoiceDO!=null) {
+			invoiceDO.forEach(invoice->{
+				invoice.setIncludeChildren(false);
+			});
 		return new ResponseEntity<List<ProformaInvoiceDO>>(invoiceDO,HttpStatus.OK);
 		}
 		else {
@@ -1102,33 +1133,33 @@ public class InvoiceController {
 		  String registerId=map.get("registerId").toString();
 		  
 		  ClientDO clientDO=invoiceService.getClientDoByRegisterId(registerId);
-//		  
-//		  StringBuilder directory=new StringBuilder(fileUploadPath);
-//		  
-//		  directory.append("\\");
-//		  
-//		  directory.append(registerId);
-//		  
-//		  Path imagePath = Paths.get(directory.toString());
-//		  
-//		  try (DirectoryStream<Path> stream = Files.newDirectoryStream(imagePath)) {
-//	            for (Path file : stream) {
-//	            	
-//	            	if(file.getFileName().toString().contains("LOGO")) {
-//	            		clientDO.setLogo(Files.readAllBytes(file));
-//	            	}
-//	            	
-//	            	if(file.getFileName().toString().contains("SIGNATURE")) {
-//	            		clientDO.setSignature(Files.readAllBytes(file));
-//	            	}
-//	               
-//	                // Process the file here
-//	            }
-//	        } catch (Exception e) {
-//	            // IOException can be thrown during the iteration, fail early
-//	        	LOGGER.error("Exception in InvoiceController::getClientDOForUser()::"+e);
+		  
+		  StringBuilder directory=new StringBuilder(fileUploadPath);
+		  
+		  directory.append(seperator);
+		  
+		  directory.append(registerId);
+		  
+		  Path imagePath = Paths.get(directory.toString());
+		  
+		  try (DirectoryStream<Path> stream = Files.newDirectoryStream(imagePath)) {
+	            for (Path file : stream) {
+	            	
+	            	if(file.getFileName().toString().contains("LOGO")) {
+	            		clientDO.setLogo(Files.readAllBytes(file));
+	            	}
+	            	
+	            	if(file.getFileName().toString().contains("SIGNATURE")) {
+	            		clientDO.setSignature(Files.readAllBytes(file));
+	            	}
+	               
+	                // Process the file here
+	            }
+	        } catch (Exception e) {
+	            // IOException can be thrown during the iteration, fail early
+	        	LOGGER.error("Exception in InvoiceController::getClientDOForUser()::"+e);
 //	            throw e;
-//	        }
+	        }
 
 		  
 		  if(clientDO!=null) {
@@ -1330,12 +1361,13 @@ public class InvoiceController {
 			
 //			 String base64UrlEncodedData = clientDO.getLogo().toString();
 //		     byte[] decodedBytes = Base64.getUrlDecoder().decode(base64UrlEncodedData);
+			try {
 			String filePath=null;
 			
 			Path path;
 			
 			if(clientDO.getLogo().length>0) {
-			 filePath=fileUploadPath+"\\"+clientDO.getClientId()+"\\"+"LOGO.jpg";
+			 filePath=fileUploadPath+seperator+clientDO.getClientId()+seperator+"LOGO.jpg";
 			 // Convert the byte array to a Path object
              path = Paths.get(filePath);
 
@@ -1346,9 +1378,14 @@ public class InvoiceController {
             
 			if(clientDO.getSignature().length>0) {
             
-            filePath=fileUploadPath+"\\"+clientDO.getClientId()+"\\"+"SIGNATURE.jpg";
+            filePath=fileUploadPath+seperator+clientDO.getClientId()+seperator+"SIGNATURE.jpg";
             path = Paths.get(filePath);
             Files.write(path, clientDO.getSignature());
+			}
+			}catch(Exception e) {
+				LOGGER.error("Exception in InvoiceController::saveInvoice()::"+e);
+				
+				System.out.println("Exception in InvoiceController::saveInvoice()::"+e);
 			}
             
 			

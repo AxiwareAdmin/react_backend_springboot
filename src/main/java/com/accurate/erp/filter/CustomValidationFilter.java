@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.accurate.erp.helper.JwtUtil;
+import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.security.service.CustomUserDetailsService;
 
 @Component
@@ -24,6 +25,9 @@ public class CustomValidationFilter extends OncePerRequestFilter{
 
 	@Autowired
 	JwtUtil jwtUtil;
+	
+    private static final ThreadLocal<String> REGISTER_ID_THREAD_LOCAL = new ThreadLocal<>();
+
 	
 	@Autowired
 	CustomUserDetailsService userDetailsService;
@@ -60,7 +64,10 @@ public class CustomValidationFilter extends OncePerRequestFilter{
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
-
+            	
+            	UserDO userDO=(UserDO)userDetails;
+            	
+            	REGISTER_ID_THREAD_LOCAL.set(userDO.getRegisterId());
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
@@ -78,7 +85,7 @@ public class CustomValidationFilter extends OncePerRequestFilter{
 		chain.doFilter(request, response);
 		}
 		catch(Exception e) {
-			System.out.println("exception in CustomValidationFilter::doFilterInternal()");
+			System.out.println("exception in CustomValidationFilter::doFilterInternal()::"+e);
 			
 			if(request.getAttribute("msgFlag")!=null) return;
 			 response.setStatus(HttpStatus.UNAUTHORIZED.value()); // Set HTTP 401 Unauthorized status
@@ -89,5 +96,10 @@ public class CustomValidationFilter extends OncePerRequestFilter{
 		
 		
 	}
+	
+	 public static String getCurrentRegisterId() {
+	        // Access the registerId stored in the ThreadLocal variable
+	        return REGISTER_ID_THREAD_LOCAL.get();
+	    }
 
 }

@@ -162,8 +162,14 @@ public class CreditNoteService {
 		
 		List<Map<String,Object>> invoiceProd=(List<Map<String,Object>>)inputJson.get("invoiceProducts");
 		
-		java.util.Date d=sdf.parse(invoiceDate.toString());
-		
+		java.util.Date d=null;
+		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
+			
+			d=sdf.parse(invoiceDate.toString());
+		}
+		else {
+			d=sdf.parse(new java.util.Date().toString());
+		}
 		
 		
 		if(invoiceNo!=null)
@@ -269,7 +275,7 @@ public class CreditNoteService {
 			invoiceDO.setBillingAddress(billingAddress.toString());
 		}
 		
-		if(poNumber!=null) {
+		if(poNumber!=null && poNumber.toString().length()>0) {
 			invoiceDO.setPoNumber(poNumber.toString());
 		}
 		
@@ -279,10 +285,10 @@ public class CreditNoteService {
 		
 		if(invoiceDate!=null) {
 			
-			invoiceDO.setInvoiceDate(sdf.parse(invoiceDate.toString()));
+			invoiceDO.setInvoiceDate(d);
 		}
 		
-		if(poDate!=null) {
+		if(poDate!=null && poNumber.toString().length()>0) {
 			invoiceDO.setPoDate(sdf.parse(poDate.toString()));
 		}
 		
@@ -294,7 +300,7 @@ public class CreditNoteService {
 //			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
 //		}
 //		
-		if(dueDate!=null) {
+		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
 		

@@ -143,8 +143,14 @@ public class CustomerPurchaseOrderService {
 		
 		List<Map<String,Object>> invoiceProd=(List<Map<String,Object>>)inputJson.get("invoiceProducts");
 		
-		java.util.Date d=sdf.parse(invoiceDate.toString());
-		
+		java.util.Date d=null;
+		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
+			
+			d=sdf.parse(invoiceDate.toString());
+		}
+		else {
+			d=sdf.parse(new java.util.Date().toString());
+		}
 		
 		
 		if(invoiceNo!=null)
@@ -265,11 +271,11 @@ public class CustomerPurchaseOrderService {
 		}
 		
 		if(invoiceDate!=null) {
-			invoiceDO.setPoDate(sdf.parse(invoiceDate.toString()));
+			invoiceDO.setPoDate(d);
 		}
 		
 
-		if(dueDate!=null) {
+		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
 		
@@ -318,6 +324,8 @@ public class CustomerPurchaseOrderService {
 		if(additionalChargesGst!=null) {
 			invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.toString()));
 		}
+		
+		invoiceDO.setInvoiceStatus("Not Booked");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
