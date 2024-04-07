@@ -121,6 +121,19 @@ public class CustomerDO {
 	
 	@Column(name="shippingContact_no")
 	String shippingContactNumber;
+	
+	@Column(name = "Opening_Stock")
+	Integer openingStock;
+	
+	
+
+	public Integer getOpeningStock() {
+		return openingStock;
+	}
+
+	public void setOpeningStock(Integer openingStock) {
+		this.openingStock = openingStock;
+	}
 
 	public String getStateCode() {
 		return stateCode;
@@ -412,9 +425,18 @@ public class CustomerDO {
 
 	@Override
 	public String toString() {
-		return "CustomerDO [gstNo=" + gstNo + ", address1=" + address1 + ", address2=" + address2 + ", city=" + city
-				+ ", pincode=" + pincode + ", state=" + state + ", country=" + country + ", email=" + email
-				+ ", contactNo=" + contactNo + ", customerId=" + customerId + ", customerName=" + customerName + "]";
+		return "CustomerDO [gstNo=" + gstNo + ", shippingGstNo=" + shippingGstNo + ", address1=" + address1
+				+ ", address2=" + address2 + ", city=" + city + ", pincode=" + pincode + ", state=" + state
+				+ ", shippingState=" + shippingState + ", country=" + country + ", email=" + email + ", contactNo="
+				+ contactNo + ", contactPerson=" + contactPerson + ", vendorCode=" + vendorCode + ", customerId="
+				+ customerId + ", customerName=" + customerName + ", shippingAddress1=" + shippingAddress1
+				+ ", termsAndCondition=" + termsAndCondition + ", stateCode=" + stateCode + ", ShippingCustomerName="
+				+ ShippingCustomerName + ", shippingCity=" + shippingCity + ", shippingPinCode=" + shippingPinCode
+				+ ", ShippingStateCode=" + ShippingStateCode + ", shippingCountry=" + shippingCountry
+				+ ", accountingGroup=" + accountingGroup + ", userId=" + userId + ", registerId=" + registerId
+				+ ", createdDate=" + createdDate + ", DrCr=" + DrCr + ", shippingContactPerson=" + shippingContactPerson
+				+ ", shippingContactNumber=" + shippingContactNumber + ", openingStock=" + openingStock
+				+ ", shippingAddress2=" + shippingAddress2 + ", poNumber=" + poNumber + ", remarks=" + remarks + "]";
 	}
 	
 	

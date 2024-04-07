@@ -1438,6 +1438,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			Object contactNo=inputJson.get("contactNo");
 			Object shippingAddress1=inputJson.get("shippingAddress1");
 			Object paymentTerms=inputJson.get("paymentTerms");
+			Object openingStock=inputJson.get("openingStock");
 
 			if(customerName != null)
 				CustomerdO.setCustomerName(customerName.toString());
@@ -1467,6 +1468,8 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				CustomerdO.setShippingAddress1(shippingAddress1.toString());
 			if(paymentTerms != null)
 				CustomerdO.setTermsAndCondition(paymentTerms.toString());
+			if(openingStock != null)
+				CustomerdO.setOpeningStock(Integer.parseInt(openingStock.toString()));
 
 			CustomerdO.setStateCode("1234");
 			CustomerdO.setCreatedDate("12-Dec-23");
