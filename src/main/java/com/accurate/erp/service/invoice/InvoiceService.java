@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 //import org.apache.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -239,9 +240,9 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
 				
@@ -524,9 +525,9 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
@@ -814,9 +815,9 @@ public String saveProforma(Map<String, Object> inputJson,String registerId,Strin
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
 				
@@ -1614,4 +1615,14 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	public List<UserDO> getUserList(){
 		return invoiceDao.getUserList();
 	}
+	
+	public boolean checkClientValidity(String registerId) {
+		return invoiceDao.checkClientValidity(registerId);
+	}
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public String getInvoiceIdByInvoiceNumber(String invoiceNumber) {
+		return invoiceDao.getInvoiceIdByInvoiceNumber(invoiceNumber);
+	}
+	
 }

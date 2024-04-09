@@ -1370,6 +1370,8 @@ public class InvoiceController {
 			 filePath=fileUploadPath+seperator+clientDO.getClientId()+seperator+"LOGO.jpg";
 			 // Convert the byte array to a Path object
              path = Paths.get(filePath);
+             
+             Files.createDirectories(path.getParent());
 
             // Write the byte array to the file
             Files.write(path, clientDO.getLogo());
@@ -1380,6 +1382,7 @@ public class InvoiceController {
             
             filePath=fileUploadPath+seperator+clientDO.getClientId()+seperator+"SIGNATURE.jpg";
             path = Paths.get(filePath);
+            Files.createDirectories(path.getParent());
             Files.write(path, clientDO.getSignature());
 			}
 			}catch(Exception e) {
@@ -1405,6 +1408,35 @@ public class InvoiceController {
 			JSONObject jsonObject=new JSONObject();
 			jsonObject.put("res", "Users not found");
 			return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
+		}
+		
+		@PostMapping(value = "/invoiceidbyno")
+		@CrossOrigin(origins= {"*"})
+		public String getInvoiceIdByInvoiceNo(@RequestBody String invoiceNumber){
+			String res=invoiceService.getInvoiceIdByInvoiceNumber(invoiceNumber);
+			
+			return res;
+		}
+		
+		@GetMapping(value = "/clientValidity")
+		@CrossOrigin(origins= {"*"})
+		public String checkClientValidity(HttpServletRequest request){
+			String token=request.getHeader("Authorization").split(" ")[1];
+			
+			
+			  Claims claims= jwtUtil.extractAllClaims(token);
+			  
+			  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+			  
+			  String registerId=map.get("registerId").toString();
+			  
+			  boolean res=invoiceService.checkClientValidity(registerId);
+			  
+			  if(res) return "true";
+			  
+			  return "false";
+					  
+					 
 		}
 		
 		
