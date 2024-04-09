@@ -1412,7 +1412,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	
 	// added code for save customer details start
 
-	public String saveCustomer(Map<String, Object> inputJson) throws ParseException {
+	public String saveCustomer(Map<String, Object> inputJson,String regId,String userId) throws ParseException {
 
 		LOGGER.info("InvoiceService::saveCustomer()::start");
 		String result = "success";
@@ -1439,6 +1439,12 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			Object shippingAddress1=inputJson.get("shippingAddress1");
 			Object paymentTerms=inputJson.get("paymentTerms");
 			Object openingStock=inputJson.get("openingStock");
+			Object shippingCustomerName = inputJson.get("shippingCustomerName");
+			Object shippingCity = inputJson.get("shippingCity");
+			Object shippingPincode = inputJson.get("shippingPincode");
+			Object shippingCountry = inputJson.get("shippingCountry");
+			
+			
 
 			if(customerName != null)
 				CustomerdO.setCustomerName(customerName.toString());
@@ -1470,17 +1476,29 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				CustomerdO.setTermsAndCondition(paymentTerms.toString());
 			if(openingStock != null)
 				CustomerdO.setOpeningStock(Integer.parseInt(openingStock.toString()));
-
-			CustomerdO.setStateCode("1234");
-			CustomerdO.setCreatedDate("12-Dec-23");
-			CustomerdO.setShippingCustomerName("Raju");
-			CustomerdO.setShippingCity("Goa");
-			CustomerdO.setShippingPinCode(1234);
+			if(shippingCustomerName != null && !shippingCustomerName.equals(""))
+				CustomerdO.setShippingCustomerName(shippingCustomerName.toString());
+			if(shippingCity != null && !shippingCity.equals(""))
+				CustomerdO.setShippingCity(shippingCity.toString());
+			if(shippingPincode != null && !shippingPincode.equals(""))
+				CustomerdO.setShippingPinCode(Integer.parseInt(shippingPincode.toString()));
+			if(shippingCountry != null && !shippingCountry.equals(""))
+				CustomerdO.setShippingCountry(shippingCountry.toString());
+			if(regId != null && !regId.equals("")) {
+				CustomerdO.setRegisterId(Integer.parseInt(regId));
+			}else {
+				CustomerdO.setRegisterId(21212);
+			}
+			if(userId != null && !userId.equals("")) {
+				CustomerdO.setUserId(Integer.parseInt(userId));
+			}else {
+				CustomerdO.setUserId(121212);
+			}
+	
+			CustomerdO.setCreatedDate(sdf.parse(sdf.format(new Date(0))).toString());
 			CustomerdO.setShippingStateCode("1111");
-			CustomerdO.setShippingCountry("US");
-			CustomerdO.setAccountingGroup("Y");
-			CustomerdO.setUserId(121212);
-			CustomerdO.setRegisterId(21212);
+			CustomerdO.setStateCode("1234");
+			CustomerdO.setAccountingGroup("Y");			
 			CustomerdO.setDrCr("CR");
 			CustomerdO.setPoNumber("11111");
 
@@ -1499,7 +1517,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 
 	    //added code for save product start
 
-	public String saveProduct(Map<String, Object> inputJson) throws ParseException {
+	public String saveProduct(Map<String, Object> inputJson,String regId,String userId,String userName) throws ParseException {
 
 		LOGGER.info("InvoiceService::saveProduct()::start");
 		String result = "success";
@@ -1546,12 +1564,24 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				productDO.setCategory(category.toString());
 			if(applicableTax != null)
 				productDO.setApplicableTax(new BigDecimal(applicableTax.toString()));
-
-
-			productDO.setUserId(21212);
-			productDO.setRegisterId(12121);
+			if(regId != null && !regId.equalsIgnoreCase("")) {
+				productDO.setRegisterId(Integer.parseInt(regId));
+			}else {
+				productDO.setRegisterId(12121);
+			}
+			if(userId != null && !userId.equalsIgnoreCase("")) {
+				productDO.setUserId(Integer.parseInt(userId));
+			}else {
+				productDO.setUserId(21212);
+			}
+			if(userName != null && !userName.equalsIgnoreCase("")) {
+				productDO.setCreatedBy(userName);
+			}else {
+				productDO.setCreatedBy("sachin");
+			}
+			
 			productDO.setCreatedDate(new Date(0));
-			productDO.setCreatedBy("sachin");
+			
 
 
 			result = invoiceDao.saveProduct(productDO);

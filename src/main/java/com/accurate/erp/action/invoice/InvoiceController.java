@@ -1183,11 +1183,23 @@ public class InvoiceController {
 
 	@PostMapping(value="/addCustomerDetails",consumes= {"application/json"})
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> saveCustomer(@RequestBody Map<String, Object> inputJson) throws ParseException{
+	public ResponseEntity<?> saveCustomer(@RequestBody Map<String, Object> inputJson,HttpServletRequest request) throws ParseException{
 
 		System.out.print(inputJson);
+		String token=request.getHeader("Authorization").split(" ")[1];
+		
+		
+		  Claims claims= jwtUtil.extractAllClaims(token);
+		  
+		  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+		  
+		  String registerId=map.get("registerId").toString();
+		  
+		  String userId=map.get("userId").toString();
+		  
+		  //String userName=map.get("userName").toString();
 
-		String msg=invoiceService.saveCustomer(inputJson);
+		String msg=invoiceService.saveCustomer(inputJson,registerId,userId);
 
 		JSONObject jsonObj=new JSONObject();
 		if(!msg.equals("")) {
@@ -1203,11 +1215,23 @@ public class InvoiceController {
 
 		@PostMapping(value="/addProductDetails",consumes= {"application/json"})
 		@CrossOrigin(origins={"*"})
-		public ResponseEntity<?> saveProduct(@RequestBody Map<String, Object> inputJson) throws ParseException{
+		public ResponseEntity<?> saveProduct(@RequestBody Map<String, Object> inputJson,HttpServletRequest request) throws ParseException{
 
 			System.out.print(inputJson);
+			String token=request.getHeader("Authorization").split(" ")[1];
+			
+			
+			  Claims claims= jwtUtil.extractAllClaims(token);
+			  
+			  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+			  
+			  String registerId=map.get("registerId").toString();
+			  
+			  String userId=map.get("userId").toString();
+			  
+			  String userName=map.get("userName").toString();
 
-			String msg=invoiceService.saveProduct(inputJson);
+			String msg=invoiceService.saveProduct(inputJson,registerId,userId,userName);
 
 			JSONObject jsonObj=new JSONObject();
 			if(!msg.equals("")) {

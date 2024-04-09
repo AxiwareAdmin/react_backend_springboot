@@ -206,7 +206,7 @@ public class CustomerDO {
 	}
 
 	public void setRegisterId(Integer registerId) {
-		registerId = registerId;
+		this.registerId = registerId;
 	}
 
 	public String getCreatedDate() {
