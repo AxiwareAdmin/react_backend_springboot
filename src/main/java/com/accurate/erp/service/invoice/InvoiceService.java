@@ -1413,7 +1413,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	
 	// added code for save customer details start
 
-	public String saveCustomer(Map<String, Object> inputJson) throws ParseException {
+	public String saveCustomer(Map<String, Object> inputJson,String regId,String userId) throws ParseException {
 
 		LOGGER.info("InvoiceService::saveCustomer()::start");
 		String result = "success";
@@ -1438,7 +1438,14 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			Object email=inputJson.get("email");
 			Object contactNo=inputJson.get("contactNo");
 			Object shippingAddress1=inputJson.get("shippingAddress1");
+			Object shippingAddress2=inputJson.get("shippingAddress2");
 			Object paymentTerms=inputJson.get("paymentTerms");
+			
+			Object openingStock=inputJson.get("openingStock");
+			Object shippingCustomerName = inputJson.get("shippingCustomerName");
+			Object shippingCity = inputJson.get("shippingCity");
+			Object shippingPincode = inputJson.get("shippingPincode");
+			Object shippingCountry = inputJson.get("shippingCountry");
 
 			if(customerName != null)
 				CustomerdO.setCustomerName(customerName.toString());
@@ -1466,22 +1473,51 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				CustomerdO.setContactNo(contactNo.toString());
 			if(shippingAddress1 != null)
 				CustomerdO.setShippingAddress1(shippingAddress1.toString());
+			if(shippingAddress2 != null)
+			CustomerdO.setShippingAddress2(shippingAddress2.toString());
 			if(paymentTerms != null)
 				CustomerdO.setTermsAndCondition(paymentTerms.toString());
 
+//			CustomerdO.setStateCode("1234");
+//			CustomerdO.setCreatedDate("12-Dec-23");
+//			CustomerdO.setShippingCustomerName("Raju");
+//			CustomerdO.setShippingCity("Goa");
+//			CustomerdO.setShippingPinCode(1234);
+//			CustomerdO.setShippingStateCode("1111");
+//			CustomerdO.setShippingCountry("US");
+//			CustomerdO.setAccountingGroup("Y");
+//			CustomerdO.setUserId(121212);
+//			CustomerdO.setRegisterId(21212);
+//			CustomerdO.setDrCr("CR");
+//			CustomerdO.setPoNumber("11111");
+			
+			if(openingStock != null)
+				CustomerdO.setOpeningStock(Integer.parseInt(openingStock.toString()));
+			if(shippingCustomerName != null && !shippingCustomerName.equals(""))
+				CustomerdO.setShippingCustomerName(shippingCustomerName.toString());
+			if(shippingCity != null && !shippingCity.equals(""))
+				CustomerdO.setShippingCity(shippingCity.toString());
+			if(shippingPincode != null && !shippingPincode.equals(""))
+				CustomerdO.setShippingPinCode(Integer.parseInt(shippingPincode.toString()));
+			if(shippingCountry != null && !shippingCountry.equals(""))
+				CustomerdO.setShippingCountry(shippingCountry.toString());
+			if(regId != null && !regId.equals("")) {
+				CustomerdO.setRegisterId(Integer.parseInt(regId));
+			}else {
+				CustomerdO.setRegisterId(21212);
+			}
+			if(userId != null && !userId.equals("")) {
+				CustomerdO.setUserId(Integer.parseInt(userId));
+			}else {
+				CustomerdO.setUserId(121212);
+			}
+
+			CustomerdO.setCreatedDate(sdf.parse(sdf.format(new Date(0))).toString());
 			CustomerdO.setStateCode("1234");
-			CustomerdO.setCreatedDate("12-Dec-23");
-			CustomerdO.setShippingCustomerName("Raju");
-			CustomerdO.setShippingCity("Goa");
-			CustomerdO.setShippingPinCode(1234);
-			CustomerdO.setShippingStateCode("1111");
-			CustomerdO.setShippingCountry("US");
-			CustomerdO.setAccountingGroup("Y");
-			CustomerdO.setUserId(121212);
-			CustomerdO.setRegisterId(21212);
+			CustomerdO.setAccountingGroup("Y");		
+			CustomerdO.setShippingStateCode("2345");
 			CustomerdO.setDrCr("CR");
 			CustomerdO.setPoNumber("11111");
-
 
 
 			result = invoiceDao.saveCustomer(CustomerdO);
@@ -1497,7 +1533,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 
 	    //added code for save product start
 
-	public String saveProduct(Map<String, Object> inputJson) throws ParseException {
+	public String saveProduct(Map<String, Object> inputJson,String regId,String userId,String userName) throws ParseException {
 
 		LOGGER.info("InvoiceService::saveProduct()::start");
 		String result = "success";
@@ -1530,8 +1566,8 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				productDO.setProductType(productType.toString());
 			if(partCode != null)
 				productDO.setPartCode(partCode.toString());
-			//if(hsnCode != null)
-			//	productDO.setHsnCode(hsnCode.toString());
+			if(hsnCode != null)
+				productDO.setHsnCode(hsnCode.toString());
 			if(openingStock != null) {
 				productDO.setUnit(Integer.parseInt(openingStock.toString()));
 				productDO.setOpeningStock(Integer.parseInt(openingStock.toString()));
@@ -1546,10 +1582,27 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				productDO.setApplicableTax(new BigDecimal(applicableTax.toString()));
 
 
-			productDO.setUserId(21212);
-			productDO.setRegisterId(12121);
+//			productDO.setUserId(21212);
+//			productDO.setRegisterId(12121);
 			productDO.setCreatedDate(new Date(0));
-			productDO.setCreatedBy("sachin");
+//			productDO.setCreatedBy("sachin");
+			
+			if(regId != null && !regId.equalsIgnoreCase("")) {
+				productDO.setRegisterId(Integer.parseInt(regId));
+			}else {
+				productDO.setRegisterId(12121);
+			}
+			if(userId != null && !userId.equalsIgnoreCase("")) {
+				productDO.setUserId(Integer.parseInt(userId));
+			}else {
+				productDO.setUserId(21212);
+			}
+			if(userName != null && !userName.equalsIgnoreCase("")) {
+				productDO.setCreatedBy(userName);
+			}else {
+				productDO.setCreatedBy("sachin");
+			}
+
 
 
 			result = invoiceDao.saveProduct(productDO);
