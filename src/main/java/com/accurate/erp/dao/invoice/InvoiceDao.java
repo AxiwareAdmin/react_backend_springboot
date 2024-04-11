@@ -1602,7 +1602,7 @@ public class InvoiceDao {
 			session.saveOrUpdate(docmentseqmasterdo);
 //			tx.commit();
 //			session.flush();
-			session.close();
+//			session.close();
 			
 		}catch(Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveDocMaster::"+e);
