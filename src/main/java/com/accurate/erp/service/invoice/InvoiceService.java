@@ -1550,8 +1550,8 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				productDO.setProductType(productType.toString());
 			if(partCode != null)
 				productDO.setPartCode(partCode.toString());
-			//if(hsnCode != null)
-			//	productDO.setHsnCode(hsnCode.toString());
+			if(hsnCode != null)
+				productDO.setHsnCode(hsnCode.toString());
 			if(openingStock != null) {
 				productDO.setUnit(Integer.parseInt(openingStock.toString()));
 				productDO.setOpeningStock(Integer.parseInt(openingStock.toString()));
