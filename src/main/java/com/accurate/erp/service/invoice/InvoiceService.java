@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 //import org.apache.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -239,9 +240,9 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
 				
@@ -524,9 +525,9 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
@@ -814,9 +815,9 @@ public String saveProforma(Map<String, Object> inputJson,String registerId,Strin
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
 				
@@ -1437,14 +1438,15 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			Object email=inputJson.get("email");
 			Object contactNo=inputJson.get("contactNo");
 			Object shippingAddress1=inputJson.get("shippingAddress1");
+			Object shippingAddress2=inputJson.get("shippingAddress2");
 			Object paymentTerms=inputJson.get("paymentTerms");
+
 			Object openingStock=inputJson.get("openingStock");
 			Object shippingCustomerName = inputJson.get("shippingCustomerName");
 			Object shippingCity = inputJson.get("shippingCity");
 			Object shippingPincode = inputJson.get("shippingPincode");
 			Object shippingCountry = inputJson.get("shippingCountry");
-			
-			
+
 
 			if(customerName != null)
 				CustomerdO.setCustomerName(customerName.toString());
@@ -1472,8 +1474,11 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				CustomerdO.setContactNo(contactNo.toString());
 			if(shippingAddress1 != null)
 				CustomerdO.setShippingAddress1(shippingAddress1.toString());
+			if(shippingAddress2 != null)
+			CustomerdO.setShippingAddress2(shippingAddress2.toString());
 			if(paymentTerms != null)
 				CustomerdO.setTermsAndCondition(paymentTerms.toString());
+
 			if(openingStock != null)
 				CustomerdO.setOpeningStock(Integer.parseInt(openingStock.toString()));
 			if(shippingCustomerName != null && !shippingCustomerName.equals(""))
@@ -1494,14 +1499,13 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			}else {
 				CustomerdO.setUserId(121212);
 			}
-	
 			CustomerdO.setCreatedDate(sdf.parse(sdf.format(new Date(0))).toString());
 			CustomerdO.setShippingStateCode("1111");
 			CustomerdO.setStateCode("1234");
 			CustomerdO.setAccountingGroup("Y");			
+
 			CustomerdO.setDrCr("CR");
 			CustomerdO.setPoNumber("11111");
-
 
 
 			result = invoiceDao.saveCustomer(CustomerdO);
@@ -1564,6 +1568,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 				productDO.setCategory(category.toString());
 			if(applicableTax != null)
 				productDO.setApplicableTax(new BigDecimal(applicableTax.toString()));
+
 			if(regId != null && !regId.equalsIgnoreCase("")) {
 				productDO.setRegisterId(Integer.parseInt(regId));
 			}else {
@@ -1582,6 +1587,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			
 			productDO.setCreatedDate(new Date(0));
 			
+
 
 
 			result = invoiceDao.saveProduct(productDO);
@@ -1647,4 +1653,14 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	public List<UserDO> getUserList(){
 		return invoiceDao.getUserList();
 	}
+	
+	public boolean checkClientValidity(String registerId) {
+		return invoiceDao.checkClientValidity(registerId);
+	}
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public String getInvoiceIdByInvoiceNumber(String invoiceNumber) {
+		return invoiceDao.getInvoiceIdByInvoiceNumber(invoiceNumber);
+	}
+	
 }

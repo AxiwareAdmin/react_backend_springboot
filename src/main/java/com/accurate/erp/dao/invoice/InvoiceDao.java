@@ -1602,7 +1602,7 @@ public class InvoiceDao {
 			session.saveOrUpdate(docmentseqmasterdo);
 //			tx.commit();
 //			session.flush();
-			session.close();
+//			session.close();
 			
 		}catch(Exception e) {
 			LOGGER.info("Exception occured in invoiceDao::saveDocMaster::"+e);
@@ -2416,6 +2416,66 @@ public List<Map<String,String>> getPONumberBySupplierNameForCopy(String supplier
 		LOGGER.info("InvoiceDao::getUserList()::end");
 		
 		return userList;
+	}
+	
+	public boolean checkClientValidity(String registerId) {
+		LOGGER.info("InvoiceDao::checkClientValidity()::start");
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<ClientDO> query=builder.createQuery(ClientDO.class);
+			
+			Root<ClientDO> root=query.from(ClientDO.class);
+			
+			Predicate pred=builder.equal(root.get("clientId"),registerId);
+			
+			query.where(pred);
+			
+			ClientDO clientDO=session.createQuery(query).getSingleResult();
+			
+			if(clientDO.getExpiryDate().before(new Date())) return false;
+			
+			return true;
+			
+		}catch(Exception e) {
+			LOGGER.error("Exception in InvoiceDao::checkClientValidity()::"+e);
+		}
+		LOGGER.info("InvoiceDao::checkClientValidity()::end");
+		return false;
+	}
+	
+	public String getInvoiceIdByInvoiceNumber(String invoiceNumber) {
+		LOGGER.info("InvoiceDao::getInvoiceIdByInvoiceNumber()::start");
+		String invoiceId=null;
+		try {
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			CriteriaQuery<InvoiceDO> query=builder.createQuery(InvoiceDO.class);
+			
+			Root<InvoiceDO> root=query.from(InvoiceDO.class);
+			
+			invoiceNumber=invoiceNumber.replaceAll("\"", "");
+			
+			query.where(builder.equal(root.get("invoiceNo"), invoiceNumber));
+			
+			InvoiceDO invoiceDO=session.createQuery(query).getSingleResult();
+			
+			invoiceId=invoiceDO.getInvoiceId().toString();
+			
+			
+		}catch(Exception e) {
+			LOGGER.error("Excepion in InvoiceDao::getInvoiceIdByInvoiceNumber()::end");
+		}
+		
+		
+		
+		LOGGER.info("InvoiceDao::getInvoiceIdByInvoiceNumber()::end");
+		return invoiceId;
 	}
 	
 	public Session getSession() {

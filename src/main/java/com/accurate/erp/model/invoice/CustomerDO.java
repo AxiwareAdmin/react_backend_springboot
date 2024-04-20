@@ -270,7 +270,18 @@ public class CustomerDO {
 	@Column(name="remark")
 	String remarks;
 	
-	
+	@Column(name = "Opening_Stock")
+	Integer openingStock;
+
+
+
+	public Integer getOpeningStock() {
+		return openingStock;
+	}
+
+	public void setOpeningStock(Integer openingStock) {
+		this.openingStock = openingStock;
+	}
 	
 	
 	public String getShippingGstNo() {
