@@ -916,7 +916,7 @@ public class InvoiceController {
 		boolean flag=false;
 				flag = invoiceService.sendMail(invoiceNo , custName,file);
 		
-		JSONObject jsonObj=new JSONObject();
+		JSONObject jsonObj=new 	JSONObject();
 		
 		if(flag) {
 			jsonObj.put("res", "sucess");
@@ -1463,6 +1463,23 @@ public class InvoiceController {
 			  return "false";
 					  
 					 
+		}
+		
+		
+		
+		@GetMapping(value = "/getStateByClientId")
+		@CrossOrigin(origins = {"*"})
+		public String getClientState(HttpServletRequest request) {
+			String token=request.getHeader("Authorization").split(" ")[1];
+			
+			  Claims claims= jwtUtil.extractAllClaims(token);
+			  
+			  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+			  
+			  String registerId=map.get("registerId").toString();
+			  
+			  return invoiceService.getStateByClientId(registerId);
+			  
 		}
 		
 		

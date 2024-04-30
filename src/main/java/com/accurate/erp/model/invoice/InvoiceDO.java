@@ -160,24 +160,24 @@ public class InvoiceDO {
 	String month;
 	
 	@Column(name="transportGst")
-	Integer transportGst;
+	BigDecimal transportGst;
 	
 	@Column(name="additionalChargesGst")
-	Integer additionalChargesGst;
+	BigDecimal additionalChargesGst;
 	
-	public Integer getTransportGst() {
+	public BigDecimal getTransportGst() {
 		return transportGst;
 	}
 
-	public void setTransportGst(Integer transportGst) {
+	public void setTransportGst(BigDecimal transportGst) {
 		this.transportGst = transportGst;
 	}
 
-	public Integer getAdditionalChargesGst() {
+	public BigDecimal getAdditionalChargesGst() {
 		return additionalChargesGst;
 	}
 
-	public void setAdditionalChargesGst(Integer additionalChargesGst) {
+	public void setAdditionalChargesGst(BigDecimal additionalChargesGst) {
 		this.additionalChargesGst = additionalChargesGst;
 	}
 

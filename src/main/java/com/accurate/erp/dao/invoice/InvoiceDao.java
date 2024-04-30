@@ -729,9 +729,9 @@ public class InvoiceDao {
 			InvoiceDO invDO = null;
 			invoiceDO.setInvoiceProductId(1);
 			Calendar cal = Calendar.getInstance();
-			invoiceDO.setMonth(new SimpleDateFormat("MMM").format(cal.getTime()));
+//			invoiceDO.setMonth(new SimpleDateFormat("MMM").format(cal.getTime()));
 			invoiceDO.setCity("Mum");
-			invoiceDO.setIgstValue(new BigDecimal(1));
+//			invoiceDO.setIgstValue(new BigDecimal(1));
 			Session session=getSession();
 			
 //			Transaction tx=session.beginTransaction();
@@ -1461,7 +1461,7 @@ public class InvoiceDao {
 			
 			query.where(predicate);
 			
-			email=session.createQuery(query).getSingleResult();
+			email=session.createQuery(query).getResultList().get(0);
 			
 			
 			/*
@@ -2476,6 +2476,41 @@ public List<Map<String,String>> getPONumberBySupplierNameForCopy(String supplier
 		
 		LOGGER.info("InvoiceDao::getInvoiceIdByInvoiceNumber()::end");
 		return invoiceId;
+	}
+	
+	
+	public String getStateByClientId(String registerId) {
+		LOGGER.info("InvoiceDao::getStateByClientId()::start");
+		String state=null;
+		try {
+			
+			Session session=getSession();
+			
+			CriteriaBuilder builder=session.getCriteriaBuilder();
+			
+			
+			CriteriaQuery<String> query=builder.createQuery(String.class);
+			
+			Root<ClientDO> root=query.from(ClientDO.class);
+			
+			query.select(root.get("state"));
+			
+			Predicate pred=builder.equal(root.get("clientId"), registerId);
+			
+			query.where(pred);
+			
+			state=session.createQuery(query).getSingleResult();
+			
+			
+			
+		}catch(Exception e) {
+			LOGGER.error("Excpetion in InvoiceDao::getStateByClientId::"+e);
+		}
+		
+		
+		LOGGER.info("InvoiceDao::getStateByClientId()::end");
+		
+		return state;
 	}
 	
 	public Session getSession() {

@@ -398,7 +398,7 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 	
 	public String saveInvoice(Map<String, Object> inputJson,String registerId,String userId,String userName) throws ParseException {
 		
-		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 		
 		InvoiceDO invoiceDO=new InvoiceDO();
 		
@@ -415,6 +415,8 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		}
 		
 		Object sgstValue=inputJson.get("sgstValue");
+		
+		Object igstValue=inputJson.get("igstValue");
 		
 		Object cgstValue=inputJson.get("cgstValue");
 		
@@ -481,6 +483,7 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
 			
 			d=sdf.parse(invoiceDate.toString());
+			
 		}
 		else {
 			d=sdf.parse(new java.util.Date().toString());
@@ -547,7 +550,8 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		
 		
 		if(sgstValue!=null) {
-			invoiceDO.setSgstValue(new BigDecimal(sgstValue.toString()));
+			String s=sgstValue.toString().length()==0?"0":sgstValue.toString();
+			invoiceDO.setSgstValue(new BigDecimal(s));
 		}
 		
 		if(financialYear!=null) {
@@ -555,7 +559,15 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		}
 		
 		if(cgstValue!=null) {
-			invoiceDO.setCgstValue(new BigDecimal(cgstValue.toString()));
+			
+			String s=cgstValue.toString().length()==0?"0":cgstValue.toString();
+			invoiceDO.setCgstValue(new BigDecimal(s));
+		}
+		
+if(igstValue!=null) {
+			
+			String s=igstValue.toString().length()==0?"0":igstValue.toString();
+			invoiceDO.setIgstValue(new BigDecimal(s));
 		}
 		
 		if(taxableValue!=null) {
@@ -662,13 +674,13 @@ public String saveCashInvoice(Map<String, Object> inputJson,String registerId,St
 		}
 		
 		if(additionalChargesGst!=null) {
-			invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.toString()));
+			invoiceDO.setAdditionalChargesGst(new BigDecimal(additionalChargesGst.toString()));
 		}
 		
 		if(transportChargesGst!=null) {
-			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
+			invoiceDO.setTransportGst(new BigDecimal(transportChargesGst.toString()));
 		}
-		invoiceDO.setInvoiceStatus("Overdue");
+		invoiceDO.setInvoiceStatus("Unpaid");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
@@ -1290,7 +1302,7 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 		try {
 		
 				String toMailId = invoiceDao.getCustomerEmail(custName);
-				toMailId="nadimk784@gmail.com";
+//				toMailId="nadimk784@gmail.com";
 				String subject = "Testing mail for Invoice No "+invNo;
 				String body ="<html><body><p>Dear "+custName+"</p><br/>Please check your invoice is in paid state"
 						+ ".please check invoice is correct or not <br/>Thanks & regards,<br/>"
@@ -1671,6 +1683,10 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	
 	public boolean checkClientValidity(String registerId) {
 		return invoiceDao.checkClientValidity(registerId);
+	}
+	
+	public String getStateByClientId(String registerId) {
+		return invoiceDao.getStateByClientId(registerId);
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
