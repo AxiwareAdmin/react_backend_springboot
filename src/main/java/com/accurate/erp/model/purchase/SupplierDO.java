@@ -65,6 +65,32 @@ public class SupplierDO {
 	
 	@Column(name="email")
 	String email;
+	
+	@Column(name="register_id")
+	String registerId;
+	
+	@Column(name="user_id")
+	String userId;
+	
+
+	
+	
+	
+	public String getRegisterId() {
+		return registerId;
+	}
+
+	public void setRegisterId(String registerId) {
+		this.registerId = registerId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
 	public Integer getSupplierId() {
 		return supplierId;
