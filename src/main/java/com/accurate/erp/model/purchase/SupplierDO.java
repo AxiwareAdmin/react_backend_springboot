@@ -73,9 +73,35 @@ public class SupplierDO {
 	String userId;
 	
 
+	@Column(name="created_date")
+	String createdDate;
+	
+	
+	@Column(name="Dr_Cr")
+	String drCr;
 	
 	
 	
+	
+	
+	
+	public String getDrCr() {
+		return drCr;
+	}
+
+	public void setDrCr(String drCr) {
+		this.drCr = drCr;
+	}
+
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
 	public String getRegisterId() {
 		return registerId;
 	}

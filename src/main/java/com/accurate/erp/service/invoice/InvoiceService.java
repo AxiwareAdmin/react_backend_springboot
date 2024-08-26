@@ -1541,7 +1541,119 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			return result;
 	}
 
-		// added code for save customer details end
+		// added code for save supplier details end
+	
+	
+	public String saveSupplier(Map<String, Object> inputJson,String regId,String userId) throws ParseException {
+
+		LOGGER.info("InvoiceService::saveSupplier()::start");
+		String result = "success";
+
+		try {
+
+			SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+
+			SupplierDO supplierDO=new SupplierDO();
+
+
+			Object customerName=inputJson.get("customerName");
+			Object gstNo=inputJson.get("gstNo");
+			Object shippingGstNo=inputJson.get("shippingGstNo");
+			Object address1=inputJson.get("address1");
+			Object address2=inputJson.get("address2");
+			Object city=inputJson.get("city");
+			Object pincode=inputJson.get("pincode");
+			Object state=inputJson.get("state");
+			Object shippingState=inputJson.get("shippingState");
+			Object country=inputJson.get("country");
+			Object email=inputJson.get("email");
+			Object contactNo=inputJson.get("contactNo");
+			Object shippingAddress1=inputJson.get("shippingAddress1");
+			Object shippingAddress2=inputJson.get("shippingAddress2");
+			Object paymentTerms=inputJson.get("paymentTerms");
+			
+			Object openingStock=inputJson.get("openingStock");
+			Object shippingCustomerName = inputJson.get("shippingCustomerName");
+			Object shippingCity = inputJson.get("shippingCity");
+			Object shippingPincode = inputJson.get("shippingPincode");
+			Object shippingCountry = inputJson.get("shippingCountry");
+
+			if(customerName != null)
+				supplierDO.setSupplierName(customerName.toString());
+			if(gstNo != null)
+				supplierDO.setGstNo(gstNo.toString());
+			
+			if(address1 != null)
+				supplierDO.setAddress1(address1.toString());
+			if(address2 != null)
+				supplierDO.setAddress2(address2.toString());
+			if(city != null)
+				supplierDO.setCity(city.toString());
+			if(pincode != null)
+				supplierDO.setPinCode(pincode.toString());
+			if(state != null)
+				supplierDO.setState(state.toString());
+			if(country != null)
+				supplierDO.setCountry(country.toString());
+			if(email != null)
+				supplierDO.setEmail(email.toString());
+			if(contactNo != null)
+				supplierDO.setContactNumber(contactNo.toString());
+			if(paymentTerms != null)
+				supplierDO.setPaymentTerms(paymentTerms.toString());
+
+//			CustomerdO.setStateCode("1234");
+//			CustomerdO.setCreatedDate("12-Dec-23");
+//			CustomerdO.setShippingCustomerName("Raju");
+//			CustomerdO.setShippingCity("Goa");
+//			CustomerdO.setShippingPinCode(1234);
+//			CustomerdO.setShippingStateCode("1111");
+//			CustomerdO.setShippingCountry("US");
+//			CustomerdO.setAccountingGroup("Y");
+//			CustomerdO.setUserId(121212);
+//			CustomerdO.setRegisterId(21212);
+//			CustomerdO.setDrCr("CR");
+//			CustomerdO.setPoNumber("11111");
+			
+//			if(openingStock != null)
+//				supplierDO.setOpeningStock(Integer.parseInt(openingStock.toString()));
+//			if(shippingCustomerName != null && !shippingCustomerName.equals(""))
+//				supplierDO.setShippingCustomerName(shippingCustomerName.toString());
+//			if(shippingCity != null && !shippingCity.equals(""))
+//				CustomerdO.setShippingCity(shippingCity.toString());
+//			if(shippingPincode != null && !shippingPincode.equals(""))
+//				CustomerdO.setShippingPinCode(Integer.parseInt(shippingPincode.toString()));
+//			if(shippingCountry != null && !shippingCountry.equals(""))
+//				CustomerdO.setShippingCountry(shippingCountry.toString());
+			if(regId != null && !regId.equals("")) {
+				supplierDO.setRegisterId(regId);
+			}else {
+				supplierDO.setRegisterId("21212");
+			}
+			if(userId != null && !userId.equals("")) {
+				supplierDO.setUserId(userId);
+			}else {
+				supplierDO.setUserId("121212");
+			}
+
+			supplierDO.setCreatedDate(sdf.parse(sdf.format(new Date(0))).toString());
+//			supplierDO.setStateCode("1234");
+//			CustomerdO.setAccountingGroup("Y");		
+			supplierDO.setDrCr("CR");
+			supplierDO.setPono("11111");
+
+
+			result = invoiceDao.saveSupplier(supplierDO);
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in InvoiceService :: saveSupplier()"+e);
+			return "failure";
+		}
+
+			return result;
+	}
+
+		// added code for save supplier details end
+
 
 	    //added code for save product start
 
@@ -1690,8 +1802,8 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public String getInvoiceIdByInvoiceNumber(String invoiceNumber) {
-		return invoiceDao.getInvoiceIdByInvoiceNumber(invoiceNumber);
+	public String getInvoiceIdByInvoiceNumber(String invoiceNumber,Class<?> claz) {
+		return invoiceDao.getInvoiceIdByInvoiceNumber(invoiceNumber,claz);
 	}
 	
 }

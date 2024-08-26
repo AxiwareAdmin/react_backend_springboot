@@ -1,5 +1,6 @@
 package com.accurate.erp.dao.invoice;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -1857,6 +1858,43 @@ public class InvoiceDao {
 		return result;
 	}
 
+	
+	
+	public String saveSupplier(SupplierDO supplierDO) {
+		LOGGER.info("InvoiceDao::saveSupplier()::start");
+		String result = "success";
+		try {
+			Session session=getSession();
+//			Transaction tx=session.beginTransaction();
+			session.saveOrUpdate(supplierDO);
+//			session.flush();
+//			tx.commit();
+
+            Session session1=getSession();	
+
+			CriteriaBuilder criteriaBuilder=session1.getCriteriaBuilder();
+
+			CriteriaQuery<SupplierDO> query=criteriaBuilder.createQuery(SupplierDO.class);
+
+			Root<SupplierDO> root=query.from(SupplierDO.class);
+
+			query.select(root);
+
+			Predicate predicate=criteriaBuilder.equal(root.get("supplierName"), supplierDO.getSupplierName());
+
+			query.where(predicate);
+
+			SupplierDO cust = session1.createQuery(query).getSingleResult();
+
+			result = cust.getSupplierId().toString();			
+		}catch(Exception e) {
+			LOGGER.error("Exception occured in ::saveSupplier()::"+e);
+			return "failure";
+		}
+		LOGGER.info("InvoiceDao::saveSupplier()::end");
+		return result;
+	}
+	
 	public String saveProduct(ProductDO prodDO) {
 		LOGGER.info("InvoiceDao::saveProduct()::start");
 		String result = "";
@@ -2447,7 +2485,7 @@ public List<Map<String,String>> getPONumberBySupplierNameForCopy(String supplier
 		return false;
 	}
 	
-	public String getInvoiceIdByInvoiceNumber(String invoiceNumber) {
+	public String getInvoiceIdByInvoiceNumber(String invoiceNumber,Class<?> clazz) {
 		LOGGER.info("InvoiceDao::getInvoiceIdByInvoiceNumber()::start");
 		String invoiceId=null;
 		try {
@@ -2455,17 +2493,24 @@ public List<Map<String,String>> getPONumberBySupplierNameForCopy(String supplier
 			
 			CriteriaBuilder builder=session.getCriteriaBuilder();
 			
-			CriteriaQuery<InvoiceDO> query=builder.createQuery(InvoiceDO.class);
+			CriteriaQuery<?> query=builder.createQuery(clazz);
 			
-			Root<InvoiceDO> root=query.from(InvoiceDO.class);
+			Root<?> root=query.from(clazz);
 			
 			invoiceNumber=invoiceNumber.replaceAll("\"", "");
 			
 			query.where(builder.equal(root.get("invoiceNo"), invoiceNumber));
 			
-			InvoiceDO invoiceDO=session.createQuery(query).getSingleResult();
+			Object invoiceDO=session.createQuery(query).getSingleResult();
 			
-			invoiceId=invoiceDO.getInvoiceId().toString();
+			for(Field field: clazz.getDeclaredFields()) {
+				if(field.isAnnotationPresent(javax.persistence.Id.class)) {
+					field.setAccessible(true);
+					invoiceId=field.get(invoiceDO).toString();
+					break;
+				}
+					
+			}
 			
 			
 		}catch(Exception e) {

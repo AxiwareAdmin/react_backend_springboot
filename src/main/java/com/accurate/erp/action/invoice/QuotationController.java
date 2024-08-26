@@ -201,7 +201,7 @@ public class QuotationController {
 	
 	@GetMapping(value="/viewQuotation")
 	@CrossOrigin(origins={"*"})
-	public ResponseEntity<?> getInvoiceDetails(@QueryParam("invId") String invId){
+	public ResponseEntity<?> getInvoiceDetails(@RequestParam("invId") String invId){
 		QuotationDO invoicedo=invoiceService.getInvoiceDetails(invId);
 		if(invoicedo!=null) {
 		return new ResponseEntity<QuotationDO>(invoicedo,HttpStatus.OK);

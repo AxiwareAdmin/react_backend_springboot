@@ -54,6 +54,8 @@ import com.accurate.erp.model.invoice.EmployeeDO;
 import com.accurate.erp.model.invoice.InvoiceDO;
 import com.accurate.erp.model.invoice.ProductDO;
 import com.accurate.erp.model.invoice.ProformaInvoiceDO;
+import com.accurate.erp.model.invoice.QuotationDO;
+import com.accurate.erp.model.invoice.SupplierQuotationDO;
 import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
@@ -144,7 +146,7 @@ public class InvoiceController {
 		}
 		else {
 			JSONObject jsonObj=new JSONObject();
-			jsonObj.put("res", "Customers are not found");
+			jsonObj.put("res", "Suppliers are not found");
 			return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 		}
 	}
@@ -1211,6 +1213,39 @@ public class InvoiceController {
 		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
 	}
 	// add customer details code end
+	
+	
+	
+	@PostMapping(value="/addSupplierDetails",consumes= {"application/json"})
+	@CrossOrigin(origins={"*"})
+	public ResponseEntity<?> saveSupplier(@RequestBody Map<String, Object> inputJson,HttpServletRequest request) throws ParseException{
+
+		System.out.print(inputJson);
+
+		String token=request.getHeader("Authorization").split(" ")[1];
+
+
+		  Claims claims= jwtUtil.extractAllClaims(token);
+
+		  LinkedHashMap<String,Object> map=claims.get("user",LinkedHashMap.class);
+
+		  String registerId=map.get("registerId").toString();
+
+		  String userId=map.get("userId").toString();
+
+		  //String userName=map.get("userName").toString();
+		
+		String msg=invoiceService.saveSupplier(inputJson,registerId,userId);
+
+		JSONObject jsonObj=new JSONObject();
+		if(!msg.equals("")) {
+		jsonObj.put("res", msg);
+		}else {
+			jsonObj.put("res", "failure");
+		}
+		return new ResponseEntity<String>(jsonObj.toString(),HttpStatus.OK);
+	}
+
 
 	//add customer details code start
 
@@ -1438,8 +1473,31 @@ public class InvoiceController {
 		
 		@PostMapping(value = "/invoiceidbyno")
 		@CrossOrigin(origins= {"*"})
-		public String getInvoiceIdByInvoiceNo(@RequestBody String invoiceNumber){
-			String res=invoiceService.getInvoiceIdByInvoiceNumber(invoiceNumber);
+		public String getInvoiceIdByInvoiceNo(@RequestBody Map<String,String> map){
+			
+			String invoiceNumber=map.get("invoiceNumber");
+			String module=map.get("module");
+			
+			Class<?> claz=null;
+			
+			if(module.equals("GST_SALE")) {
+				claz=InvoiceDO.class;
+			}
+			if(module.equals("CASH_SALE")) {
+				claz=CashDO.class;
+			}
+			if(module.equals("PROFORMA_SALE")) {
+				claz=ProformaInvoiceDO.class;
+			}
+			if(module.equals("Quotation")) {
+				claz=QuotationDO.class;
+			}
+			if(module.equals("SupplierQuotation")) {
+				claz=SupplierQuotationDO.class;
+			}
+				
+			
+			String res=invoiceService.getInvoiceIdByInvoiceNumber(invoiceNumber,claz);
 			
 			return res;
 		}
