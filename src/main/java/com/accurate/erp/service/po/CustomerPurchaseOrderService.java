@@ -67,20 +67,27 @@ public class CustomerPurchaseOrderService {
  	
 	public String saveInvoice(Map<String, Object> inputJson,String registerId,String userId,String userName) throws ParseException {
 		
-		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 		
 		CustomerPurchaseOrderDO invoiceDO=new CustomerPurchaseOrderDO();
+		
+		
 		
 		Object invoiceNo=inputJson.get("invoiceNo");
 		
 		
 		Object invoiceId=inputJson.get("invoiceId");
 		
+		//TO make sure invoice updates on edit
 		if(invoiceId!=null && invoiceId.toString().length()>0) {
 			invoiceDO=invoiceDao.getInvoiceDetails(invoiceId.toString());
 		}
 		
 		Object sgstValue=inputJson.get("sgstValue");
+		
+		Object igstValue=inputJson.get("igstValue");
 		
 		Object cgstValue=inputJson.get("cgstValue");
 		
@@ -147,10 +154,12 @@ public class CustomerPurchaseOrderService {
 		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
 			
 			d=sdf.parse(invoiceDate.toString());
+			
 		}
 		else {
 			d=sdf.parse(new java.util.Date().toString());
 		}
+		
 		
 		
 		if(invoiceNo!=null)
@@ -190,9 +199,9 @@ public class CustomerPurchaseOrderService {
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
@@ -212,7 +221,8 @@ public class CustomerPurchaseOrderService {
 		
 		
 		if(sgstValue!=null) {
-			invoiceDO.setSgstValue(new BigDecimal(sgstValue.toString()));
+			String s=sgstValue.toString().length()==0?"0":sgstValue.toString();
+			invoiceDO.setSgstValue(new BigDecimal(s));
 		}
 		
 		if(financialYear!=null) {
@@ -220,7 +230,15 @@ public class CustomerPurchaseOrderService {
 		}
 		
 		if(cgstValue!=null) {
-			invoiceDO.setCgstValue(new BigDecimal(cgstValue.toString()));
+			
+			String s=cgstValue.toString().length()==0?"0":cgstValue.toString();
+			invoiceDO.setCgstValue(new BigDecimal(s));
+		}
+		
+if(igstValue!=null) {
+			
+			String s=igstValue.toString().length()==0?"0":igstValue.toString();
+			invoiceDO.setIgstValue(new BigDecimal(s));
 		}
 		
 		if(taxableValue!=null) {
@@ -231,11 +249,9 @@ public class CustomerPurchaseOrderService {
 			invoiceDO.setInvoiceValue(new BigDecimal(invoiceValue.toString()));
 		}
 				
-		
 		if(transportCharges!=null) {
-		 invoiceDO.setTransportCharges(transportCharges.toString()); 
-		 }
-		 
+			invoiceDO.setTransportCharges(transportCharges.toString());
+		}
 		
 		if(additionalCharges!=null) {
 			invoiceDO.setAdditionalCharges(additionalCharges.toString());
@@ -257,8 +273,8 @@ public class CustomerPurchaseOrderService {
 			invoiceDO.setBillingAddress(billingAddress.toString());
 		}
 		
-		if(invoiceNo!=null) {
-			invoiceDO.setPoNumber(invoiceNo.toString());
+		if(poNumber!=null) {
+			invoiceDO.setPoNumber(poNumber.toString());
 		}
 		
 		if(customerName!=null) {
@@ -267,14 +283,21 @@ public class CustomerPurchaseOrderService {
 		
 		if(invoiceDate!=null) {
 			
-			invoiceDO.setInvoiceDate(sdf.parse(invoiceDate.toString()));
+			invoiceDO.setInvoiceDate(d);
 		}
 		
-		if(invoiceDate!=null) {
-			invoiceDO.setPoDate(d);
+		if(poDate!=null && poDate.toString().length()>0) {
+			invoiceDO.setPoDate(sdf.parse(poDate.toString()));
 		}
 		
-
+		if(challanNumber!=null) {
+			invoiceDO.setChallanNo(challanNumber.toString());
+		}
+		
+		if(challanDate!=null && challanDate.toString().length()>0) {
+			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
+		}
+		
 		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
@@ -283,7 +306,13 @@ public class CustomerPurchaseOrderService {
 			invoiceDO.setPaymentTerms(paymentTerms.toString());
 		}
 		
-
+		if(transportMode!=null) {
+			invoiceDO.setTransportMode(transportMode.toString());
+		}
+		
+		if(vehicleNumber!=null) {
+			invoiceDO.setVehicleNo(vehicleNumber.toString());
+		}
 		
 		if(remarks!=null) {
 			invoiceDO.setRemarks(remarks.toString());
@@ -315,17 +344,15 @@ public class CustomerPurchaseOrderService {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
 		}
 		
-		
+		if(additionalChargesGst!=null) {
+			invoiceDO.setAdditionalChargesGst(new BigDecimal(additionalChargesGst.toString()));
+		}
 		
 		if(transportChargesGst!=null) {
-			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
+			invoiceDO.setTransportGst(new BigDecimal(transportChargesGst.toString()));
 		}
 		
-		if(additionalChargesGst!=null) {
-			invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.toString()));
-		}
-		
-		invoiceDO.setInvoiceStatus("Not Booked");
+		invoiceDO.setInvoiceStatus("Unpaid");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
@@ -339,6 +366,7 @@ public class CustomerPurchaseOrderService {
 		
 		return invoiceDao.saveInvoice(invoiceDO);
 		
+	
 	}
 	
 

@@ -82,9 +82,14 @@ public class DebitNoteService {
  	
 	public String saveInvoice(Map<String, Object> inputJson,String registerId,String userId,String userName) throws ParseException {
 		
-		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
+		
+
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 		
 		DebitNoteDO invoiceDO=new DebitNoteDO();
+		
+		
 		
 		Object invoiceNo=inputJson.get("invoiceNo");
 		
@@ -97,6 +102,8 @@ public class DebitNoteService {
 		}
 		
 		Object sgstValue=inputJson.get("sgstValue");
+		
+		Object igstValue=inputJson.get("igstValue");
 		
 		Object cgstValue=inputJson.get("cgstValue");
 		
@@ -163,10 +170,12 @@ public class DebitNoteService {
 		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
 			
 			d=sdf.parse(invoiceDate.toString());
+			
 		}
 		else {
 			d=sdf.parse(new java.util.Date().toString());
 		}
+		
 		
 		
 		if(invoiceNo!=null)
@@ -206,9 +215,9 @@ public class DebitNoteService {
 				
 				invoiceProduct.setInvoiceDO(invoiceDO);
 				
-				invoiceProduct.setRegisterId("11111");
+				invoiceProduct.setRegisterId(registerId);
 				
-				invoiceProduct.setUserId("22222");
+				invoiceProduct.setUserId(userId);
 				
 				
 				invoiceProduct.setCreatedDate(sdf.parse(sdf.format(new Date(0))));
@@ -228,7 +237,8 @@ public class DebitNoteService {
 		
 		
 		if(sgstValue!=null) {
-			invoiceDO.setSgstValue(new BigDecimal(sgstValue.toString()));
+			String s=sgstValue.toString().length()==0?"0":sgstValue.toString();
+			invoiceDO.setSgstValue(new BigDecimal(s));
 		}
 		
 		if(financialYear!=null) {
@@ -236,7 +246,15 @@ public class DebitNoteService {
 		}
 		
 		if(cgstValue!=null) {
-			invoiceDO.setCgstValue(new BigDecimal(cgstValue.toString()));
+			
+			String s=cgstValue.toString().length()==0?"0":cgstValue.toString();
+			invoiceDO.setCgstValue(new BigDecimal(s));
+		}
+		
+if(igstValue!=null) {
+			
+			String s=igstValue.toString().length()==0?"0":igstValue.toString();
+			invoiceDO.setIgstValue(new BigDecimal(s));
 		}
 		
 		if(taxableValue!=null) {
@@ -247,10 +265,9 @@ public class DebitNoteService {
 			invoiceDO.setInvoiceValue(new BigDecimal(invoiceValue.toString()));
 		}
 				
-		/*
-		 * if(transportCharges!=null) {
-		 * invoiceDO.setTransportCharges(transportCharges.toString()); }
-		 */
+		if(transportCharges!=null) {
+			invoiceDO.setTransportCharges(transportCharges.toString());
+		}
 		
 		if(additionalCharges!=null) {
 			invoiceDO.setAdditionalCharges(additionalCharges.toString());
@@ -289,14 +306,14 @@ public class DebitNoteService {
 			invoiceDO.setPoDate(sdf.parse(poDate.toString()));
 		}
 		
-//		if(challanNumber!=null) {
-//			invoiceDO.setChallanNo(challanNumber.toString());
-//		}
-//		
-//		if(challanDate!=null) {
-//			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
-//		}
-//		
+		if(challanNumber!=null) {
+			invoiceDO.setChallanNo(challanNumber.toString());
+		}
+		
+		if(challanDate!=null && challanDate.toString().length()>0) {
+			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
+		}
+		
 		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
@@ -305,13 +322,13 @@ public class DebitNoteService {
 			invoiceDO.setPaymentTerms(paymentTerms.toString());
 		}
 		
-//		if(transportMode!=null) {
-//			invoiceDO.setTransportMode(transportMode.toString());
-//		}
-//		
-//		if(vehicleNumber!=null) {
-//			invoiceDO.setVehicleNo(vehicleNumber.toString());
-//		}
+		if(transportMode!=null) {
+			invoiceDO.setTransportMode(transportMode.toString());
+		}
+		
+		if(vehicleNumber!=null) {
+			invoiceDO.setVehicleNo(vehicleNumber.toString());
+		}
 		
 		if(remarks!=null) {
 			invoiceDO.setRemarks(remarks.toString());
@@ -343,11 +360,15 @@ public class DebitNoteService {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
 		}
 		
-		
+		if(additionalChargesGst!=null) {
+			invoiceDO.setAdditionalChargesGst(new BigDecimal(additionalChargesGst.toString()));
+		}
 		
 		if(transportChargesGst!=null) {
-			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
+			invoiceDO.setTransportGst(new BigDecimal(transportChargesGst.toString()));
 		}
+		
+		invoiceDO.setInvoiceStatus("Unpaid");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
@@ -361,6 +382,7 @@ public class DebitNoteService {
 		
 		return invoiceDao.saveInvoice(invoiceDO);
 		
+	
 	}
 	
 

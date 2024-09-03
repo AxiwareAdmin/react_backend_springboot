@@ -21,6 +21,7 @@ import com.accurate.erp.dao.po.CustomerPurchaseOrderDAO;
 import com.accurate.erp.dao.po.SupplierPurchaseOrderDAO;
 import com.accurate.erp.model.inventory.MaterialInwardDO;
 import com.accurate.erp.model.inventory.MaterialInwardProductDO;
+import com.accurate.erp.model.invoice.SupplierQuotationDO;
 import com.accurate.erp.model.invoice.SupplierQuotationProductsDO;
 import com.accurate.erp.model.po.CustomerPurchaseOrderDO;
 import com.accurate.erp.model.po.CustomerPurchaseOrderProductDO;
@@ -71,6 +72,9 @@ public class MaterialInwardService {
  	
 	public String saveInvoice(Map<String, Object> inputJson,String registerId,String userId,String userName) throws ParseException {
 		
+		
+
+		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
 		MaterialInwardDO invoiceDO=new MaterialInwardDO();
@@ -105,13 +109,13 @@ public class MaterialInwardService {
 		
 		Object billingAddress=inputJson.get("billingAddress");
 		
-		Object poNumber=inputJson.get("invoiceNo");
+		Object poNumber=inputJson.get("poNumber");
 		
 		Object customerName=inputJson.get("customerName");
 		
 		Object invoiceDate=inputJson.get("invoiceDate");
 		
-		Object poDate=inputJson.get("invoiceDate");
+		Object poDate=inputJson.get("poDate");
 		
 		Object challanNumber=inputJson.get("challanNumber");
 		
@@ -236,10 +240,10 @@ public class MaterialInwardService {
 			invoiceDO.setInvoiceValue(new BigDecimal(invoiceValue.toString()));
 		}
 				
-		
-		  if(transportCharges!=null) {
-		  invoiceDO.setTransportCharges(transportCharges.toString()); }
-		 
+		/*
+		 * if(transportCharges!=null) {
+		 * invoiceDO.setTransportCharges(transportCharges.toString()); }
+		 */
 		
 		if(additionalCharges!=null) {
 			invoiceDO.setAdditionalCharges(additionalCharges.toString());
@@ -285,7 +289,7 @@ public class MaterialInwardService {
 //		if(challanDate!=null) {
 //			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
 //		}
-//		
+		
 		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
@@ -332,15 +336,20 @@ public class MaterialInwardService {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
 		}
 		
+		if(transportCharges!=null) {
+			invoiceDO.setTransportCharges(transportCharges.toString());
+		}
 		
+		
+		  if(additionalChargesGst!=null) {
+		  invoiceDO.setAdditionalChargesGst(new BigDecimal(additionalChargesGst.
+		  toString())); }
+		 
 		
 		if(transportChargesGst!=null) {
-			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
+			invoiceDO.setTransportGst(new BigDecimal(transportChargesGst.toString()));
 		}
-		
-		if(additionalChargesGst!=null) {
-			invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.toString()));
-		}
+		invoiceDO.setInvoiceStatus("Unpaid");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
@@ -353,6 +362,8 @@ public class MaterialInwardService {
 		invoiceDO.setMonth(new SimpleDateFormat("MMM").format(d));
 		
 		return invoiceDao.saveInvoice(invoiceDO);
+		
+	
 		
 	}
 	

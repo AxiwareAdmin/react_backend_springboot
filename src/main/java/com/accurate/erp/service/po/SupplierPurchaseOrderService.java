@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.accurate.erp.dao.po.CustomerPurchaseOrderDAO;
 import com.accurate.erp.dao.po.SupplierPurchaseOrderDAO;
+import com.accurate.erp.model.invoice.SupplierQuotationDO;
 import com.accurate.erp.model.invoice.SupplierQuotationProductsDO;
 import com.accurate.erp.model.po.CustomerPurchaseOrderDO;
 import com.accurate.erp.model.po.CustomerPurchaseOrderProductDO;
@@ -68,6 +69,8 @@ public class SupplierPurchaseOrderService {
  	
 	public String saveInvoice(Map<String, Object> inputJson,String registerId,String userId,String userName) throws ParseException {
 		
+
+		
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
 		
 		SupplierPurchaseOrderDO invoiceDO=new SupplierPurchaseOrderDO();
@@ -102,13 +105,13 @@ public class SupplierPurchaseOrderService {
 		
 		Object billingAddress=inputJson.get("billingAddress");
 		
-		Object poNumber=inputJson.get("invoiceNo");
+		Object poNumber=inputJson.get("poNumber");
 		
 		Object customerName=inputJson.get("customerName");
 		
 		Object invoiceDate=inputJson.get("invoiceDate");
 		
-		Object poDate=inputJson.get("invoiceDate");
+		Object poDate=inputJson.get("poDate");
 		
 		Object challanNumber=inputJson.get("challanNumber");
 		
@@ -144,6 +147,7 @@ public class SupplierPurchaseOrderService {
 		Object transportChargesGst=inputJson.get("transportGstRate");
 		
 		List<Map<String,Object>> invoiceProd=(List<Map<String,Object>>)inputJson.get("invoiceProducts");
+		
 		java.util.Date d=null;
 		if(invoiceDate!=null && invoiceDate.toString().length()>0) {
 			
@@ -232,10 +236,10 @@ public class SupplierPurchaseOrderService {
 			invoiceDO.setInvoiceValue(new BigDecimal(invoiceValue.toString()));
 		}
 				
-		
-		  if(transportCharges!=null) {
-		  invoiceDO.setTransportCharges(transportCharges.toString()); }
-		 
+		/*
+		 * if(transportCharges!=null) {
+		 * invoiceDO.setTransportCharges(transportCharges.toString()); }
+		 */
 		
 		if(additionalCharges!=null) {
 			invoiceDO.setAdditionalCharges(additionalCharges.toString());
@@ -281,7 +285,7 @@ public class SupplierPurchaseOrderService {
 //		if(challanDate!=null) {
 //			invoiceDO.setChallanDate(sdf.parse(challanDate.toString()));
 //		}
-//		
+		
 		if(dueDate!=null && dueDate.toString().length()>0) {
 			invoiceDO.setDueDate(sdf.parse(dueDate.toString()));
 		}
@@ -328,17 +332,21 @@ public class SupplierPurchaseOrderService {
 			invoiceDO.setAdditionalTerms(termsAndCondition.toString());
 		}
 		
+		if(transportCharges!=null) {
+			invoiceDO.setTransportCharges(transportCharges.toString());
+		}
 		
+		
+		  if(additionalChargesGst!=null) {
+		  invoiceDO.setAdditionalChargesGst(new BigDecimal(additionalChargesGst.
+		  toString())); 
+		  }
+		 
 		
 		if(transportChargesGst!=null) {
-			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
+			invoiceDO.setTransportGst(new BigDecimal(transportChargesGst.toString()));
 		}
-		
-		if(additionalChargesGst!=null) {
-			invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.toString()));
-		}
-		
-		invoiceDO.setInvoiceStatus("Not Booked");
+		invoiceDO.setInvoiceStatus("Unpaid");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		
@@ -352,6 +360,7 @@ public class SupplierPurchaseOrderService {
 		
 		return invoiceDao.saveInvoice(invoiceDO);
 		
+	
 	}
 	
 

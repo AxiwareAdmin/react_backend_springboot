@@ -358,6 +358,7 @@ if(igstValue!=null) {
 		if(transportChargesGst!=null) {
 			invoiceDO.setTransportGst(new BigDecimal(transportChargesGst.toString()));
 		}
+		
 		invoiceDO.setInvoiceStatus("Unpaid");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));

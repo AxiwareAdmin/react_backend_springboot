@@ -346,13 +346,15 @@ public class SupplierQuotationService {
 		
 		
 		  if(additionalChargesGst!=null) {
-		  invoiceDO.setAdditionalChargesGst(Integer.parseInt(additionalChargesGst.
-		  toString())); }
+		  invoiceDO.setAdditionalChargesGst(new BigDecimal(additionalChargesGst.
+		  toString())); 
+		  }
 		 
 		
 		if(transportChargesGst!=null) {
-			invoiceDO.setTransportGst(Integer.parseInt(transportChargesGst.toString()));
+			invoiceDO.setTransportGst(new BigDecimal(transportChargesGst.toString()));
 		}
+		invoiceDO.setInvoiceStatus("Unpaid");
 		
 		invoiceDO.setRegisterId(Integer.parseInt(registerId));
 		

@@ -47,6 +47,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.accurate.erp.dto.security.AuthenticationRequest;
 import com.accurate.erp.helper.JwtUtil;
+import com.accurate.erp.model.accounting.CreditNoteDO;
+import com.accurate.erp.model.accounting.DebitNoteDO;
+import com.accurate.erp.model.inventory.MaterialInwardDO;
+import com.accurate.erp.model.inventory.MaterialOutwardDO;
 import com.accurate.erp.model.invoice.CashDO;
 import com.accurate.erp.model.invoice.ClientDO;
 import com.accurate.erp.model.invoice.CustomerDO;
@@ -58,6 +62,8 @@ import com.accurate.erp.model.invoice.QuotationDO;
 import com.accurate.erp.model.invoice.SupplierQuotationDO;
 import com.accurate.erp.model.invoice.UserDO;
 import com.accurate.erp.model.modelmaster.DocumentSeqMasterDO;
+import com.accurate.erp.model.po.CustomerPurchaseOrderDO;
+import com.accurate.erp.model.po.SupplierPurchaseOrderDO;
 import com.accurate.erp.model.purchase.PurchaseDO;
 import com.accurate.erp.model.purchase.SupplierDO;
 import com.accurate.erp.security.service.CustomUserDetailsService;
@@ -1495,6 +1501,27 @@ public class InvoiceController {
 			if(module.equals("SupplierQuotation")) {
 				claz=SupplierQuotationDO.class;
 			}
+			if(module.equals("SupplierPo")) {
+				claz=SupplierPurchaseOrderDO.class;
+			}
+			if(module.equals("CustomerPo")) {
+				claz=CustomerPurchaseOrderDO.class;
+			}
+			
+			if(module.equals("MaterialInward")) {
+				claz=MaterialInwardDO.class;
+			}
+			if(module.equals("MaterialOutward")) {
+				claz=MaterialOutwardDO.class;
+			}
+			
+			if(module.equals("DebitNote")) {
+				claz=DebitNoteDO.class;
+			}
+			if(module.equals("CreditNote")) {
+				claz=CreditNoteDO.class;
+			}
+			
 				
 			
 			String res=invoiceService.getInvoiceIdByInvoiceNumber(invoiceNumber,claz);
