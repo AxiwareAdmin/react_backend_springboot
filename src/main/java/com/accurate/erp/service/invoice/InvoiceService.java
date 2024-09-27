@@ -1452,12 +1452,13 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			Object shippingAddress1=inputJson.get("shippingAddress1");
 			Object shippingAddress2=inputJson.get("shippingAddress2");
 			Object paymentTerms=inputJson.get("paymentTerms");
-			
+
 			Object openingStock=inputJson.get("openingStock");
 			Object shippingCustomerName = inputJson.get("shippingCustomerName");
 			Object shippingCity = inputJson.get("shippingCity");
 			Object shippingPincode = inputJson.get("shippingPincode");
 			Object shippingCountry = inputJson.get("shippingCountry");
+
 
 			if(customerName != null)
 				CustomerdO.setCustomerName(customerName.toString());
@@ -1490,19 +1491,6 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			if(paymentTerms != null)
 				CustomerdO.setTermsAndCondition(paymentTerms.toString());
 
-//			CustomerdO.setStateCode("1234");
-//			CustomerdO.setCreatedDate("12-Dec-23");
-//			CustomerdO.setShippingCustomerName("Raju");
-//			CustomerdO.setShippingCity("Goa");
-//			CustomerdO.setShippingPinCode(1234);
-//			CustomerdO.setShippingStateCode("1111");
-//			CustomerdO.setShippingCountry("US");
-//			CustomerdO.setAccountingGroup("Y");
-//			CustomerdO.setUserId(121212);
-//			CustomerdO.setRegisterId(21212);
-//			CustomerdO.setDrCr("CR");
-//			CustomerdO.setPoNumber("11111");
-			
 			if(openingStock != null)
 				CustomerdO.setOpeningStock(Integer.parseInt(openingStock.toString()));
 			if(shippingCustomerName != null && !shippingCustomerName.equals(""))
@@ -1523,11 +1511,11 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			}else {
 				CustomerdO.setUserId(121212);
 			}
-
 			CustomerdO.setCreatedDate(sdf.parse(sdf.format(new Date(0))).toString());
+			CustomerdO.setShippingStateCode("1111");
 			CustomerdO.setStateCode("1234");
-			CustomerdO.setAccountingGroup("Y");		
-			CustomerdO.setShippingStateCode("2345");
+			CustomerdO.setAccountingGroup("Y");			
+
 			CustomerdO.setDrCr("CR");
 			CustomerdO.setPoNumber("11111");
 
@@ -1705,12 +1693,6 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			if(applicableTax != null)
 				productDO.setApplicableTax(new BigDecimal(applicableTax.toString()));
 
-
-//			productDO.setUserId(21212);
-//			productDO.setRegisterId(12121);
-			productDO.setCreatedDate(new Date(0));
-//			productDO.setCreatedBy("sachin");
-			
 			if(regId != null && !regId.equalsIgnoreCase("")) {
 				productDO.setRegisterId(Integer.parseInt(regId));
 			}else {
@@ -1726,6 +1708,9 @@ public <T> T getSalesTypeClassDetails(Class<T> resultClass, String invId) {
 			}else {
 				productDO.setCreatedBy("sachin");
 			}
+			
+			productDO.setCreatedDate(new Date(0));
+			
 
 
 

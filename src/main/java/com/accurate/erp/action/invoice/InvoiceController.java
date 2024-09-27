@@ -1195,6 +1195,7 @@ public class InvoiceController {
 
 		System.out.print(inputJson);
 
+
 		String token=request.getHeader("Authorization").split(" ")[1];
 
 
@@ -1207,7 +1208,7 @@ public class InvoiceController {
 		  String userId=map.get("userId").toString();
 
 		  //String userName=map.get("userName").toString();
-		
+
 		String msg=invoiceService.saveCustomer(inputJson,registerId,userId);
 
 		JSONObject jsonObj=new JSONObject();
@@ -1260,6 +1261,7 @@ public class InvoiceController {
 		public ResponseEntity<?> saveProduct(@RequestBody Map<String, Object> inputJson,HttpServletRequest request) throws ParseException{
 
 			System.out.print(inputJson);
+
 			
 			String token=request.getHeader("Authorization").split(" ")[1];
 
